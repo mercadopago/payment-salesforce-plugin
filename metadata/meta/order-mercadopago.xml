@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata xmlns="http://www.demandware.com/xml/impex/metadata/2006-10-31">
+    <type-extension type-id="Order">
+        <custom-attribute-definitions>
+            <attribute-definition attribute-id="paymentStatus">
+                <display-name xml:lang="x-default">Payment Status</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="paymentReport">
+                <display-name xml:lang="x-default">Payment Report</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+        </custom-attribute-definitions>
+        <group-definitions>
+            <attribute-group group-id="MercadopagoOrders">
+                <display-name xml:lang="x-default">Mercado Pago Orders</display-name>
+                <attribute attribute-id="paymentStatus"/>
+                <attribute attribute-id="paymentReport"/>
+            </attribute-group>
+        </group-definitions>
+    </type-extension>
+</metadata>

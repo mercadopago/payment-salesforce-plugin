@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<form xmlns="http://www.demandware.com/xml/form/2008-04-19">
+
+    <field formid="paymentMethod" type="string" mandatory="true" />
+
+    <field formid="email" label="label.input.payment.email" type="string" mandatory="true" binding="email" max-length="254" missing-error="error.card.info.missing.email" />
+
+    <field formid="firstName" label="label.input.firstname.profile" type="string" mandatory="true" binding="firstName" max-length="16" missing-error="error.message.required" />
+
+    <field formid="lastName" label="label.input.lastname.profile" type="string" mandatory="true" binding="lastName" max-length="16" missing-error="error.message.required" />
+
+    <field formid="docTypePix" label="label.input.payment.docType" type="string" mandatory="true" missing-error="error.message.required"/>
+
+    <field formid="docNumberPix" label="label.input.payment.docNumber" type="string" mandatory="true" missing-error="error.message.required" />
+
+</form>

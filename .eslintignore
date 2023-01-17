@@ -1,0 +1,7 @@
+.eslintrc.js
+.gitignore
+webpack.config.js
+cartridges/app_storefront_base/*
+cartridges/int_mercadopago/cartridge/client/default/js/checkout/checkout.js
+cartridges/int_mercadopago/cartridge/static/*
+.vscode/*

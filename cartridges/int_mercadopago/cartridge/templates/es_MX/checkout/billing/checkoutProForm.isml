@@ -1,0 +1,42 @@
+<isscript>
+  let assets = require('*/cartridge/scripts/assets.js');
+  assets.addCss('css/mercadopago.css');
+</isscript>
+
+<div class="box">
+  <div class="row-title">
+    <p class="span15">
+      ${Resource.msg('mercadopago.chopro.title', 'mercadopago', null)}
+    </p>
+  </div>
+  <div class="row-payments">
+    <ul class="box-img">
+      <li class="span11 mini-box">
+        <img src="${URLUtils.staticURL('/images/credit_card.png')}" alt="" width="31" />
+        <p>${Resource.msg('mercadopago.chopro.creditcard', 'mercadopago', null)}</p>
+      </li>
+      <li class="span11 margin-tb mini-box margin-l">
+        <img src="${URLUtils.staticURL('/images/debit_card.png')}" alt="" width="31" />
+        <p>${Resource.msg('mercadopago.chopro.debitcard', 'mercadopago', null)}</p>
+      </li>
+      <li class="span11 margin-tb mini-box margin-l">
+        <img src="${URLUtils.staticURL('/images/cash.png')}" alt="" width="31" />
+        <p>${Resource.msg('mercadopago.chopro.efectivo', 'mercadopago', null)}</p>
+      </li>
+    </ul>
+    <ul class="box-img">
+      <li class="span11 mini-box-2 margin-first">
+        <img src="${URLUtils.staticURL('/images/internet.png')}" alt="" width="25" class="img-pix mb-img" />
+        <p>${Resource.msg('mercadopago.chopro.cajerpautomatico', 'mercadopago', null)}</p>
+      </li>
+      <li class="span11 mini-box-2 margin-l">
+        <img src="${URLUtils.staticURL('/images/mercado_credito.png')}" alt="" width="31" height="25" />
+        <p>${Resource.msg('mercadopago.chopro.mercadocredito', 'mercadopago', null)}</p>
+      </li>
+    </ul>
+  </div>
+  <div class="row-footer">
+    <p class="span12">${Resource.msg('mercadopago.chopro.acceptedflags', 'mercadopago', null)}:</p>
+    <img src="${URLUtils.staticURL('/images/flags_mex.png')}" alt="" />
+  </div>
+</div>

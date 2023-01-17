@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata xmlns="http://www.demandware.com/xml/impex/metadata/2006-10-31">
+    <type-extension type-id="OrderPaymentInstrument">
+        <custom-attribute-definitions>
+            <attribute-definition attribute-id="paymentTypeId">
+                <display-name xml:lang="x-default">Payment Type</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="cardTypeName">
+                <display-name xml:lang="x-default">Card Name</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="payerEmail">
+                <display-name xml:lang="x-default">Email</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="payerFirstName">
+                <display-name xml:lang="x-default">First Name</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="payerLastName">
+                <display-name xml:lang="x-default">LastName</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="payerDocType">
+                <display-name xml:lang="x-default">Document Type</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="payerDocNumber">
+                <display-name xml:lang="x-default">Document Number</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="pixQrCode">
+                <display-name xml:lang="x-default">Pix QrCode</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="pixQrCodeBase64">
+                <display-name xml:lang="x-default">Pix QrCode Base64</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="checkoutProLink">
+                <display-name xml:lang="x-default">Link Checkout Pro</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+        </custom-attribute-definitions>
+        <group-definitions>
+            <attribute-group group-id="MercadopagoPaymentInfo">
+                <display-name xml:lang="x-default">Mercado Pago Payment Info</display-name>
+                <attribute attribute-id="paymentTypeId"/>
+                <attribute attribute-id="cardTypeName"/>
+                <attribute attribute-id="payerEmail"/>
+                <attribute attribute-id="payerFirstName"/>
+                <attribute attribute-id="payerLastName"/>
+                <attribute attribute-id="payerDocType"/>
+                <attribute attribute-id="payerDocNumber"/>
+                <attribute attribute-id="pixQrCode"/>
+                <attribute attribute-id="pixQrCodeBase64"/>
+                <attribute attribute-id="checkoutProLink"/>
+            </attribute-group>
+        </group-definitions>
+    </type-extension>
+</metadata>

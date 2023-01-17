@@ -1,0 +1,11 @@
+<div class="tab-pane checkout-pro-content" id="checkout-pro-content" role="tabpanel">
+    <fieldset class="payment-form-fields">
+
+        <iscomment> payment method is CHECKOUT_PRO </iscomment>
+        <input type="hidden" class="form-control" name="${pdict.forms.billingForm.paymentMethod.htmlName}"
+            value="CHECKOUT_PRO" />
+
+        <isinclude template="checkout/billing/checkoutProForm" />
+
+    </fieldset>
+</div>

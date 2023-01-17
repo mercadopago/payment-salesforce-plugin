@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<payment-settings xmlns="http://www.demandware.com/xml/impex/paymentsettings/2009-09-15">
+    <payment-method method-id="CREDIT_CARD">
+        <name xml:lang="x-default">Credit Card</name>
+        <enabled-flag>true</enabled-flag>
+        <processor-id>MERCADOPAGO_CREDIT_CARD</processor-id>
+    </payment-method>
+    <payment-method method-id="PIX">
+        <name xml:lang="x-default">PIX</name>
+        <enabled-flag>true</enabled-flag>
+        <processor-id>MERCADOPAGO_PIX</processor-id>
+    </payment-method>
+    <payment-method method-id="CHECKOUT_PRO">
+        <name xml:lang="x-default">Mercado Pago Checkout Pro</name>
+        <enabled-flag>true</enabled-flag>
+        <processor-id>MERCADOPAGO_CHECKOUT_PRO</processor-id>
+    </payment-method>
+</payment-settings>

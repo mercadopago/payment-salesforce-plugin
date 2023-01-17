@@ -1,0 +1,6 @@
+<li class="nav-item" data-method-id="${paymentOption.ID}">
+    <a class="nav-link checkout-pro-tab" data-toggle="tab" href="#checkout-pro-content" role="tab">
+        <img class="checkout-pro-option" src="${URLUtils.staticURL('/images/payment-mercado-pago.png')}" height="32"
+            alt="${paymentOption.name}" title="${paymentOption.name}" />
+    </a>
+</li>

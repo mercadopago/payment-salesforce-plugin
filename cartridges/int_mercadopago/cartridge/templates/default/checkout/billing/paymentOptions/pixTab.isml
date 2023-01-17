@@ -1,0 +1,6 @@
+<li class="nav-item" data-method-id="${paymentOption.ID}">
+    <a class="nav-link pix-tab" data-toggle="tab" href="#pix-content" role="tab">
+        <img class="pix-option" src="${URLUtils.staticURL('/images/payment-pix.svg')}" height="32"
+            alt="${paymentOption.name}" title="${paymentOption.name}" />
+    </a>
+</li>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<payment-processors xmlns="http://www.demandware.com/xml/impex/paymentprocessor/2007-03-31">
+    <payment-processor processor-id="MERCADOPAGO_CREDIT_CARD">
+        <description>Mercado Pago payment processor with Checkout API</description>
+        <preferences>
+            <all-instances/>
+            <development/>
+            <staging/>
+            <production/>
+        </preferences>
+    </payment-processor>
+    <payment-processor processor-id="MERCADOPAGO_PIX">
+        <description>Mercado Pago payment processor with PIX</description>
+        <preferences>
+            <all-instances/>
+            <development/>
+            <staging/>
+            <production/>
+        </preferences>
+    </payment-processor>
+    <payment-processor processor-id="MERCADOPAGO_CHECKOUT_PRO">
+        <description>Mercado Pago payment processor with Checkout Pro</description>
+        <preferences>
+            <all-instances/>
+            <development/>
+            <staging/>
+            <production/>
+        </preferences>
+    </payment-processor>
+</payment-processors>

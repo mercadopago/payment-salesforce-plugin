@@ -1,0 +1,41 @@
+{
+  "name": "int_mercadopago",
+  "version": "22.1.0",
+  "description": "Payment Integration cartridge for Mercadopago",
+  "main": "index.js",
+  "scripts": {
+    "lint": "sgmf-scripts --lint js",
+    "lint:fix": "sgmf-scripts --lint js --fix",
+    "upload": "sgmf-scripts --upload -- ",
+    "test": "sgmf-scripts --test test/unit/**/*.js",
+    "uploadCartridge": "sgmf-scripts --uploadCartridge int_mercadopago",
+    "watch": "sgmf-scripts --watch",
+    "compile:js": "sgmf-scripts --compile js",
+    "compile:scss": "sgmf-scripts --compile css",
+    "build": "npm run compile:js && npm run compile:scss"
+  },
+  "devDependencies": {
+    "cleave.js": "^1.5.3",
+    "css-loader": "^0.28.11",
+    "eslint": "^8.21.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "postcss-loader": "^2.1.6",
+    "proxyquire": "1.7.4",
+    "sass-loader": "^7.3.1",
+    "sgmf-scripts": "^2.3.0",
+    "stylelint": "^8.4.0",
+    "stylelint-config-standard": "^17.0.0",
+    "stylelint-scss": "^2.5.0"
+  },
+  "browserslist": [
+    "last 2 versions",
+    "ie >= 10"
+  ],
+  "paths": {
+    "BaseCartridge": "./cartridges/app_storefront_base/"
+  },
+  "dependencies": {
+    "sass": "^1.54.5"
+  }
+}

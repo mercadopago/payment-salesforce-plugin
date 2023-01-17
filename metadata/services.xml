@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<services xmlns="http://www.demandware.com/xml/impex/services/2014-09-26">
+    <service-credential service-credential-id="mercadopagoPayment">
+        <url>https://api.mercadopago.com</url>
+        <user-id/>
+    </service-credential>
+
+    <service-profile service-profile-id="mercadopagoPayment">
+        <timeout-millis>30000</timeout-millis>
+        <rate-limit-enabled>false</rate-limit-enabled>
+        <rate-limit-calls>0</rate-limit-calls>
+        <rate-limit-millis>0</rate-limit-millis>
+        <cb-enabled>false</cb-enabled>
+        <cb-calls>0</cb-calls>
+        <cb-millis>0</cb-millis>
+    </service-profile>
+
+    <service service-id="mercadopagoPayment">
+        <service-type>HTTP</service-type>
+        <enabled>true</enabled>
+        <log-prefix>mercadopago</log-prefix>
+        <comm-log-enabled>false</comm-log-enabled>
+        <mock-mode-enabled>false</mock-mode-enabled>
+        <profile-id>mercadopagoPayment</profile-id>
+        <credential-id>mercadopagoPayment</credential-id>
+    </service>
+</services>

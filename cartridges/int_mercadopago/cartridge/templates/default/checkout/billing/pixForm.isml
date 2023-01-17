@@ -1,0 +1,105 @@
+<isset name="pixFields" value="${pdict.forms.billingForm.pixFields}" scope="page" />
+
+<div class="row">
+    <div class="col-sm-12">
+        <div id="form-checkout" class="form-group
+            <isif condition=${pixFields.email.mandatory === true}>required</isif>
+            ${pixFields.email.htmlName}">
+
+            <label class="form-control-label" for="email">${Resource.msg('field.customer.email', 'checkout', null)}</label>
+
+            <button type="button" class="info-icon">
+                <span class="icon" aria-hidden="true">i</span>
+                <span class="sr-only">${Resource.msg('button.help.assistive.text', 'common', null)}</span>
+                <span class="tooltip d-none">
+                    ${Resource.msg('tooltip.email', 'creditCard', null)}
+                </span>
+            </button>
+
+            <input type="email" class="form-control email" id="email" value="${pdict.order.orderEmail || ''}" <isprint
+                value="${pixFields.email.attributes}" encoding="htmlsinglequote" />
+            autocomplete="email"
+            data-checkout="email"
+            required
+            />
+
+            <div class="invalid-feedback"></div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-6">
+
+        <div class="form-group
+            <isif condition=${pixFields.firstName.mandatory === true}>required</isif>
+            ${pixFields.firstName.htmlName}">
+
+            <label class="form-control-label" for="firstName">${Resource.msg('label.profile.firstname', 'account', null)}</label>
+
+            <input type="text" class="form-control" id="firstName" <isprint value="${pixFields.firstName.attributes}"
+                encoding="htmlsinglequote" />
+            required
+            aria-describedby="firstNameInvalidMessage" 
+            />
+            <div class="invalid-feedback" id="firstNameInvalidMessage"></div>
+
+        </div>
+
+    </div>
+
+    <div class="col-sm-6">
+
+        <div class="form-group
+            <isif condition=${pixFields.lastName.mandatory === true}>required</isif>
+            ${pixFields.lastName.htmlName}">
+
+            <label class="form-control-label" for="lastName">${Resource.msg('label.profile.lastname', 'account', null)}</label>
+
+            <input type="text" class="form-control" id="lastName" <isprint value="${pixFields.lastName.attributes}"
+                encoding="htmlsinglequote" />
+            required
+            aria-describedby="lastNameInvalidMessage" 
+            />
+            <div class="invalid-feedback" id="lastNameInvalidMessageç"></div>
+
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-6">
+        <div class="form-group
+            <isif condition=${pixFields.docTypePix.mandatory === true}>required</isif>
+            ${pixFields.docTypePix.htmlName}">
+
+            <label class="form-control-label" for="docTypePix">${Resource.msg('mercadopago.field.doctype', 'mercadopago', null)}</label>
+
+            <select class="form-control" id="docTypePix" <isprint value="${pixFields.docTypePix.attributes}"
+                encoding="htmlsinglequote" /> >
+            </select>
+
+        </div>
+
+    </div>
+
+    <div class="col-sm-6">
+
+        <div class="form-group
+            <isif condition=${pixFields.docNumberPix.mandatory === true}>required</isif>
+            ${pixFields.docNumberPix.htmlName}">
+
+            <label class="form-control-label" for="docNumberPix">${Resource.msg('mercadopago.field.docnumber', 'mercadopago', null)}</label>
+
+            <input type="text" class="form-control" id="docNumberPix" <isprint value="${pixFields.docNumberPix.attributes}"
+                encoding="htmlsinglequote" />
+            autocomplete="docNumberPix"
+            data-checkout="docNumberPix"
+            required
+            aria-describedby="docNumberInvalidMessage" 
+            />
+            <div class="invalid-feedback" id="docNumberInvalidMessage"></div>
+
+        </div>
+    </div>
+</div>

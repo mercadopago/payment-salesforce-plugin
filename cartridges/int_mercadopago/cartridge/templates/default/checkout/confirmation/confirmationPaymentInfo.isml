@@ -1,0 +1,33 @@
+<iscomment>
+    This template is created to render payment information in the order confirmation email.
+</iscomment>
+<isloop items="${pdict.order.billing.payment.selectedPaymentInstruments}" var="payment">
+    <isif condition="${payment.paymentMethod === 'CREDIT_CARD'}">
+        <div>
+            <span>${Resource.msg('msg.payment.type.credit', 'confirmation', null)}
+                ${payment.type}</span>
+        </div>
+        <div>
+            ${payment.maskedCreditCardNumber}
+        </div>
+        <div>
+            <span>${Resource.msg('msg.card.type.ending', 'confirmation', null)} ${payment.expirationMonth}/${payment.expirationYear}</span>
+        </div>
+    </isif>
+    <isif condition="${payment.paymentMethod === 'PIX'}">
+        <div>
+            <span>${Resource.msg('pix.qrcode.email.pix', 'mercadopago', null)}</span>
+        </div>
+        <div>
+            <span>${Resource.msg('pix.qrcode.email.copy', 'mercadopago', null)}</span>
+        </div>
+        <div>
+            <span>${payment.pixQrCode}</span>
+        </div>
+    </isif>
+    <isif condition="${payment.paymentMethod === 'CHECKOUT_PRO'}">
+        <div>
+            <span>${Resource.msg('mercadopago.chopro.selectedpayment', 'mercadopago', null)}</span>
+        </div>
+    </isif>
+</isloop>

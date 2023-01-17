@@ -1,0 +1,11 @@
+<div class="tab-pane pix-content" id="pix-content" role="tabpanel">
+    <fieldset class="payment-form-fields">
+
+        <iscomment> payment method is PIX </iscomment>
+        <input type="hidden" class="form-control" name="${pdict.forms.billingForm.paymentMethod.htmlName}"
+            value="PIX" />
+
+        <isinclude template="checkout/billing/pixForm" />
+
+    </fieldset>
+</div>

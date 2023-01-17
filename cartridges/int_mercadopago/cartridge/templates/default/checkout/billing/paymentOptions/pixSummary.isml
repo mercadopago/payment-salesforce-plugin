@@ -1,0 +1,12 @@
+<div class="pix-qrcode-img-msg">
+    <span>${Resource.msg('pix.qrcode.scan', 'mercadopago', null)}</span>
+</div>
+<div class="pix-qrcode-img">
+    <img src='${payment.pixQrCodeBase64}' alt="qrCode" width='250px' />
+</div>
+<div class="pix-qrcode-msg">
+    <span>${Resource.msg('pix.qrcode.copy', 'mercadopago', null)}</span>
+</div>
+<div class="pix-qrcode">
+    <span>${payment.pixQrCode}</span>
+</div>

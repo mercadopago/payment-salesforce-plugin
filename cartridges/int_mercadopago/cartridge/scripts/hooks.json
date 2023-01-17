@@ -1,0 +1,32 @@
+{
+    "hooks": [
+        {
+            "name": "app.payment.form.processor.mercadopago_credit_card",
+            "script": "./hooks/payment/processor/mercadopagoCreditCard"
+        },
+        {
+            "name": "app.payment.processor.mercadopago_credit_card",
+            "script": "./hooks/payment/processor/mercadopagoCreditCard"
+        },
+        {
+            "name": "app.payment.form.processor.mercadopago_pix",
+            "script": "./hooks/payment/processor/mercadopagoPix"
+        },
+        {
+            "name": "app.payment.processor.mercadopago_pix",
+            "script": "./hooks/payment/processor/mercadopagoPix"
+        },
+        {
+            "name": "app.payment.form.processor.mercadopago_checkout_pro",
+            "script": "./hooks/payment/processor/mercadopagoCheckoutPro"
+        },
+        {
+            "name": "app.payment.processor.mercadopago_checkout_pro",
+            "script": "./hooks/payment/processor/mercadopagoCheckoutPro"
+        },
+        {
+            "name": "app.post.auth",
+            "script": "./hooks/payment/processor/mercadopagoPostAuthorization"
+        }
+    ]
+}
