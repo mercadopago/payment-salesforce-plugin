@@ -61,9 +61,9 @@ function handlePayments(order, orderNumber) {
       );
       let authorizationResult;
       if (paymentProcessor === null) {
-        Transaction.begin();
-        paymentInstrument.paymentTransaction.setTransactionID(orderNumber);
-        Transaction.commit();
+        Transaction.wrap(() => {
+          paymentInstrument.paymentTransaction.setTransactionID(orderNumber);
+        });
       } else {
         authorizationResult = callHookProcessor(
           orderNumber,

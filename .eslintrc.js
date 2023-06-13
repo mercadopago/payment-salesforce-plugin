@@ -24,6 +24,7 @@ module.exports = {
     },
   },
   "rules": {
+    "linebreak-style": 0,
     "no-var": "error",
     "prefer-const": "error",
     "complexity": ["error", { "max": 6 }],
