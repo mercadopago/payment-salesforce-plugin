@@ -338,10 +338,8 @@ function submitPayment(paymentMethodId, mpToken, defer) {
                                 $('body').trigger('checkout:enableButton', '.next-step-button button');
                                 shippingHelpers.methods.shippingFormResponse(defer, data);
 
-                                let amount = data.order.priceTotal;
-                                let clearAmount = amount.replace(/[\$,]/g, "");
-
-                                cardFormHelper.createCardForm(clearAmount).mount();
+                                let amount = "" + data.paymentAmount;   
+                                cardFormHelper.createCardForm(amount).mount();
                                 pixFormHelper.prepareForm();
                             },
                             error: function (err) {

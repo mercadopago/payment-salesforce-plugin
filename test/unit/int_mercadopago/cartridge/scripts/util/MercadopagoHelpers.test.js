@@ -8,7 +8,7 @@ const proxyquireObject = {
   "dw/web/Resource": importsUtil.Resource,
   "dw/order/PaymentInstrument": importsUtil.PaymentInstrument,
   "dw/system/Site": importsUtil.Site(),
-  "*/cartridge/scripts/util/Logger": importsUtil.Logger,
+  "dw/system/Logger": importsUtil.Logger,
   "dw/web/URLUtils": importsUtil.URLUtils,
   "dw/svc/LocalServiceRegistry": {},
   "*/cartridge/scripts/util/MercadopagoUtil": importsUtil.MercadopagoUtil,

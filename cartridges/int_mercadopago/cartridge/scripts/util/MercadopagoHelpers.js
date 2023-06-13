@@ -3,9 +3,11 @@ const Site = require("dw/system/Site");
 const Resource = require("dw/web/Resource");
 const URLUtils = require("dw/web/URLUtils");
 const LocalServiceRegistry = require("dw/svc/LocalServiceRegistry");
-const Logger = require("*/cartridge/scripts/util/Logger");
+const Logger = require("dw/system/Logger");
 const MercadopagoUtil = require("*/cartridge/scripts/util/MercadopagoUtil");
 const collections = require("*/cartridge/scripts/util/collections");
+
+const log = Logger.getLogger("int_mercadopago", "mercadopago");
 
 function MercadopagoHelpers() {}
 
@@ -110,7 +112,7 @@ function MercadopagoServiceError(callResult) {
 function callService(requestObject) {
   if (!requestObject) {
     const msg = "Required requestObject parameter missing or incorrect.";
-    Logger.error(msg);
+    log.error(msg);
     throw new Error(msg);
   }
 
@@ -118,7 +120,7 @@ function callService(requestObject) {
 
   if (!callResult.ok) {
     const err = new MercadopagoServiceError(callResult);
-    Logger.error(JSON.stringify(err));
+    log.error(JSON.stringify(err));
     throw err;
   }
 

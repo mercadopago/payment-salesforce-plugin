@@ -4,7 +4,8 @@ module.exports = {
       loggerName: loggerName,
       msg: msg,
       args: args
-    })
+    }),
+    info: (msg) => msg
   }),
   error: (msg, args) => ({
     msg: msg,

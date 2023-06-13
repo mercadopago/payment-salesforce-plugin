@@ -2,23 +2,17 @@ const Transaction = require("dw/system/Transaction");
 const OrderMgr = require("dw/order/OrderMgr");
 const Order = require("dw/order/Order");
 const Resource = require("dw/web/Resource");
-const Logger = require("*/cartridge/scripts/util/Logger");
+const Logger = require("dw/system/Logger");
 const MercadopagoHelpers = require("*/cartridge/scripts/util/MercadopagoHelpers");
 const MercadopagoUtil = require("*/cartridge/scripts/util/MercadopagoUtil");
 const COHelpers = require("*/cartridge/scripts/checkout/checkoutHelpers");
 
+const log = Logger.getLogger("int_mercadopago", "mercadopago");
+
 function getNotificationData() {
-  const notificationData = JSON.parse(
-    request.httpParameterMap.requestBodyAsString
-  );
-  Logger.info(
-    Resource.msgf(
-      "notification.received",
-      "mercadopago",
-      null,
-      JSON.stringify(notificationData)
-    )
-  );
+  const notificationData = JSON.parse(request.httpParameterMap.requestBodyAsString);
+  const notificationMsg = Resource.msgf("notification.received", "mercadopago", null, JSON.stringify(notificationData));
+  log.info(notificationMsg);
   return notificationData;
 }
 
@@ -26,10 +20,7 @@ function getPaymentInfoInMercadopago(notificationId) {
   const paymentInfo = MercadopagoHelpers.payments.retrieve(notificationId);
   paymentInfo.payer = {};
   paymentInfo.additional_info = {};
-  if (
-    paymentInfo.payment_method_id ===
-    MercadopagoUtil.PAYMENT_METHOD.pix.toLowerCase()
-  ) {
+  if (paymentInfo.payment_method_id === MercadopagoUtil.PAYMENT_METHOD.pix.toLowerCase()) {
     paymentInfo.point_of_interaction.transaction_data.qr_code = "";
     paymentInfo.point_of_interaction.transaction_data.qr_code_base64 = "";
   }
@@ -54,12 +45,14 @@ function validateAmountPaid(order, paymentInfo) {
     totalOrder
   );
 
-  Logger.info(paidAmountMsg);
+  log.info(paidAmountMsg);
 
   const amountPaidValid = totalOrder === paymentInfo.transaction_amount;
 
   if (!amountPaidValid) {
-    order.addNote(paidAmountMsg);
+    Transaction.wrap(() => {
+      order.addNote(paidAmountMsg);
+    });
   }
 
   return amountPaidValid;
@@ -71,25 +64,14 @@ function validateAmountPaid(order, paymentInfo) {
  * @param {*} paymentInfo  - Object containing the payment information sent by MercadoPago
  */
 function updatePaymentInfo(order, paymentInfo) {
-  order.addNote("Mercadopago Notification status: ", paymentInfo.status);
+  const lastDetail = paymentInfo.payments_details.pop();
+  const msgPaymentStatus = Resource.msg("status." + paymentInfo.status, "mercadopago", null);
+  const msgPaymentReport = Resource.msg("status_detail." + lastDetail.status_detail, "mercadopago", null);
 
   Transaction.wrap(() => {
-    const msgPaymentStatus = Resource.msg(
-      "status." + paymentInfo.status,
-      "mercadopago",
-      null
-    );
-    order.custom.paymentStatus =
-      paymentInfo.status + " [ " + msgPaymentStatus + " ]";
-
-    const lastDetail = paymentInfo.payments_details.pop();
-    const msgPaymentReport = Resource.msg(
-      "status_detail." + lastDetail.status_detail,
-      "mercadopago",
-      null
-    );
-    order.custom.paymentReport =
-      lastDetail.status_detail + " [ " + msgPaymentReport + " ]";
+    order.addNote("Mercadopago Notification status: ", paymentInfo.status);
+    order.custom.paymentStatus = paymentInfo.status + " [ " + msgPaymentStatus + " ]";
+    order.custom.paymentReport = lastDetail.status_detail + " [ " + msgPaymentReport + " ]";
   });
 }
 
@@ -98,7 +80,9 @@ function updatePaymentInfo(order, paymentInfo) {
  * @param {dw.order.Order} order - Order for which to create charge for
  */
 function declineOrder(order) {
-  order.setPaymentStatus(Order.PAYMENT_STATUS_NOTPAID);
+  Transaction.wrap(() => {
+    order.setPaymentStatus(Order.PAYMENT_STATUS_NOTPAID);
+  });
 
   try {
     if (order.status.value === Order.ORDER_STATUS_CREATED) {
@@ -114,7 +98,7 @@ function declineOrder(order) {
       });
     }
   } catch (e) {
-    Logger.error(
+    log.error(
       Resource.msgf("notification.errorMensage", "mercadopago", null, e.message)
     );
   }
@@ -125,7 +109,9 @@ function declineOrder(order) {
  * @param {dw.order.Order} order - Order for which to create charge for
  */
 function refundOrder(order) {
-  order.setPaymentStatus(Order.PAYMENT_STATUS_NOTPAID);
+  Transaction.wrap(() => {
+    order.setPaymentStatus(Order.PAYMENT_STATUS_NOTPAID);
+  });
 
   try {
     if (order.status.value === Order.ORDER_STATUS_CREATED) {
@@ -141,7 +127,7 @@ function refundOrder(order) {
       });
     }
   } catch (e) {
-    Logger.error(
+    log.error(
       Resource.msgf("notification.errorMensage", "mercadopago", null, e.message)
     );
   }
@@ -152,7 +138,9 @@ function refundOrder(order) {
  * @param {dw.order.Order} order - Order for which to create charge for
  */
 function authorizeOrder(order, localeID) {
-  order.setPaymentStatus(Order.PAYMENT_STATUS_PAID);
+  Transaction.wrap(() => {
+    order.setPaymentStatus(Order.PAYMENT_STATUS_PAID);
+  });
 
   if (order.status.value !== Order.ORDER_STATUS_CREATED) {
     return;
@@ -164,7 +152,7 @@ function authorizeOrder(order, localeID) {
     });
 
     if (placeOrderResult.error) {
-      Logger.error(
+      log.error(
         Resource.msgf(
           "notification.errorMensage",
           "mercadopago",
@@ -176,7 +164,7 @@ function authorizeOrder(order, localeID) {
       COHelpers.sendConfirmationEmail(order, localeID);
     }
   } catch (e) {
-    Logger.error(
+    log.error(
       Resource.msgf("notification.errorMensage", "mercadopago", null, e.message)
     );
   }
@@ -199,10 +187,6 @@ function changeStatusOrder(order, paymentInfo, localeID) {
 }
 
 function savePaymentInformation(order, paymentInfo, localeID) {
-  Transaction.begin();
-
-  order.addNote("Mercadopago notification: ", JSON.stringify(paymentInfo));
-
   const paymentStatusSequence = {
     pending: ["authorized", "declined", "refunded"],
     authorized: ["declined", "refunded"],
@@ -233,8 +217,6 @@ function savePaymentInformation(order, paymentInfo, localeID) {
     updatePaymentInfo(order, paymentInfo);
     changeStatusOrder(order, paymentInfo, localeID);
   }
-
-  Transaction.commit();
 }
 
 /**
@@ -249,7 +231,7 @@ function paymentNotifications(req, res, next) {
     const notificationId = notification && notification.notification_id;
 
     if (typeof notificationId !== "string") {
-      Logger.info("NotificationId invalid!");
+      log.info("NotificationId invalid!");
       return;
     }
 
@@ -261,14 +243,19 @@ function paymentNotifications(req, res, next) {
       if (order) {
         const localeID = req.locale.id;
         savePaymentInformation(order, paymentInfo, localeID);
+        Transaction.wrap(() => {
+          order.addNote("Mercadopago notification: ", JSON.stringify(paymentInfo));
+        });
       } else {
-        Logger.info("Order not found!");
+        log.info("Order not found!");
       }
     } else {
-      Logger.info("Payment not found!");
+      log.info("Payment not found!");
     }
+    res.json({ message: "Successful processed notification" });
+    next();
   } catch (error) {
-    Logger.error(
+    log.error(
       Resource.msgf(
         "notification.errorMensage",
         "mercadopago",
@@ -277,11 +264,9 @@ function paymentNotifications(req, res, next) {
       )
     );
     response.setStatus(500);
+    res.json({ message: error.message });
+    next();
   }
-
-  res.render("checkout/notifications.isml");
-
-  next();
 }
 
 module.exports = paymentNotifications;

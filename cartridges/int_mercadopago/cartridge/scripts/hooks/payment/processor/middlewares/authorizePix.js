@@ -2,9 +2,11 @@ const Transaction = require("dw/system/Transaction");
 const Resource = require("dw/web/Resource");
 const Order = require("dw/order/Order");
 const OrderMgr = require("dw/order/OrderMgr");
-const Logger = require("*/cartridge/scripts/util/Logger");
+const Logger = require("dw/system/Logger");
 const MercadopagoUtil = require("*/cartridge/scripts/util/MercadopagoUtil");
 const MercadopagoHelpers = require("*/cartridge/scripts/util/MercadopagoHelpers");
+
+const log = Logger.getLogger("int_mercadopago", "mercadopago");
 
 function setPaymentValid(
   paymentInstrument,
@@ -12,13 +14,6 @@ function setPaymentValid(
   order,
   parseResponseStatus
 ) {
-  paymentInstrument.paymentTransaction.transactionID = paymentResponse.id;
-  paymentInstrument.custom.pixQrCode =
-    paymentResponse.point_of_interaction.transaction_data.qr_code;
-  paymentInstrument.custom.pixQrCodeBase64 = "data:image/jpeg;base64,";
-  paymentInstrument.custom.pixQrCodeBase64 +=
-    paymentResponse.point_of_interaction.transaction_data.qr_code_base64;
-
   const msgPaymentStatus = Resource.msg(
     "status." + paymentResponse.status,
     "mercadopago",
@@ -29,24 +24,31 @@ function setPaymentValid(
     "mercadopago",
     null
   );
-  order.custom.paymentStatus =
-    paymentResponse.status + " [ " + msgPaymentStatus + " ]";
-  order.custom.paymentReport =
-    paymentResponse.status_detail + " [ " + msgPaymentReport + " ]";
+  Transaction.wrap(() => {
+    paymentInstrument.paymentTransaction.transactionID = paymentResponse.id;
+    paymentInstrument.custom.pixQrCode =
+      paymentResponse.point_of_interaction.transaction_data.qr_code;
+    paymentInstrument.custom.pixQrCodeBase64 = "data:image/jpeg;base64,";
+    paymentInstrument.custom.pixQrCodeBase64 +=
+      paymentResponse.point_of_interaction.transaction_data.qr_code_base64;
+    order.custom.paymentStatus =
+      paymentResponse.status + " [ " + msgPaymentStatus + " ]";
+    order.custom.paymentReport =
+      paymentResponse.status_detail + " [ " + msgPaymentReport + " ]";
 
-  order.addNote(
-    "Mercadopago payment response",
-    parseResponseStatus + " [ " + paymentResponse.status_detail + " ]"
-  );
-  if (parseResponseStatus === "authorized") {
-    order.setPaymentStatus(Order.PAYMENT_STATUS_PAID);
-  } else {
-    order.setPaymentStatus(Order.PAYMENT_STATUS_NOTPAID);
-  }
+    order.addNote(
+      "Mercadopago payment response",
+      parseResponseStatus + " [ " + paymentResponse.status_detail + " ]"
+    );
+    if (parseResponseStatus === "authorized") {
+      order.setPaymentStatus(Order.PAYMENT_STATUS_PAID);
+    } else {
+      order.setPaymentStatus(Order.PAYMENT_STATUS_NOTPAID);
+    }
+  });
 }
 
 function savePaymentInformation(paymentInstrument, paymentResponse, order) {
-  Transaction.begin();
   let error = false;
   const parseResponseStatus = MercadopagoUtil.parseOrderStatus(
     paymentResponse.status
@@ -62,10 +64,11 @@ function savePaymentInformation(paymentInstrument, paymentResponse, order) {
       parseResponseStatus
     );
   } else {
-    order.setPaymentStatus(Order.PAYMENT_STATUS_NOTPAID);
+    Transaction.wrap(() => {
+      order.setPaymentStatus(Order.PAYMENT_STATUS_NOTPAID);
+    });
     error = true;
   }
-  Transaction.commit();
   return {
     error: error
   };
@@ -87,9 +90,9 @@ function errrorMercadopagoResponse() {
     if (mpError && mpError.cause && mpError.cause[0] && mpError.cause[0].code) {
       detailedError = mpError.cause[0].code.toString();
     }
-    Logger.error(JSON.stringify(detailedError));
+    log.error(JSON.stringify(detailedError));
   } catch (ex) {
-    Logger.error(ex);
+    log.error(ex);
   } finally {
     delete session.privacy.mercadopagoErrorMessage;
   }
@@ -120,7 +123,7 @@ function authorizePix(orderNumber, paymentInstrument, paymentProcessor) {
       return errrorMercadopagoResponse();
     }
   } catch (e) {
-    Logger.error(JSON.stringify(e));
+    log.error("Error on authorizePix: " + e.message);
     return errorHandler();
   }
 

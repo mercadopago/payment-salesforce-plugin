@@ -2,9 +2,11 @@ const Transaction = require("dw/system/Transaction");
 const Resource = require("dw/web/Resource");
 const Order = require("dw/order/Order");
 const OrderMgr = require("dw/order/OrderMgr");
-const Logger = require("*/cartridge/scripts/util/Logger");
+const Logger = require("dw/system/Logger");
 const MercadopagoUtil = require("*/cartridge/scripts/util/MercadopagoUtil");
 const MercadopagoHelpers = require("*/cartridge/scripts/util/MercadopagoHelpers");
+
+const log = Logger.getLogger("int_mercadopago", "mercadopago");
 
 function setPaymentValid(
   paymentInstrument,
@@ -12,8 +14,6 @@ function setPaymentValid(
   order,
   parseResponseStatus
 ) {
-  paymentInstrument.paymentTransaction.transactionID = paymentResponse.id;
-
   const msgPaymentStatus = Resource.msg(
     "status." + paymentResponse.status,
     "mercadopago",
@@ -24,23 +24,26 @@ function setPaymentValid(
     "mercadopago",
     null
   );
-  order.custom.paymentStatus =
-    paymentResponse.status + " [ " + msgPaymentStatus + " ]";
-  order.custom.paymentReport =
-    paymentResponse.status_detail + " [ " + msgPaymentReport + " ]";
-  order.addNote(
-    "Mercadopago payment response",
-    parseResponseStatus + " [ " + paymentResponse.status_detail + " ]"
-  );
-  if (parseResponseStatus === "authorized") {
-    order.setPaymentStatus(Order.PAYMENT_STATUS_PAID);
-  } else {
-    order.setPaymentStatus(Order.PAYMENT_STATUS_NOTPAID);
-  }
+  Transaction.wrap(() => {
+    paymentInstrument.paymentTransaction.transactionID = paymentResponse.id;
+    order.custom.paymentStatus =
+      paymentResponse.status + " [ " + msgPaymentStatus + " ]";
+    order.custom.paymentReport =
+      paymentResponse.status_detail + " [ " + msgPaymentReport + " ]";
+    order.addNote(
+      "Mercadopago payment response",
+      parseResponseStatus + " [ " + paymentResponse.status_detail + " ]"
+    );
+    if (parseResponseStatus === "authorized") {
+      order.setPaymentStatus(Order.PAYMENT_STATUS_PAID);
+    } else {
+      order.setPaymentStatus(Order.PAYMENT_STATUS_NOTPAID);
+    }
+  });
 }
 
 function savePaymentInformation(paymentInstrument, paymentResponse, order) {
-  Transaction.begin();
+  log.info("Starting order update " + order.orderNo + " after MercadoPago response");
   let error = false;
   const parseResponseStatus = MercadopagoUtil.parseOrderStatus(
     paymentResponse.status
@@ -55,11 +58,13 @@ function savePaymentInformation(paymentInstrument, paymentResponse, order) {
       order,
       parseResponseStatus
     );
+    log.info("Order " + order.orderNo + " updated successfully");
   } else {
-    order.setPaymentStatus(Order.PAYMENT_STATUS_NOTPAID);
+    Transaction.wrap(() => {
+      order.setPaymentStatus(Order.PAYMENT_STATUS_NOTPAID);
+    });
     error = true;
   }
-  Transaction.commit();
   return {
     error: error
   };
@@ -99,23 +104,26 @@ function errrorMercadopagoResponse() {
     if (mpError && mpError.cause && mpError.cause[0] && mpError.cause[0].code) {
       detailedError = mpError.cause[0].code.toString();
     }
-    Logger.error(JSON.stringify(detailedError));
+    log.error(JSON.stringify(detailedError));
   } catch (ex) {
-    Logger.error(ex);
+    log.error(ex);
   } finally {
     delete session.privacy.mercadopagoErrorMessage;
   }
   return errorHandler(detailedError);
 }
 
+function getOrder(orderNumber) {
+  const orderToken = session.privacy.currentOrderToken;
+  return OrderMgr.getOrder(orderNumber, orderToken);
+}
+
 function authorizeCreditCard(orderNumber, paymentInstrument, paymentProcessor) {
+  const order = getOrder(orderNumber);
   try {
     Transaction.wrap(() => {
       paymentInstrument.paymentTransaction.paymentProcessor = paymentProcessor;
     });
-
-    const orderToken = session.privacy.currentOrderToken;
-    const order = OrderMgr.getOrder(orderNumber, orderToken);
     const form = session.forms.billing;
     const installments = parseInt(form.creditCardFields.installments.value, 10);
     const issuer = parseInt(form.creditCardFields.issuer.value, 10);
@@ -124,7 +132,12 @@ function authorizeCreditCard(orderNumber, paymentInstrument, paymentProcessor) {
       installments,
       issuer
     );
+    log.info("Requesting MercadoPago's Api to creates new payment. Order number: " + orderNumber);
     const paymentResponse = MercadopagoHelpers.payments.create(paymentData);
+    log.info("MercadoPago response status_detail is [" +
+      paymentResponse.status_detail +
+      "] for transaction [" + paymentResponse.id + "] and order number [" +
+      orderNumber + "]");
 
     if (paymentResponse) {
       const result = savePaymentInformation(
@@ -139,7 +152,10 @@ function authorizeCreditCard(orderNumber, paymentInstrument, paymentProcessor) {
       return errrorMercadopagoResponse();
     }
   } catch (e) {
-    Logger.error(JSON.stringify(e));
+    log.error("Error on authorizeCreditCard: " + e.message);
+    Transaction.wrap(() => {
+      order.addNote("Error on authorizeCreditCard", e.message);
+    });
     return errorHandler();
   }
 
