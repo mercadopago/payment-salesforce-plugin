@@ -1,0 +1,83 @@
+<div class="three-ds-modal-box" id="three-ds-modal-box" hidden="true">
+    <div class="col-12 three-ds-modal" id="three-ds-modal" >
+        <div id="loading-area" class="loading-area" hidden="true">
+            <div class="modal-button-area" id="modal-button-area">
+                <div class="modal-button-container">
+                    <button class="modal-button-close" type="button">
+                        <img class="modal-close-icon" src="${URLUtils.staticURL('/images/icon_close.png')}" alt="close" />
+                        <img class="modal-close-icon-mobile" src="${URLUtils.staticURL('/images/icon_close_mobile.png')}" alt="close" />
+                    </button>
+                </div>
+            </div>
+            <div class="loading-container" id="loading-container">
+                <div class="loading-challenge" id="loading-challenge">
+                    <div class="loading-image" id="loading-image">
+                        <img class="loading-image-image" src="${URLUtils.staticURL('/images/modal_loading.png')}" alt="loading" />
+                    </div>
+                    <div class="loading-message" id="loading-message">
+                        <p class="loading-message-info">
+                            ${Resource.msg('challenge.loading.info.start', 'mercadopago', null)}
+                            <span id="card-information"></span>
+                            ${Resource.msg('challenge.loading.info.end', 'mercadopago', null)}
+                        </p>
+                        <p class="loading-message-confirmation">
+                            ${Resource.msg('challenge.loading.confirmation', 'mercadopago', null)}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="validation-area" class="validation-area" hidden="true">
+            <div class="slds-modal__header" id="slds-modal__header">
+                <div class="modal-header" id="modal-header">
+                    <p class="slds-modal__title slds-hyphenate" id="modal-heading-01">
+                        ${Resource.msg('challenge.validation.header', 'mercadopago', null)}
+                    </p>
+                    <button class="modal-button-close" type="button">
+                        <img class="modal-close-icon" src="${URLUtils.staticURL('/images/icon_close.png')}" alt="close" />
+                        <img class="modal-close-icon-mobile" src="${URLUtils.staticURL('/images/icon_close_mobile.png')}" alt="close" />
+                    </button>
+                </div>
+                <div class="modal-info-box">
+                    <div class="blue-bar"></div>
+                    <div class="modal-info-box-row">
+                        <img class="modal-info-box-logo" src="${URLUtils.staticURL('/images/icon_info.png')}" alt="info_icon" />
+                        <div class="modal-info-box-info">
+                            ${Resource.msg('challenge.validation.info', 'mercadopago', null)}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="iframe-div">
+                <div class="iframe-container">
+                    <iframe 
+                            id="iframe-challenge" 
+                            src="about:blank" 
+                            title="Challenge" 
+                            width="600px" 
+                            height="500px"
+                            overflow-x="scroll"
+                            overflow-y="scroll"
+                            scrolling="yes"
+                            frameborder="0"
+                        >
+                    </iframe>
+                </div>
+            </div>
+        </div>
+        <div id="confirmation-area" class="confirmation-area" hidden="true">
+            <div class="confirmation-container">
+                <div class="loading-image-row">
+                    <div class="loading-image">
+                        <img class="loading-confirmation-image" src="${URLUtils.staticURL('/images/modal_loading.png')}" alt="loading" />
+                    </div>
+                </div>
+                <div class="loading-confirmation-message">
+                    <p class="loading-confirmation-message-info">
+                        ${Resource.msg('challenge.confirmation', 'mercadopago', null)}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

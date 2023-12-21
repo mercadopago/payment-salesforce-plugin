@@ -27,4 +27,13 @@
             <production/>
         </preferences>
     </payment-processor>
+    <payment-processor processor-id="MERCADOPAGO_MERCADO_CREDITO">
+        <description>Mercado Pago payment processor with Mercado Crédito</description>
+        <preferences>
+            <all-instances/>
+            <development/>
+            <staging/>
+            <production/>
+        </preferences>
+    </payment-processor>
 </payment-processors>

@@ -14,4 +14,8 @@ server.append(
 
 server.get("ThankYou", server.middleware.https, checkoutService.thankYou);
 
+server.get("GetPaymentInfo", server.middleware.https, checkoutService.getPaymentInfo);
+
+server.post("AuthorizePayment", server.middleware.https, checkoutService.authorizePayment);
+
 module.exports = server.exports();

@@ -7,7 +7,7 @@ const { notification } = _require;
 server.post(
   "PaymentNotifications",
   server.middleware.https,
-  notification.paymentNotifications
+  notification.paymentNotifications.paymentNotifications
 );
 
 module.exports = server.exports();

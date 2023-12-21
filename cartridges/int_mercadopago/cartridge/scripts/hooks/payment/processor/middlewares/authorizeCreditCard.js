@@ -26,6 +26,16 @@ function setPaymentValid(
   );
   Transaction.wrap(() => {
     paymentInstrument.paymentTransaction.transactionID = paymentResponse.id;
+    if (
+      paymentResponse.status_detail ===
+      "pending_challenge" && paymentResponse.three_ds_info
+    ) {
+      paymentInstrument.custom.status = paymentResponse.status;
+      paymentInstrument.custom.statusDetail = paymentResponse.status_detail;
+      paymentInstrument.custom.externalResourceUrl =
+      paymentResponse.three_ds_info.external_resource_url;
+      paymentInstrument.custom.creq = paymentResponse.three_ds_info.creq;
+    }
     order.custom.paymentStatus =
       paymentResponse.status + " [ " + msgPaymentStatus + " ]";
     order.custom.paymentReport =
@@ -97,7 +107,7 @@ function errorHandler(detailedError) {
   };
 }
 
-function errrorMercadopagoResponse() {
+function errorMercadopagoResponse() {
   let detailedError;
   try {
     const mpError = JSON.parse(session.privacy.mercadopagoErrorMessage);
@@ -145,11 +155,12 @@ function authorizeCreditCard(orderNumber, paymentInstrument, paymentProcessor) {
         paymentResponse,
         order
       );
+
       if (result.error) {
         return authorizationErrorHandler(paymentResponse.status_detail);
       }
     } else {
-      return errrorMercadopagoResponse();
+      return errorMercadopagoResponse();
     }
   } catch (e) {
     log.error("Error on authorizeCreditCard: " + e.message);

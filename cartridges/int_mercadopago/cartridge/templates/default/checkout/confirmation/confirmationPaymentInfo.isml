@@ -30,4 +30,9 @@
             <span>${Resource.msg('mercadopago.chopro.selectedpayment', 'mercadopago', null)}</span>
         </div>
     </isif>
+    <isif condition="${payment.paymentMethod === 'MERCADO_CREDITO'}">
+        <div>
+            <span>${Resource.msg('mercadopago.chopro.selectedpayment', 'mercadopago', null)}</span>
+        </div>
+    </isif>
 </isloop>

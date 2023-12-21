@@ -8,8 +8,9 @@ const MercadopagoUtil = require("*/cartridge/scripts/util/MercadopagoUtil");
 const collections = require("*/cartridge/scripts/util/collections");
 
 const log = Logger.getLogger("int_mercadopago", "mercadopago");
+const { getTotalAmount, validateAndReturnAttribute } = MercadopagoUtil;
 
-function MercadopagoHelpers() {}
+function MercadopagoHelpers() { }
 
 /**
  * Build a Local Services Framework service definition
@@ -40,7 +41,6 @@ function getServiceDefinition() {
       if (!integratorId) {
         integratorId = "";
       }
-
       svc.addHeader("Content-Type", "application/json");
       svc.addHeader("Authorization", "Bearer " + accessToken);
       svc.addHeader("x-platform-id", platformId);
@@ -57,7 +57,9 @@ function getServiceDefinition() {
       }
 
       let { URL } = svc.configuration.credential;
-      URL += apiVersion;
+      if (requestObject.hasApiVersion == null || requestObject.hasApiVersion) {
+        URL += apiVersion;
+      }
       URL += requestObject.endpoint;
 
       svc.setURL(URL);
@@ -151,10 +153,51 @@ MercadopagoHelpers.prototype.payments = {
 };
 
 /**
+ * Access Mercadopago Rest Api to get payment methods availabe for a credential
+ */
+MercadopagoHelpers.prototype.paymentMethods = {
+  retrieve: () => {
+    const requestObject = {
+      endpoint: "/asgard/payment-methods",
+      httpMethod: "GET"
+    };
+
+    const call = callService(requestObject);
+
+    return call;
+  }
+};
+
+/**
+ * Verifies if a payment method exists among available payment methods
+ */
+MercadopagoHelpers.prototype.hasPaymentMethod = (paymentMethods, paymentId) => {
+  let isValidMethod = false;
+  collections.forEach(paymentMethods, (paymentMethod) => {
+    if (paymentMethod.id === paymentId) {
+      isValidMethod = true;
+    }
+  });
+  return isValidMethod;
+};
+
+/**
  * Access the Mercadopago Preference Rest Api
  */
 MercadopagoHelpers.prototype.preference = {
   create: (createPreferencePayload) => {
+    const requestObject = {
+      endpoint: "/asgard/preferences",
+      httpMethod: "POST",
+      payload: createPreferencePayload
+    };
+
+    return callService(requestObject);
+  },
+  createRedirectingToCredits: (createPreferencePayload) => {
+    createPreferencePayload.purpose = "onboarding_credits";
+    createPreferencePayload.paymentMethods = {};
+    createPreferencePayload.paymentMethods.defaultPaymentMethodId = "consumer_credits";
     const requestObject = {
       endpoint: "/asgard/preferences",
       httpMethod: "POST",
@@ -200,6 +243,299 @@ function getPixExpiration() {
 }
 
 /**
+ * Retrieves Coupoms Information
+ * @returns {value} Coupom value or null
+ */
+function getCoupomLineItemsAmount(order) {
+  if (order.couponLineItems.length > 0 && order.couponLineItems[0].priceAdjustments.length > 0
+    && order.couponLineItems[0].priceAdjustments[0].appliedDiscount != null
+    && order.couponLineItems[0].priceAdjustments[0].appliedDiscount.amount != null) {
+    return order.couponLineItems[0].priceAdjustments[0].appliedDiscount.amount;
+  }
+  return null;
+}
+
+/**
+ * Retrieves Authentication Type Information
+ * @returns {String} Authentication Type value or null
+ */
+function getAuthenticationType(customer) {
+  if (customer.registered) {
+    if (customer.getExternalProfiles().empty) {
+      return "Web Nativa";
+    }
+    return customer.getExternalProfiles()[0].getAuthenticationProviderID();
+  }
+  return null;
+}
+
+/**
+ * Retrieves the Date of the Last Purchase
+ * @returns {String} Date value or null
+ */
+function getLastPurchase(customer) {
+  if (customer.registered) {
+    return (customer.getOrderHistory()
+      .getOrders(null, "creationDate DESC")
+      .first().creationDate).toString();
+  }
+  return null;
+}
+
+/**
+ * Retrieves seller information from Mercado Pago
+ * @returns {Object|Null} seller info
+ */
+function getUserMPData() {
+  const requestObject = {
+    endpoint: "/users/me",
+    httpMethod: "GET",
+    hasApiVersion: false
+  };
+
+  try {
+    return callService(requestObject);
+  } catch (error) {
+    log.error(JSON.stringify(error));
+    return null;
+  }
+}
+
+/**
+ * Retrieves seller information
+ * @returns {Object} seller
+ */
+function getAdditionalInfoSellerInfo() {
+  let seller = {};
+
+  try {
+    const sellerInfo = getUserMPData();
+    if (sellerInfo) {
+      seller = {
+        id: sellerInfo.id,
+        registration_date: sellerInfo.registration_date,
+        business_type: null,
+        identification: {
+          type: validateAndReturnAttribute(sellerInfo.identification, "type"),
+          number: validateAndReturnAttribute(sellerInfo.identification, "number")
+        },
+        status: validateAndReturnAttribute(sellerInfo.status, "site_status"),
+        store_id: null,
+        email: sellerInfo.email,
+        phone: {
+          area_code: validateAndReturnAttribute(sellerInfo.phone, "area_code"),
+          number: validateAndReturnAttribute(sellerInfo.phone, "number")
+        },
+        collector: sellerInfo.id,
+        website: Site.getCurrent().getName(),
+        platform_url: Site.getCurrent().getHttpHostName(),
+        referral_url: Site.getCurrent().getHttpHostName(),
+        register_updated_at: null,
+        document: validateAndReturnAttribute(sellerInfo.identification, "number"),
+        name: sellerInfo.first_name + " " + sellerInfo.last_name,
+        hired_plan: null,
+        category: null,
+        address: {
+          zip_code: validateAndReturnAttribute(sellerInfo.address, "zip_code"),
+          street_name: (validateAndReturnAttribute(sellerInfo.address, "address"))
+            ? sellerInfo.address.address.replace(/[0-9]/g, "") : null,
+          city: validateAndReturnAttribute(sellerInfo.address, "city"),
+          country: sellerInfo.country_id,
+          state: validateAndReturnAttribute(sellerInfo.address, "state"),
+          number: (validateAndReturnAttribute(sellerInfo.address, "address"))
+            ? sellerInfo.address.address.replace(/[^0-9]/g, "") : null,
+          complement: null
+        }
+      };
+    }
+  } catch (error) {
+    log.error(JSON.stringify(error));
+    return null;
+  }
+
+  return seller;
+}
+
+/**
+ * Retrieves shipments information
+ * @returns {Object} shipments
+ */
+function getAdditionalInfoShipmentsInfo(order) {
+  let streetName = null;
+  let zipCode = null;
+  let city = null;
+  let country = null;
+  let state = null;
+  let streetNumber = null;
+  let code = null;
+  let status = null;
+
+  if (validateAndReturnAttribute(order.defaultShipment, "shippingAddress")) {
+    streetName = validateAndReturnAttribute(order.defaultShipment.shippingAddress, "address1");
+    zipCode = validateAndReturnAttribute(order.defaultShipment.shippingAddress, "postalCode");
+    city = validateAndReturnAttribute(order.defaultShipment.shippingAddress, "city");
+    country = validateAndReturnAttribute(order.defaultShipment.shippingAddress, "countryCode")
+      ? validateAndReturnAttribute(order.defaultShipment.shippingAddress.countryCode, "value") : country;
+    state = validateAndReturnAttribute(order.defaultShipment.shippingAddress, "stateCode");
+    streetNumber = validateAndReturnAttribute(order.defaultShipment.shippingAddress, "address2");
+    code = validateAndReturnAttribute(order.defaultShipment, "shipmentNo");
+    status = validateAndReturnAttribute(order.defaultShipment, "shippingStatus")
+      ? validateAndReturnAttribute(order.defaultShipment.shippingStatus, "displayValue") : status;
+  }
+
+  return {
+    receiver_address: {
+      apartment: null,
+      floor: null,
+      street_name: streetName,
+      zip_code: zipCode,
+      city: city,
+      country: country,
+      state: state,
+      street_number: streetNumber,
+      complement: null
+    },
+    delivery_promise: null,
+    drop_shipping: null,
+    local_pickup: null,
+    express_shipment: null,
+    safety: null,
+    withdrawn: null,
+    tracking: {
+      code: code,
+      status: status
+    }
+  };
+}
+
+/**
+ * Retrieves Billing information
+ * @returns {Object} billing
+ */
+function getAdditionalInfoBillingInfo(order) {
+  try {
+    return {
+      address: {
+        zip_code: validateAndReturnAttribute(order.billingAddress, "postalCode"),
+        federal_unit: validateAndReturnAttribute(order.billingAddress, "stateCode"),
+        city: validateAndReturnAttribute(order.billingAddress, "city"),
+        street_name: validateAndReturnAttribute(order.billingAddress, "address1"),
+        street_number: validateAndReturnAttribute(order.billingAddress, "address2"),
+        floor: null,
+        apartment: null
+      }
+    };
+  } catch (error) {
+    log.error(JSON.stringify(error));
+    return null;
+  }
+}
+
+/**
+ * Retrieves Payment information
+ * @returns {Object} payment
+ */
+function getAdditionalInfoPaymentInfo(order) {
+  try {
+    return {
+      capture: true,
+      coupon_amount: getCoupomLineItemsAmount(order)
+    };
+  } catch (error) {
+    log.error(JSON.stringify(error));
+    return null;
+  }
+}
+
+/**
+ * Build the payer object
+ * @param {Object} order - An object containing the order attributes
+ * @returns {object} - Returns an object containing two other objects with payer data
+ */
+function getAdditionalInfoPayer(order) {
+  let docType = null;
+  let docNumber = null;
+  let firstName = null;
+  let lastName = null;
+  let email = null;
+  let registrationDate = null;
+  let isFirstPurchaseOnline = null;
+
+  collections.forEach(order.getPaymentInstruments(), (payInstrument) => {
+    if (payInstrument.custom) {
+      docType = validateAndReturnAttribute(payInstrument.custom, "payerDocType");
+      docNumber = validateAndReturnAttribute(payInstrument.custom, "payerDocNumber");
+      firstName = validateAndReturnAttribute(payInstrument.custom, "payerFirstName")
+        ? payInstrument.custom.payerFirstName
+        : validateAndReturnAttribute(order.billingAddress, "firstName");
+      lastName = validateAndReturnAttribute(payInstrument.custom, "payerLastName")
+        ? payInstrument.custom.payerLastName
+        : validateAndReturnAttribute(order.billingAddress, "lastName");
+      email = validateAndReturnAttribute(payInstrument.custom, "payerEmail")
+        ? payInstrument.custom.payerEmail
+        : order.customerEmail;
+    }
+  });
+
+  const address = {
+    city: validateAndReturnAttribute(order.billingAddress, "city"),
+    country: validateAndReturnAttribute(order.billingAddress, "countryCode")
+      ? order.billingAddress.countryCode.displayValue : null,
+    state: validateAndReturnAttribute(order.billingAddress, "stateCode"),
+    street_name: validateAndReturnAttribute(order.billingAddress, "address1"),
+    number: validateAndReturnAttribute(order.billingAddress, "address2"),
+    zip_code: validateAndReturnAttribute(order.billingAddress, "postalCode")
+  };
+
+  const phone = {
+    area_code: "_",
+    number: validateAndReturnAttribute(order.billingAddress, "phone")
+  };
+
+  if (validateAndReturnAttribute(order.customer, "profile")) {
+    registrationDate = validateAndReturnAttribute(order.customer.profile, "creationDate")
+      ? validateAndReturnAttribute(order.customer.profile, "creationDate").toString()
+      : null;
+  }
+  if (validateAndReturnAttribute(order.customer, "orderHistory")) {
+    isFirstPurchaseOnline = validateAndReturnAttribute(order.customer.orderHistory, "orderCount");
+    isFirstPurchaseOnline = isFirstPurchaseOnline === 0;
+  }
+  const registeredUser = validateAndReturnAttribute(order.customer, "registered");
+  const usedPassword = validateAndReturnAttribute(order.customer, "registered");
+  const authenticationType = getAuthenticationType(order.customer);
+  const lastPurchase = getLastPurchase(order.customer);
+
+  const additionalInfoPayer = {
+    identification: {
+      type: docType,
+      number: docNumber
+    },
+    address: address,
+    first_name: firstName,
+    last_name: lastName,
+    email: email,
+    phone: phone,
+    registration_date: registrationDate,
+    registered_user: registeredUser,
+    user_email: order.customerEmail,
+    autentication_type: authenticationType,
+    last_purchase: lastPurchase,
+    is_first_purchase_online: isFirstPurchaseOnline,
+    used_password: usedPassword
+  };
+
+  const payer = {
+    email: email,
+    first_name: firstName,
+    last_name: lastName,
+    identification: additionalInfoPayer.identification
+  };
+
+  return { additionalInfoPayer: additionalInfoPayer, payer: payer };
+}
+
+/**
  * Converts order objects into a json payload
  *
  * @param {dw.order.Order} order - the order to handle payments for
@@ -216,34 +552,25 @@ MercadopagoHelpers.prototype.createPaymentPayload = (
     const item = {};
 
     item.id = prodLineItem.productID;
+    item.title = validateAndReturnAttribute(prodLineItem.product, "name")
+      ? prodLineItem.product.name : prodLineItem.productName;
 
     if (prodLineItem.product) {
-      item.title = prodLineItem.product.name;
-
-      if (prodLineItem.product.longDescription) {
-        item.description = prodLineItem.product.longDescription.markup;
-      }
-
-      if (prodLineItem.product.primaryCategory) {
-        item.category_id = prodLineItem.product.primaryCategory.displayName;
-      }
-    } else {
-      item.title = prodLineItem.productName;
+      item.description = validateAndReturnAttribute(prodLineItem.product, "longDescription")
+        ? validateAndReturnAttribute(prodLineItem.product.longDescription, "markup")
+        : null;
+      item.category_id = validateAndReturnAttribute(prodLineItem.product, "primaryCategory")
+        ? validateAndReturnAttribute(prodLineItem.product.primaryCategory, "displayName") : null;
     }
 
     item.quantity = prodLineItem.quantityValue;
-    item.unit_price = prodLineItem.adjustedGrossPrice.value;
+    item.unit_price = validateAndReturnAttribute(prodLineItem.adjustedGrossPrice, "value") / prodLineItem.quantityValue;
 
     return item;
   });
 
   let paymentMethodId;
   let token;
-  let docType;
-  let docNumber;
-  let firstName;
-  let lastName;
-  let email;
   let expirationDate;
 
   collections.forEach(order.getPaymentInstruments(), (payInstrument) => {
@@ -254,71 +581,25 @@ MercadopagoHelpers.prototype.createPaymentPayload = (
       paymentMethodId = payInstrument.paymentMethod;
       expirationDate = getPixExpiration();
     }
-
-    docType = payInstrument.custom.payerDocType;
-    docNumber = payInstrument.custom.payerDocNumber;
-    firstName = payInstrument.custom.payerFirstName
-      ? payInstrument.custom.payerFirstName
-      : order.billingAddress.firstName;
-    lastName = payInstrument.custom.payerLastName
-      ? payInstrument.custom.payerLastName
-      : order.billingAddress.lastName;
-    email = payInstrument.custom.payerEmail
-      ? payInstrument.custom.payerEmail
-      : order.customerEmail;
   });
 
-  const bayer = {
-    address: {
-      street_name:
-        order.billingAddress.address1 +
-        "-" +
-        order.billingAddress.city +
-        "-" +
-        order.billingAddress.countryCode,
-      street_number: "0",
-      zip_code: order.billingAddress.postalCode
-    },
-    first_name: order.billingAddress.firstName,
-    last_name: order.billingAddress.lastName,
-    phone: {
-      area_code: "-",
-      number: order.billingAddress.phone
-    }
-  };
+  const { additionalInfoPayer, payer } = getAdditionalInfoPayer(order);
 
-  const payer = {
-    email: email,
-    first_name: firstName,
-    last_name: lastName,
-    identification: {
-      type: docType,
-      number: docNumber
-    }
-  };
+  const threeDSecureMode = "optional";
 
-  const transactionAmount = MercadopagoUtil.getTotalAmount(order);
+  const transactionAmount = getTotalAmount(order);
 
   const payDataObj = {
     payer: payer,
     external_reference: order.orderNo,
     additional_info: {
+      ip_address: order.remoteHost,
       items: items,
-      payer: bayer,
-      shipments: {
-        receiver_address: {
-          apartment: "-",
-          floor: "-",
-          street_name:
-            order.defaultShipment.shippingAddress.address1 +
-            "-" +
-            order.defaultShipment.shippingAddress.city +
-            "-" +
-            order.defaultShipment.shippingAddress.countryCode,
-          street_number: "0",
-          zip_code: order.defaultShipment.shippingAddress.postalCode
-        }
-      }
+      payer: additionalInfoPayer,
+      seller: getAdditionalInfoSellerInfo(),
+      shipments: getAdditionalInfoShipmentsInfo(order),
+      billing: getAdditionalInfoBillingInfo(order),
+      payment: getAdditionalInfoPaymentInfo(order)
     },
     payment_method_id: paymentMethodId.toLowerCase(),
     transaction_amount: transactionAmount.value,
@@ -327,7 +608,8 @@ MercadopagoHelpers.prototype.createPaymentPayload = (
     ).toString(),
     point_of_interaction: {
       type: "CHECKOUT"
-    }
+    },
+    three_d_secure_mode: threeDSecureMode
   };
 
   if (token) {
@@ -363,21 +645,18 @@ MercadopagoHelpers.prototype.createPreferencePayload = (
 
     item.id = prodLineItem.productID;
 
-    if (prodLineItem.product) {
-      item.title = prodLineItem.product.name;
+    item.title = validateAndReturnAttribute(prodLineItem.product, "name")
+      ? prodLineItem.product.name : prodLineItem.productName;
 
-      if (prodLineItem.product.longDescription) {
-        item.description = prodLineItem.product.longDescription.markup;
-      }
+    item.description = validateAndReturnAttribute(prodLineItem.product, "longDescription")
+      ? validateAndReturnAttribute(prodLineItem.product.longDescription, "markup") : null;
 
-      if (prodLineItem.product.primaryCategory) {
-        item.category_id = prodLineItem.product.primaryCategory.displayName;
-      }
-    } else {
-      item.title = prodLineItem.productName;
+    if (prodLineItem.product.primaryCategory) {
+      item.category_id = validateAndReturnAttribute(prodLineItem.product, "primaryCategory")
+        ? validateAndReturnAttribute(prodLineItem.product.primaryCategory, "displayName") : null;
     }
 
-    const unitPrice = prodLineItem.adjustedPrice.value / prodLineItem.quantityValue;
+    const unitPrice = validateAndReturnAttribute(prodLineItem.adjustedPrice, "value") / prodLineItem.quantityValue;
     item.quantity = prodLineItem.quantityValue;
     item.unit_price = Number(unitPrice.toFixed(5));
 
@@ -401,58 +680,13 @@ MercadopagoHelpers.prototype.createPreferencePayload = (
 
   let paymentMethodId;
   let token;
-  let docType;
-  let docNumber;
-  let firstName;
-  let lastName;
-  let email;
 
   collections.forEach(order.getPaymentInstruments(), (payInstrument) => {
     paymentMethodId = payInstrument.paymentMethod;
-
-    docType = payInstrument.custom.payerDocType;
-    docNumber = payInstrument.custom.payerDocNumber;
-    firstName = payInstrument.custom.payerFirstName
-      ? payInstrument.custom.payerFirstName
-      : order.billingAddress.firstName;
-    lastName = payInstrument.custom.payerLastName
-      ? payInstrument.custom.payerLastName
-      : order.billingAddress.lastName;
-    email = payInstrument.custom.payerEmail
-      ? payInstrument.custom.payerEmail
-      : order.customerEmail;
   });
+  const { additionalInfoPayer, payer } = getAdditionalInfoPayer(order);
 
-  const buyer = {
-    address: {
-      street_name:
-        order.billingAddress.address1 +
-        "-" +
-        order.billingAddress.city +
-        "-" +
-        order.billingAddress.countryCode,
-      street_number: "0",
-      zip_code: order.billingAddress.postalCode
-    },
-    first_name: order.billingAddress.firstName,
-    last_name: order.billingAddress.lastName,
-    phone: {
-      area_code: "-",
-      number: order.billingAddress.phone
-    }
-  };
-
-  const payer = {
-    email: email,
-    name: firstName,
-    surname: lastName,
-    identification: {
-      type: docType,
-      number: docNumber
-    }
-  };
-
-  const transactionAmount = MercadopagoUtil.getTotalAmount(order);
+  const transactionAmount = getTotalAmount(order);
 
   const thankYouUrl = URLUtils.https("CheckoutServices-ThankYou", "orderID", order.orderNo, "orderToken", order.orderToken).toString();
   const thankYouWithTryAgainUrl = URLUtils.https("CheckoutServices-ThankYou", "orderID", order.orderNo, "orderToken", order.orderToken, "tryAgain", true).toString();
@@ -467,21 +701,12 @@ MercadopagoHelpers.prototype.createPreferencePayload = (
     external_reference: order.orderNo,
     items: items,
     additional_info: {
-      payer: buyer,
-      shipments: {
-        receiver_address: {
-          apartment: "-",
-          floor: "-",
-          street_name:
-            order.defaultShipment.shippingAddress.address1 +
-            "-" +
-            order.defaultShipment.shippingAddress.city +
-            "-" +
-            order.defaultShipment.shippingAddress.countryCode,
-          street_number: "0",
-          zip_code: order.defaultShipment.shippingAddress.postalCode
-        }
-      }
+      ip_address: order.remoteHost,
+      payer: additionalInfoPayer,
+      seller: getAdditionalInfoSellerInfo(),
+      shipments: getAdditionalInfoShipmentsInfo(order),
+      billing: getAdditionalInfoBillingInfo(order),
+      payment: getAdditionalInfoPaymentInfo(order)
     },
     shipments: {
       cost: order.adjustedShippingTotalPrice.value,

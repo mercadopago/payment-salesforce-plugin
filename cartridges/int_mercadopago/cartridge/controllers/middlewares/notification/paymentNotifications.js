@@ -269,4 +269,8 @@ function paymentNotifications(req, res, next) {
   }
 }
 
-module.exports = paymentNotifications;
+module.exports = {
+  paymentNotifications: paymentNotifications,
+  getPaymentInfoInMercadopago: getPaymentInfoInMercadopago,
+  savePaymentInformation: savePaymentInformation
+};

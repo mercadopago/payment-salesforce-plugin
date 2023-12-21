@@ -2,6 +2,8 @@ const base = module.superModule;
 
 const HookMgr = require("dw/system/HookMgr");
 const OrderMgr = require("dw/order/OrderMgr");
+const Order = require("dw/order/Order");
+const Status = require("dw/system/Status");
 const PaymentMgr = require("dw/order/PaymentMgr");
 const Transaction = require("dw/system/Transaction");
 const PaymentInstrument = require("dw/order/PaymentInstrument");
@@ -135,6 +137,44 @@ function validatePayment(req, currentBasket) {
 }
 
 /**
+ * Attempts to place the order
+ * @param {dw.order.Order} order - The order object to be placed
+ * @param {Object} fraudDetectionStatus - an Object returned by the fraud detection hook
+ * @returns {Object} an error object
+ */
+function placeOrder(order, fraudDetectionStatus) {
+  const result = { error: false };
+
+  try {
+    Transaction.wrap(() => {
+      const { paymentInstruments } = order;
+      const [paymentInstrument] = paymentInstruments;
+
+      if (paymentInstrument.custom.statusDetail === "pending_challenge") {
+        OrderMgr.failOrder(order, true);
+      } else {
+        const placeOrderStatus = OrderMgr.placeOrder(order);
+        if (placeOrderStatus === Status.ERROR) {
+          throw new Error();
+        }
+      }
+
+      if (fraudDetectionStatus.status === "flag") {
+        order.setConfirmationStatus(Order.CONFIRMATION_STATUS_NOTCONFIRMED);
+      } else {
+        order.setConfirmationStatus(Order.CONFIRMATION_STATUS_CONFIRMED);
+      }
+
+      order.setExportStatus(Order.EXPORT_STATUS_READY);
+    });
+  } catch (e) {
+    Transaction.wrap(() => { OrderMgr.failOrder(order, true); });
+    result.error = true;
+  }
+
+  return result;
+}
+/**
  * Sets the payment transaction amount
  * @returns {Object} an error object
  */
@@ -148,7 +188,8 @@ function calculatePaymentTransaction() {
 module.exports = {
   handlePayments: handlePayments,
   validatePayment: validatePayment,
-  calculatePaymentTransaction: calculatePaymentTransaction
+  calculatePaymentTransaction: calculatePaymentTransaction,
+  placeOrder: placeOrder
 };
 
 Object.keys(base).forEach((prop) => {

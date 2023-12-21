@@ -5,7 +5,8 @@ function MercadopagoUtil() {}
 MercadopagoUtil.prototype.PAYMENT_METHOD = {
   credit_card: "CREDIT_CARD",
   pix: "PIX",
-  checkout_pro: "CHECKOUT_PRO"
+  checkout_pro: "CHECKOUT_PRO",
+  mercado_credito: "MERCADO_CREDITO"
 };
 
 MercadopagoUtil.prototype.DOCUMENT_TYPE = {
@@ -66,7 +67,8 @@ MercadopagoUtil.prototype.getTextMessages = () => ({
   "field.month": Resource.msg("mercadopago.field.month", "mercadopago", null),
   "field.year": Resource.msg("mercadopago.field.year", "mercadopago", null),
   "field.installments": Resource.msg("mercadopago.field.installments", "mercadopago", null),
-  "field.issuer": Resource.msg("mercadopago.field.issuer", "mercadopago", null)
+  "field.issuer": Resource.msg("mercadopago.field.issuer", "mercadopago", null),
+  "field.mercadocredito.billing.message": Resource.msg("mercadocredito.billing.message", "mercadopago", null)
 });
 
 /**
@@ -143,6 +145,15 @@ MercadopagoUtil.prototype.validateDocument = (docNumber, docType) => {
     }
   }
   return valid;
+};
+
+MercadopagoUtil.prototype.validateAndReturnAttribute = (object, prop) => {
+  if (object) {
+    if (Object.prototype.hasOwnProperty.call(object, prop)) {
+      return object[prop];
+    }
+  }
+  return null;
 };
 
 /**

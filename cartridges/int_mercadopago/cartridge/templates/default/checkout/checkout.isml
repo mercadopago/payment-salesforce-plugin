@@ -144,7 +144,12 @@
                 <isinclude template="checkout/orderProductSummary" />
             </div>
         </div>
+        <!----------------------------------------------------------------------------------->
+        <!-- 3DS Challenge Modal -->
+        <!----------------------------------------------------------------------------------->
+        <isinclude template="checkout/modal/threeDSModal.isml" />
+
+        <isinclude template="checkout/shipping/shippingAddressTemplate" />
     </div>
-    <isinclude template="checkout/shipping/shippingAddressTemplate" />
 
 </isdecorate>
