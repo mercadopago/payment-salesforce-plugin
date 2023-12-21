@@ -63,7 +63,7 @@ function errorHandler(detailedError) {
   };
 }
 
-function errrorMercadopagoResponse() {
+function errorMercadopagoResponse() {
   let detailedError;
   try {
     const mpError = JSON.parse(session.privacy.mercadopagoErrorMessage);
@@ -103,7 +103,7 @@ function authorizeCheckoutPro(
         return errorHandler();
       }
     } else {
-      return errrorMercadopagoResponse();
+      return errorMercadopagoResponse();
     }
   } catch (e) {
     log.error("Error on authorizeCheckoutPro: " + e.message);

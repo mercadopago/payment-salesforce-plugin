@@ -8,4 +8,7 @@
     <isif condition="${paymentOption.ID === 'CHECKOUT_PRO'}">
         <isinclude template="checkout/billing/paymentOptions/checkoutProContent" />
     </isif>
+    <isif condition="${paymentOption.ID === 'MERCADO_CREDITO'}">
+        <isinclude template="checkout/billing/paymentOptions/mercadoCreditoContent" />
+    </isif>
 </isloop>

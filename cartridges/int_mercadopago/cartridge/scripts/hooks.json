@@ -25,6 +25,14 @@
             "script": "./hooks/payment/processor/mercadopagoCheckoutPro"
         },
         {
+            "name": "app.payment.form.processor.mercadopago_mercado_credito",
+            "script": "./hooks/payment/processor/mercadopagoMercadoCredito"
+        },
+        {
+            "name": "app.payment.processor.mercadopago_mercado_credito",
+            "script": "./hooks/payment/processor/mercadopagoMercadoCredito"
+        },
+        {
             "name": "app.post.auth",
             "script": "./hooks/payment/processor/mercadopagoPostAuthorization"
         }

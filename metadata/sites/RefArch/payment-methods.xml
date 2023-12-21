@@ -15,4 +15,30 @@
         <enabled-flag>true</enabled-flag>
         <processor-id>MERCADOPAGO_CHECKOUT_PRO</processor-id>
     </payment-method>
+    <payment-method method-id="MERCADO_CREDITO">
+        <name xml:lang="x-default">Buy now pay later</name>
+        <name xml:lang="es">Compra ahora y paga después</name>
+        <name xml:lang="es-AR">Comprá ahora y pagá después</name>
+        <name xml:lang="es-MX">Compra ahora y paga después</name>
+        <name xml:lang="es-CO">Compra ahora y paga después</name>
+        <name xml:lang="es-PE">Compra ahora y paga después</name>
+        <name xml:lang="es-UY">Compra ahora y paga después</name>
+        <name xml:lang="es-CL">Compra ahora y paga después</name>
+        <name xml:lang="pt">Buy now pay later</name>
+        <name xml:lang="pt-BR">Buy now pay later</name>
+        <name xml:lang="en">Buy now pay later</name>
+        <description xml:lang="x-default">Offer up to 12 installments without any card directly in your checkout. Currently available in Argentina, Brazil and Mexico.</description>
+        <description xml:lang="es">Ofrece hasta 12 cuotas sin tarjeta, directo en tu checkout. Disponible actualmente en Argentina, Brasil y México.</description>
+        <description xml:lang="es-AR">Ofrecé hasta 12 cuotas sin tarjeta, directo en tu checkout.</description>
+        <description xml:lang="es-MX">Ofrece hasta 12 meses sin tarjeta de crédito, directo en tu checkout.</description>
+        <description xml:lang="es-CO">Ofrece hasta 12 cuotas sin tarjeta, directo en tu checkout. Disponible actualmente en Argentina, Brasil y México.</description>
+        <description xml:lang="es-PE">Ofrece hasta 12 cuotas sin tarjeta, directo en tu checkout. Disponible actualmente en Argentina, Brasil y México.</description>
+        <description xml:lang="es-UY">Ofrece hasta 12 cuotas sin tarjeta, directo en tu checkout. Disponible actualmente en Argentina, Brasil y México.</description>
+        <description xml:lang="es-CL">Ofrece hasta 12 cuotas sin tarjeta, directo en tu checkout. Disponible actualmente en Argentina, Brasil y México.</description>
+        <description xml:lang="pt">Ofereça parcelamento em até 12x sem cartão, direto no checkout.</description>
+        <description xml:lang="pt-BR">Ofereça parcelamento em até 12x sem cartão, direto no checkout.</description>
+        <description xml:lang="en">Offer up to 12 installments without any card directly in your checkout. Currently available in Argentina, Brazil and Mexico.</description>
+        <enabled-flag>false</enabled-flag>
+        <processor-id>MERCADOPAGO_MERCADO_CREDITO</processor-id>
+    </payment-method>
 </payment-settings>

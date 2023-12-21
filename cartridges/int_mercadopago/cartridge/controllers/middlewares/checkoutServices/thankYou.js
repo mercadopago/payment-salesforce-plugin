@@ -10,6 +10,11 @@ function thankYou(req, res, next) {
     const [paymentInstrument] = paymentInstruments;
     Transaction.wrap(() => {
       paymentInstrument.custom.checkoutProLink = "";
+      paymentInstrument.custom.creq = "";
+      paymentInstrument.custom.externalResourceUrl = "";
+      paymentInstrument.custom.status = "";
+      paymentInstrument.custom.statusDetail = "";
+      paymentInstrument.custom.mercadoCreditoLink = "";
     });
   }
 

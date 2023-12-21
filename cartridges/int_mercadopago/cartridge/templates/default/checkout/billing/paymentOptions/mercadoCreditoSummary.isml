@@ -1,0 +1,15 @@
+<div class="cho-credits-img">
+    <img src="${URLUtils.staticURL('/images/payment-mercado-pago.png')}" height="32"
+        alt="${Resource.msg('mercadopago.chopro.mercadopago', 'mercadopago', null)}"
+        title="${Resource.msg('mercadopago.chopro.creditcard', 'mercadopago', null)}" 
+        style="margin: 10px 0px" />
+</div>
+<div class="cho-credits-msg">
+    <span>${Resource.msg('mercadopago.chopro.selectedpayment', 'mercadopago', null)}</span>
+</div>
+<isif condition="${payment.mercadoCreditoLink}">
+    <div class="cho-credits-link">
+        <span>${Resource.msg('mercadopago.chopro.clicklink', 'mercadopago', null)}</span>
+        <a href="${payment.mercadoCreditoLink}">${Resource.msg('mercadopago.chopro.mercadopago', 'mercadopago', null)}</a>
+    </div>
+</isif>

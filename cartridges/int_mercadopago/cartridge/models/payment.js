@@ -29,6 +29,8 @@ function getSelectedPaymentInstruments(selectedPaymentInstruments) {
       results.pixQrCodeBase64 = paymentInstrument.custom.pixQrCodeBase64;
     } else if (paymentInstrument.paymentMethod === "CHECKOUT_PRO") {
       results.checkoutProLink = paymentInstrument.custom.checkoutProLink;
+    } else if (paymentInstrument.paymentMethod === "MERCADO_CREDITO") {
+      results.mercadoCreditoLink = paymentInstrument.custom.mercadoCreditoLink;
     }
 
     return results;

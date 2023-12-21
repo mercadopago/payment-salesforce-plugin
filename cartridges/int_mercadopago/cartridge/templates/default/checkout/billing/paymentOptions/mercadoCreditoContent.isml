@@ -1,0 +1,11 @@
+<div class="tab-pane checkout-credits-content" id="checkout-credits-content" role="tabpanel">
+    <fieldset class="payment-form-fields">
+
+        <iscomment> payment method is CREDITS </iscomment>
+        <input type="hidden" class="form-control" name="${pdict.forms.billingForm.paymentMethod.htmlName}"
+            value="MERCADO_CREDITO" />
+
+        <isinclude template="checkout/billing/mercadoCreditoForm" />
+
+    </fieldset>
+</div>

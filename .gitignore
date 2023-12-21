@@ -7,4 +7,5 @@ cartridges/int_mercadopago/cartridge/static/default/js/*.map
 cartridges/int_mercadopago/cartridge/static/default/css/*.css
 .idea
 cartridges/app_storefront_base
+cartridges/modules
 metadata.zip

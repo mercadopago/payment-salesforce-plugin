@@ -2,10 +2,13 @@
     <isif condition="${paymentOption.ID === 'CREDIT_CARD'}">
         <isinclude template="checkout/billing/paymentOptions/creditCardTab" />
     </isif>
-    <isif condition="${paymentOption.ID === 'PIX'}">
+    <isif condition="${paymentOption.ID === 'PIX' && pdict.mercadopago.isPixEnabled}">
         <isinclude template="checkout/billing/paymentOptions/pixTab" />
     </isif>
     <isif condition="${paymentOption.ID === 'CHECKOUT_PRO'}">
         <isinclude template="checkout/billing/paymentOptions/checkoutProTab" />
+    </isif>
+    <isif condition="${paymentOption.ID === 'MERCADO_CREDITO' && pdict.mercadopago.isCreditsEnabled}">
+        <isinclude template="checkout/billing/paymentOptions/mercadoCreditoTab" />
     </isif>
 </isloop>

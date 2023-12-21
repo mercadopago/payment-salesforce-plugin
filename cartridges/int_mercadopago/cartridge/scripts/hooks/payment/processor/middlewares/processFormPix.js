@@ -1,5 +1,6 @@
 const Resource = require("dw/web/Resource");
 const MercadopagoUtil = require("*/cartridge/scripts/util/MercadopagoUtil");
+const formErrors = require("*/cartridge/scripts/formErrors");
 
 function getViewData(paymentForm, viewFormData) {
   const viewData = viewFormData;
@@ -37,7 +38,8 @@ function getViewData(paymentForm, viewFormData) {
 }
 
 function getPixErrors(paymentForm) {
-  const fieldErrors = {};
+  let fieldErrors = {};
+  fieldErrors = formErrors.getFormErrors(paymentForm.pixFields);
 
   if (paymentForm.pixFields.docNumberPix.value) {
     const docNumber = MercadopagoUtil.validateDocument(
@@ -48,7 +50,7 @@ function getPixErrors(paymentForm) {
       paymentForm.pixFields.docNumberPix.value = docNumber;
     } else {
       fieldErrors[paymentForm.pixFields.docNumberPix.htmlName] = Resource.msg(
-        "error.2067",
+        "error.324",
         "mercadopago",
         null
       );

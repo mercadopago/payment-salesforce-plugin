@@ -21,6 +21,13 @@ module.exports = {
       status_detail: "pending",
       point_of_interaction: {
       }
+    }),
+    createRedirectingToCredits: () => ({
+      id: "1234567890",
+      status: "pending",
+      status_detail: "pending",
+      point_of_interaction: {
+      }
     })
   }
 };

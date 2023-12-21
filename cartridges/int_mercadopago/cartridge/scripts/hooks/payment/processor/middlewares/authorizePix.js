@@ -83,7 +83,7 @@ function errorHandler(detailedError) {
   };
 }
 
-function errrorMercadopagoResponse() {
+function errorMercadopagoResponse() {
   let detailedError;
   try {
     const mpError = JSON.parse(session.privacy.mercadopagoErrorMessage);
@@ -120,7 +120,7 @@ function authorizePix(orderNumber, paymentInstrument, paymentProcessor) {
         return errorHandler();
       }
     } else {
-      return errrorMercadopagoResponse();
+      return errorMercadopagoResponse();
     }
   } catch (e) {
     log.error("Error on authorizePix: " + e.message);
