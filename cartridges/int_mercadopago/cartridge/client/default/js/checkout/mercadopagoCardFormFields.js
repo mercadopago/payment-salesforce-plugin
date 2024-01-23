@@ -49,7 +49,8 @@ const fields = [
     mpName: "installments",
     mpFieldErrorCode: ["installments"],
     fieldId: "installments",
-    fieldPlaceHolder: $(".mp-text-messages").data("mpTextMessages")["field.installments"]
+    fieldPlaceHolder: $(".mp-text-messages").data("mpTextMessages")["field.installments"],
+    itensText: $(".mp-text-messages").data("mpTextMessages")["field.installments.itensText"]
   },
   {
     mpName: "identificationType",
