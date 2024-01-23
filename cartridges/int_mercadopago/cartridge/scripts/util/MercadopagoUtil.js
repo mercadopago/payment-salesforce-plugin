@@ -68,7 +68,8 @@ MercadopagoUtil.prototype.getTextMessages = () => ({
   "field.year": Resource.msg("mercadopago.field.year", "mercadopago", null),
   "field.installments": Resource.msg("mercadopago.field.installments", "mercadopago", null),
   "field.issuer": Resource.msg("mercadopago.field.issuer", "mercadopago", null),
-  "field.mercadocredito.billing.message": Resource.msg("mercadocredito.billing.message", "mercadopago", null)
+  "field.mercadocredito.billing.message": Resource.msg("mercadocredito.billing.message", "mercadopago", null),
+  "field.installments.itensText": Resource.msg("mercadopago.field.installments.itensText", "mercadopago", null)
 });
 
 /**

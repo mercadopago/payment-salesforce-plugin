@@ -82,10 +82,7 @@ function createCardForm(totalAmount) {
           "dwfrm_billing_creditCardFields_securityCode"
         );
         $("#issuer").removeAttr("data-name");
-        $("#issuer").attr(
-          "name",
-          "dwfrm_billing_creditCardFields_issuer"
-        );
+        $("#issuer").attr("name", "dwfrm_billing_creditCardFields_issuer");
       },
       onPaymentMethodsReceived: (error, data) => {
         if (error) {
@@ -94,6 +91,19 @@ function createCardForm(totalAmount) {
         $("#paymentMethodId").val(data[0].id);
         $("#paymentTypeId").val(data[0].payment_type_id);
         $("#cardTypeName").val(data[0].name);
+      },
+      onInstallmentsReceived: (error, data) => {
+        if (error) {
+          return;
+        }
+        $(document).ready(() => {
+          const select = $("#installments");
+          for (let i = 0; i < select[0].options.length; i++) {
+            if (data.payer_costs[i].installment_rate_collector[0] === "THIRD_PARTY") {
+              select[0].options[i].text += " " + cardFormFields.getFieldByMpName("installments").itensText;
+            }
+          }
+        });
       },
       onIdentificationTypesReceived: (error, identificationTypes) => {
         if (!identificationTypes.length) {
