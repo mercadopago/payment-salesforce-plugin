@@ -477,45 +477,39 @@ function submitPayment(paymentMethodId, mpToken, defer) {
             },
 
             /**
-             * Challenge URL.
-             *
-             */
-            buildChallengeURL: function (threeDsData) {
-                return threeDsData.external_resource_url + '?creq=' + threeDsData.creq;
-            },
-
-            /**
              * Challenge service call.
              *
              */
             loadChallengeInfo: function (threeDsData) {
-                $.ajax({
-                    type: "POST",
-                    async: false,
-                    url: members.buildChallengeURL(threeDsData),
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                    },
-                    success: function (data) {
-                        setTimeout(function () {
-                            $('body').on('click', '.three-ds-modal-box .modal-button-close', function () {
-                                $('body').trigger('checkout:close3dsModal', $('.three-ds-modal-box'));
-                                members.showErrorMessage(threeDsData.mpErrorMessage);
-                            });
-                            members.modalVisibilityMode('.loading-area', true);
-                            members.modalVisibilityMode('.validation-area', false);
-                            members.createIframe();
-                            var iframeDoc = document.querySelector('#iframe-challenge').contentWindow.document;
-                            iframeDoc.open('text/html', 'replace');
-                            iframeDoc.write(data);
-                            iframeDoc.close();
-                        }, 5000)
-                    },
-                    error: function (error) {
-                        const message = error.message || error;
+                try {
+                        var iframe = document.createElement("iframe");
+                        iframe.name = "myframe";
+                        iframe.id = "myframe";
+                        iframe.height = "500px";
+                        iframe.width = "600px";
+                        document.body.appendChild(iframe);
+
+                        var idocument = iframe.contentWindow.document;
+
+                        var myform = idocument.createElement("form");
+                        myform.name = "myform";
+                        myform.setAttribute("target", "myframe");
+                        myform.setAttribute("method", "post");
+                        myform.setAttribute("action", threeDsData.external_resource_url);
+
+                        var hiddenField = idocument.createElement("input");
+                        hiddenField.setAttribute("type", "hidden");
+                        hiddenField.setAttribute("name", "creq");
+                        hiddenField.setAttribute("value", threeDsData.creq);
+                        myform.appendChild(hiddenField);
+                        iframe.appendChild(myform);
+
+                        myform.submit();
+                        
+                } catch (error) {
+                    const message = error.message || error;
                         members.sendMetric('mp_3ds_sales_error_load_challenge_info', message, threeDsData);
-                    }
-                });
+                  }
             },
 
             /**

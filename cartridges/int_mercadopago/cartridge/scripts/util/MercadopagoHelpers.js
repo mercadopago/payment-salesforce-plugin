@@ -714,6 +714,7 @@ MercadopagoHelpers.prototype.createPreferencePayload = (
     },
     payment_method_id: paymentMethodId.toLowerCase(),
     transaction_amount: transactionAmount.value,
+    auto_return: "all",
     notification_url: URLUtils.https(
       "MercadopagoNotification-PaymentNotifications"
     ).toString(),
