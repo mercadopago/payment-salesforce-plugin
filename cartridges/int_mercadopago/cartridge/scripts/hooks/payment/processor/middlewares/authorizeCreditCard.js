@@ -81,17 +81,19 @@ function savePaymentInformation(paymentInstrument, paymentResponse, order) {
 }
 
 function authorizationErrorHandler(statusDetail) {
+  const msgErrorDefault = Resource.msg("seller_status_detail.cc_rejected_default", "mercadopago", null);
+
   return {
     fieldErrors: [],
     serverErrors: [Resource.msg(
       "status_detail." + statusDetail,
       "mercadopago",
-      null
+      msgErrorDefault
     )],
     message: Resource.msg(
       "status_detail." + statusDetail,
       "mercadopago",
-      null
+      msgErrorDefault
     ),
     detailedError: statusDetail,
     error: true

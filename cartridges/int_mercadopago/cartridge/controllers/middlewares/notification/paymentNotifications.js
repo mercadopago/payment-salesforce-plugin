@@ -64,9 +64,14 @@ function validateAmountPaid(order, paymentInfo) {
  * @param {*} paymentInfo  - Object containing the payment information sent by MercadoPago
  */
 function updatePaymentInfo(order, paymentInfo) {
+  const msgErrorDefault = Resource.msg("seller_status_detail.cc_rejected_default", "mercadopago", null);
   const lastDetail = paymentInfo.payments_details.pop();
   const msgPaymentStatus = Resource.msg("status." + paymentInfo.status, "mercadopago", null);
-  const msgPaymentReport = Resource.msg("status_detail." + lastDetail.status_detail, "mercadopago", null);
+  const msgPaymentReport = Resource.msg(
+    "seller_status_detail." + lastDetail.status_detail, 
+    "mercadopago", 
+    Resource.msg("status_detail." + lastDetail.status_detail, "mercadopago", msgErrorDefault)
+  );
 
   Transaction.wrap(() => {
     order.addNote("Mercadopago Notification status: ", paymentInfo.status);
@@ -244,7 +249,7 @@ function paymentNotifications(req, res, next) {
         const localeID = req.locale.id;
         savePaymentInformation(order, paymentInfo, localeID);
         Transaction.wrap(() => {
-          order.addNote("Mercadopago notification: ", JSON.stringify(paymentInfo));
+          order.addNote("Mercadopago notification: ", JSON.stringify(paymentInfo, null, 2));
         });
       } else {
         log.info("Order not found!");

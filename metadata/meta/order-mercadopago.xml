@@ -8,13 +8,16 @@
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
                 <min-length>0</min-length>
+                <field-length>100</field-length>
             </attribute-definition>
             <attribute-definition attribute-id="paymentReport">
                 <display-name xml:lang="x-default">Payment Report</display-name>
-                <type>string</type>
+                <type>text</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
                 <min-length>0</min-length>
+                <field-length>100</field-length>
+                <field-height>5</field-height>
             </attribute-definition>
         </custom-attribute-definitions>
         <group-definitions>
