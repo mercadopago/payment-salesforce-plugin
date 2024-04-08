@@ -481,13 +481,19 @@ function submitPayment(paymentMethodId, mpToken, defer) {
              *
              */
             loadChallengeInfo: function (threeDsData) {
+                setTimeout(function() {
+
                 try {
-                        var iframe = document.createElement("iframe");
+                    members.modalVisibilityMode('.loading-area', true);
+                    members.modalVisibilityMode('.validation-area', false);
+                    var iframe = document.createElement("iframe");
                         iframe.name = "myframe";
                         iframe.id = "myframe";
                         iframe.height = "500px";
                         iframe.width = "600px";
-                        document.body.appendChild(iframe);
+                        iframe.style = "border:none;";
+
+                        document.getElementById("iframe-challenge").appendChild(iframe);
 
                         var idocument = iframe.contentWindow.document;
 
@@ -510,6 +516,7 @@ function submitPayment(paymentMethodId, mpToken, defer) {
                     const message = error.message || error;
                         members.sendMetric('mp_3ds_sales_error_load_challenge_info', message, threeDsData);
                   }
+                }, 3000)
             },
 
             /**
