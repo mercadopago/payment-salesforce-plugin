@@ -49,20 +49,7 @@
                 </div>
             </div>
             <div class="iframe-div">
-                <div class="iframe-container">
-                    <iframe 
-                            id="iframe-challenge" 
-                            src="about:blank" 
-                            title="Challenge" 
-                            width="600px" 
-                            height="500px"
-                            overflow-x="scroll"
-                            overflow-y="scroll"
-                            scrolling="yes"
-                            frameborder="0"
-                        >
-                    </iframe>
-                </div>
+                <div class="iframe-container" id="iframe-challenge"></div>
             </div>
         </div>
         <div id="confirmation-area" class="confirmation-area" hidden="true">
