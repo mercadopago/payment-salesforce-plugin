@@ -1,0 +1,17 @@
+<div class="methods-off-info" style="margin-top: 10px; margin-bottom: 10px">
+  <span>${Resource.msg('methodsoff.invoice.info', 'mercadopago', null)}</span>
+</div>
+<div class="methods-off-info">
+  <span><strong>${Resource.msg('methodsoff.whereToPay', 'mercadopago', null)}</strong> ${payment.paymentPlace}</span>
+</div>
+<div class="methods-off-info">
+  <span><strong>${Resource.msg('methodsoff.expiration', 'mercadopago', null)}</strong> ${payment.dateOfExpiration}</span>
+</div>
+<div class="methods-off-info">
+  <span>${Resource.msg('methodsoff.field.paymentplaces.detail', 'mercadopago', null)}</span>
+</div>
+<div class="methods-off-invoice-button" style="margin-top: 20px;">
+  <a class="methods-off-link" href='${payment.externalUrlInvoice}'>
+    <button class="btn btn-primary">${Resource.msg('methodsoff.invoice.link', 'mercadopago', null)}</button>
+  </a>
+</div>

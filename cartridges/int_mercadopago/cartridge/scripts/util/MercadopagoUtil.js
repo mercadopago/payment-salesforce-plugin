@@ -1,12 +1,14 @@
 const Resource = require("dw/web/Resource");
+const Site = require("dw/system/Site");
 
-function MercadopagoUtil() {}
+function MercadopagoUtil() { }
 
 MercadopagoUtil.prototype.PAYMENT_METHOD = {
   credit_card: "CREDIT_CARD",
   pix: "PIX",
   checkout_pro: "CHECKOUT_PRO",
-  mercado_credito: "MERCADO_CREDITO"
+  mercado_credito: "MERCADO_CREDITO",
+  methods_off: "CASH"
 };
 
 MercadopagoUtil.prototype.DOCUMENT_TYPE = {
@@ -69,7 +71,9 @@ MercadopagoUtil.prototype.getTextMessages = () => ({
   "field.installments": Resource.msg("mercadopago.field.installments", "mercadopago", null),
   "field.issuer": Resource.msg("mercadopago.field.issuer", "mercadopago", null),
   "field.mercadocredito.billing.message": Resource.msg("mercadocredito.billing.message", "mercadopago", null),
-  "field.installments.itensText": Resource.msg("mercadopago.field.installments.itensText", "mercadopago", null)
+  "field.installments.itensText": Resource.msg("mercadopago.field.installments.itensText", "mercadopago", null),
+  "field.methodsoff.invoice.place": Resource.msg("methodsoff.info.place", "mercadopago", null),
+  "field.methodsoff.invoice.expire": Resource.msg("methodsoff.info.expiration", "mercadopago", null)
 });
 
 /**
@@ -288,5 +292,89 @@ MercadopagoUtil.prototype.validateCpf = (cpf) => {
 
   return true;
 };
+
+/**
+ *
+ * @param {Object} methodsOff - An object with the methods off
+ * @returns {Object} - Returns an object with the methods off sorted by sort value
+ */
+MercadopagoUtil.prototype.sortMethodsOff = (methodsOff) => {
+  const toSort = [];
+  const endSort = [];
+  const nullSort = [];
+
+  Object.keys(methodsOff).forEach((key) => {
+    const method = methodsOff[key];
+
+    if (!method.sort || method.sort === null) {
+      nullSort.push(method);
+    } else if (method.sort === 999) {
+      endSort.push(method);
+    } else {
+      toSort.push(method);
+    }
+  });
+
+  toSort.sort((a, b) => parseFloat(a.sort) - parseFloat(b.sort));
+
+  endSort.sort((a, b) => a.id.localeCompare(b.id));
+
+  nullSort.sort((a, b) => a.id.localeCompare(b.id));
+
+  return toSort.concat(endSort, nullSort);
+};
+
+/**
+ * Get formated expiration date
+ * @returns {String} expiration date formated
+ */
+MercadopagoUtil.prototype.GetFormatedDateToExpirationField = (fullDate) => {
+  const locale = Site.getCurrent().defaultLocale;
+  const newDate = new Date(fullDate);
+  const months = getMonths();
+
+  const month = months[newDate.getMonth()];
+  const day = newDate.getDate();
+  const hour = locale.includes("en") ? getFormatedHour(newDate) : newDate.getHours();
+
+  const formatedDate = `${month} ${day}, at ${hour}`;
+
+  return Resource.msgf("methodsoff.invoice.msg", "mercadopago", null, month, day, hour);
+};
+
+/**
+ * Return formated en_ Hour
+ * @returns {String} hour
+ */
+function getFormatedHour(date) {
+  let hours = date.getHours();
+  const period = (hours >= 12) ? "p.m." : "a.m.";
+
+  hours = (hours % 12 === 0) ? 12 : hours % 12;
+  hours = hours < 10 ? "0" + hours : hours;
+
+  return hours + " " + period;
+}
+
+/**
+ * Return months
+ * @returns {String} Months
+ */
+function getMonths() {
+  return {
+    0: Resource.msg("month.0", "mercadopago", null),
+    1: Resource.msg("month.1", "mercadopago", null),
+    2: Resource.msg("month.2", "mercadopago", null),
+    3: Resource.msg("month.3", "mercadopago", null),
+    4: Resource.msg("month.4", "mercadopago", null),
+    5: Resource.msg("month.5", "mercadopago", null),
+    6: Resource.msg("month.6", "mercadopago", null),
+    7: Resource.msg("month.7", "mercadopago", null),
+    8: Resource.msg("month.8", "mercadopago", null),
+    9: Resource.msg("month.9", "mercadopago", null),
+    10: Resource.msg("month.10", "mercadopago", null),
+    11: Resource.msg("month.11", "mercadopago", null)
+  };
+}
 
 module.exports = new MercadopagoUtil();

@@ -78,6 +78,19 @@ function getFormPix() {
   };
 }
 
+function getFormMethodsOff() {
+  return {
+    docTypeMethodsOff: {
+      selectedOption: "CPF",
+      htmlName: "dwfrm_billing_methodsOffFields_docTypeMethods"
+    },
+    docNumberMethodsOff: {
+      value: "12345678909",
+      htmlName: "dwfrm_billing_methodsOffFields_docNumberMethodsOff"
+    }
+  };
+}
+
 function getPaymentInfoPix() {
   return {
     email: {
@@ -99,6 +112,19 @@ function getPaymentInfoPix() {
     docNumber: {
       value: "12345678909",
       htmlName: "dwfrm_billing_pixFields_docNumberPix"
+    }
+  };
+}
+
+function getPaymentInfoMethodsOff() {
+  return {
+    docType: {
+      selectedOption: "CPF",
+      htmlName: "dwfrm_billing_methodsOffFields_docTypeMethodsOff"
+    },
+    docNumber: {
+      value: "12345678909",
+      htmlName: "dwfrm_billing_methodsFields_docNumberMethodsOff"
     }
   };
 }
@@ -173,7 +199,9 @@ function getPaymentInstrument() {
 module.exports = {
   getFormCreditCard: getFormCreditCard,
   getFormPix: getFormPix,
+  getFormMethodsOff: getFormMethodsOff,
   getPaymentInfoCreditCard: getPaymentInfoCreditCard,
   getPaymentInfoPix: getPaymentInfoPix,
+  getPaymentInfoMethodsOff: getPaymentInfoMethodsOff,
   getPaymentInstrument: getPaymentInstrument
 };

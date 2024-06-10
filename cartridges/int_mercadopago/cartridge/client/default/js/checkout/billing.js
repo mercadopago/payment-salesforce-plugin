@@ -64,6 +64,16 @@ base.methods.updatePaymentInformation = (order) => {
           htmlToAppend += "<p style='line-height: 21px;margin-top: 10px'>" + mercadoPagoText;
           htmlToAppend += "</p>";
           htmlToAppend += "</div>";
+        } else if (selectedPaymentInstrument.paymentMethod === "CASH") {
+          const { paymentPlace, dateOfExpiration } = selectedPaymentInstrument;
+          const methodsOffInfo = $(".mp-text-messages").data("mpTextMessages")["field.methodsoff.invoice.place"];
+          const methodsOffExpire = $(".mp-text-messages").data("mpTextMessages")["field.methodsoff.invoice.expire"];
+          htmlToAppend += "<div class='methods-off-info' style='margin-top: 15px;'>";
+          htmlToAppend += "<span><strong>" + methodsOffInfo + paymentPlace + "</strong></span>";
+          htmlToAppend += "</div>";
+          htmlToAppend += "<div class='methods-off-info' style='margin-top: 6px;'>";
+          htmlToAppend += "<span>" + methodsOffExpire + dateOfExpiration + "</span>";
+          htmlToAppend += "</div>";
         }
       }
     );

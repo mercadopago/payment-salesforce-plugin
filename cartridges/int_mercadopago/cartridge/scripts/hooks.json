@@ -17,6 +17,14 @@
             "script": "./hooks/payment/processor/mercadopagoPix"
         },
         {
+            "name": "app.payment.form.processor.mercadopago_methods_off",
+            "script": "./hooks/payment/processor/mercadopagoMethodsOff"
+        },
+        {
+            "name": "app.payment.processor.mercadopago_methods_off",
+            "script": "./hooks/payment/processor/mercadopagoMethodsOff"
+        },
+        {
             "name": "app.payment.form.processor.mercadopago_checkout_pro",
             "script": "./hooks/payment/processor/mercadopagoCheckoutPro"
         },

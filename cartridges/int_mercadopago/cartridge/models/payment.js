@@ -8,6 +8,7 @@ const collections = require("*/cartridge/scripts/util/collections");
  * @returns {Array} Array of objects that contain information about the selected payment instruments
  */
 function getSelectedPaymentInstruments(selectedPaymentInstruments) {
+  // eslint-disable-next-line complexity
   return collections.map(selectedPaymentInstruments, (paymentInstrument) => {
     const results = {
       paymentMethod: paymentInstrument.paymentMethod,
@@ -31,6 +32,11 @@ function getSelectedPaymentInstruments(selectedPaymentInstruments) {
       results.checkoutProLink = paymentInstrument.custom.checkoutProLink;
     } else if (paymentInstrument.paymentMethod === "MERCADO_CREDITO") {
       results.mercadoCreditoLink = paymentInstrument.custom.mercadoCreditoLink;
+    } else if (paymentInstrument.paymentMethod === "CASH") {
+      results.dateOfExpiration = paymentInstrument.custom.dateOfExpiration;
+      results.paymentMethodOff = paymentInstrument.custom.paymentOffMethodId;
+      results.paymentPlace = paymentInstrument.custom.paymentPlace;
+      results.externalUrlInvoice = paymentInstrument.custom.externalUrlInvoice;
     }
 
     return results;

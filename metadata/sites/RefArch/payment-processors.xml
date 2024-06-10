@@ -18,6 +18,15 @@
             <production/>
         </preferences>
     </payment-processor>
+     <payment-processor processor-id="MERCADOPAGO_METHODS_OFF">
+        <description>Mercado Pago payment processor with Methods Off</description>
+        <preferences>
+            <all-instances/>
+            <development/>
+            <staging/>
+            <production/>
+        </preferences>
+    </payment-processor>
     <payment-processor processor-id="MERCADOPAGO_CHECKOUT_PRO">
         <description>Mercado Pago payment processor with Checkout Pro</description>
         <preferences>

@@ -11,6 +11,7 @@ var scrollAnimate = require('BaseCartridge/components/scrollAnimate');
 var pixFormHelper = require('./mercadopagoPixForm');
 var cardFormHelper = require('./mercadopagoCardForm');
 var cardFormFields = require('./mercadopagoCardFormFields');
+var methodsOffHelper = require('./mercadopagoMethodsOffForm');
 
 const publicKey = $(".js-mp-form").data("mpPreferences").mercadopagoPublicKey;
 const mp = new MercadoPago(publicKey);
@@ -220,6 +221,16 @@ function submitPayment(paymentMethodId, mpToken, defer) {
             );
         }
 
+        function getMethodsOffSelected(){
+            var radios = document.getElementsByName("payment_methods_off");
+            for(var i = 0; i < radios.length; i++){
+                if(radios[i].checked){
+                    document.getElementById("paymentMethodsOffChecked").value = radios[i].value;
+                    break;
+                }
+            }
+        }
+
         //
         // Local member methods of the Checkout plugin
         //
@@ -341,6 +352,7 @@ function submitPayment(paymentMethodId, mpToken, defer) {
                                 let amount = "" + data.paymentAmount;
                                 cardFormHelper.createCardForm(amount).mount();
                                 pixFormHelper.prepareForm();
+                                methodsOffHelper.prepareMethodsOffForm();
                             },
                             error: function (err) {
                                 // enable the next:Payment button here
@@ -394,6 +406,9 @@ function submitPayment(paymentMethodId, mpToken, defer) {
                             defer.reject();
                         });
                     } else if (paymentMethodId === 'PIX') {
+                        defer = submitPayment(paymentMethodId, "", defer);
+                    } else if (paymentMethodId === 'CASH') {
+                        getMethodsOffSelected();
                         defer = submitPayment(paymentMethodId, "", defer);
                     } else if (paymentMethodId === 'CHECKOUT_PRO') {
                         defer = submitPayment(paymentMethodId, "", defer);
@@ -481,12 +496,12 @@ function submitPayment(paymentMethodId, mpToken, defer) {
              *
              */
             loadChallengeInfo: function (threeDsData) {
-                setTimeout(function() {
+                setTimeout(function () {
 
-                try {
-                    members.modalVisibilityMode('.loading-area', true);
-                    members.modalVisibilityMode('.validation-area', false);
-                    var iframe = document.createElement("iframe");
+                    try {
+                        members.modalVisibilityMode('.loading-area', true);
+                        members.modalVisibilityMode('.validation-area', false);
+                        var iframe = document.createElement("iframe");
                         iframe.name = "myframe";
                         iframe.id = "myframe";
                         iframe.height = "500px";
@@ -511,11 +526,11 @@ function submitPayment(paymentMethodId, mpToken, defer) {
                         iframe.appendChild(myform);
 
                         myform.submit();
-                        
-                } catch (error) {
-                    const message = error.message || error;
+
+                    } catch (error) {
+                        const message = error.message || error;
                         members.sendMetric('mp_3ds_sales_error_load_challenge_info', message, threeDsData);
-                  }
+                    }
                 }, 3000)
             },
 
@@ -739,6 +754,14 @@ function submitPayment(paymentMethodId, mpToken, defer) {
                     members.nextStage();
                 });
 
+                $('body').on('click', '.methods-off-options-more', function () {
+                    $('body').trigger('checkout:toggleMoreOptionsButtonText', $('.methods-off-options'));
+                    var options = $('.methods-off-places-more-options');
+                    for (let index = 0; index < options.length; index++) {
+                        $('body').trigger('checkout:toggleMoreOptions', options[index]);
+                    };
+                });
+
                 //
                 // Handle Edit buttons on shipping and payment summary cards
                 //
@@ -932,6 +955,19 @@ var exports = {
     close3dsModal: function () {
         $('body').on('checkout:close3dsModal', function (e, modal) {
             $(modal).prop('hidden', true);
+        });
+    },
+
+    toggleMoreOptions: function () {
+        $('body').on('checkout:toggleMoreOptions', function (e, option) {
+            $(option).prop('hidden', !$(option).prop('hidden'));
+        });
+    },
+
+    toggleMoreOptionsButtonText: function () {
+        $('body').on('checkout:toggleMoreOptionsButtonText', function (e, buttonText) {
+            $("#methods-off-options").prop('hidden', !$("#methods-off-options").prop('hidden'));
+            $("#methods-off-options-hide").prop('hidden', !$("#methods-off-options-hide").prop('hidden'));
         });
     }
 };

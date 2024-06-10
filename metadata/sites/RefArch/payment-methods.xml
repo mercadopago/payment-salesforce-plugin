@@ -10,6 +10,32 @@
         <enabled-flag>true</enabled-flag>
         <processor-id>MERCADOPAGO_PIX</processor-id>
     </payment-method>
+    <payment-method method-id="CASH">
+        <name xml:lang="x-default">Invoice Payment</name>
+        <name xml:lang="es">Pagos en efectivo</name>
+        <name xml:lang="es-AR">Pagos en efectivo</name>
+        <name xml:lang="es-MX">Pagos en efectivo</name>
+        <name xml:lang="es-CO">Pagos en efectivo</name>
+        <name xml:lang="es-PE">Pagos en efectivo</name>
+        <name xml:lang="es-UY">Pagos en efectivo</name>
+        <name xml:lang="es-CL">Pagos en efectivo</name>
+        <name xml:lang="pt">Pagamentos via boleto</name>
+        <name xml:lang="pt-BR">Pagamentos via boleto</name>
+        <name xml:lang="en">Invoice Payment</name>
+        <description xml:lang="x-default">Invoice at payment points</description>
+        <description xml:lang="es">Efectivo en puntos de pago</description>
+        <description xml:lang="es-AR">Efectivo en puntos de pago</description>
+        <description xml:lang="es-MX">Efectivo en puntos de pago</description>
+        <description xml:lang="es-CO">Efectivo en puntos de pago</description>
+        <description xml:lang="es-PE">Efectivo en puntos de pago</description>
+        <description xml:lang="es-UY">Efectivo en puntos de pago</description>
+        <description xml:lang="es-CL">Efectivo en puntos de pago</description>
+        <description xml:lang="pt">Pagamentos via boleto</description>
+        <description xml:lang="pt-BR">Boleto em pontos de pagamento</description>
+        <description xml:lang="en">Invoice at payment points</description>
+        <enabled-flag>true</enabled-flag>
+        <processor-id>MERCADOPAGO_METHODS_OFF</processor-id>
+    </payment-method>
     <payment-method method-id="CHECKOUT_PRO">
         <name xml:lang="x-default">Mercado Pago Checkout Pro</name>
         <enabled-flag>true</enabled-flag>
