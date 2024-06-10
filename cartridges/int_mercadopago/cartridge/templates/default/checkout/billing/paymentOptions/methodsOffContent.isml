@@ -1,0 +1,11 @@
+<div class="tab-pane methods-off-content" id="methods-off-content" role="tabpanel">
+	<fieldset class="payment-form-fields">
+
+		<iscomment> payment method is CASH </iscomment>
+		<input type="hidden" class="form-control" name="${pdict.forms.billingForm.paymentMethod.htmlName}"
+			value="CASH" />
+
+		<isinclude template="checkout/billing/methodsOffForm" />
+	
+	</fieldset>
+</div>

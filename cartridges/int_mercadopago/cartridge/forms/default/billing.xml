@@ -14,6 +14,8 @@
 
     <include formid="pixFields" name="pix"/>
 
+    <include formid="methodsOffFields" name="methodsOff"/>
+
     <field formid="subscribe" type="boolean" checked="false" default-value="false" mandatory="false" />
 
 </form>

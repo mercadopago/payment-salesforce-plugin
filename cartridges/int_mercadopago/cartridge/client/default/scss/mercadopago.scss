@@ -639,6 +639,108 @@ body {
   }
 }
 
+// end off 3ds modal
+
+// methods off
+
+#methods-off-title {
+  justify-content: center;
+}
+
+#methods-off-title li {
+  list-style-type: none;
+}
+
+.methods-off-tab {
+  line-height: 15px;
+  padding: 6px 16px 3px;
+}
+
+.methods-off-tab p {
+  margin: 0;
+  font-size: 12px;
+  font-family: "Proxima Nova", sans-serif;
+  color: rgba(0, 0, 0, 0.9);
+  font-weight: 600;
+}
+
+#methods-off-title .row-title {
+  font-size: 20px;
+  font-family: "Proxima Nova", sans-serif;
+  color: rgba(0, 0, 0, 0.9);
+  font-weight: 600;
+  padding-top: 24px;
+  padding-bottom: 0;
+}
+
+#methods-off-title .row-subtitle {
+  font-size: 16px;
+  font-family: "Proxima Nova", sans-serif;
+  color: rgba(0, 0, 0, 0.55);
+  font-weight: 400;
+}
+
+.methods-off-places {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.methods-off-places-option {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  padding: 14px 0 14px 12px;
+  width: 50%;
+  gap: 16px;
+}
+
+.payment-methods-off-input img {
+  padding: 10px 16px;
+}
+
+.methods-off-places-option label {
+  font-size: 16px;
+  font-family: "Proxima Nova", sans-serif;
+  color: rgba(0, 0, 0, 0.9);
+  font-weight: 400;
+  margin: 0;
+}
+
+#methods-off-options-more {
+  color: var(--skin-primary-color-1);
+  float: right;
+}
+
+#methods-off-options-more p {
+  margin: 0;
+}
+
+.methods-off-invoice-button {
+  margin-top: 20px !important;
+}
+
+#methods-off-options-error {
+  text-align: center;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 1rem 0 0;
+}
+
+#methods-off-options-error img {
+  width: 16px;
+}
+
+#payment-methods-off-checked-invalid-message {
+  width: auto;
+}
+
+// end of methods off
+
 @media screen and (max-width: 472px) {
 
   .three-ds-modal-box {
@@ -838,6 +940,9 @@ body {
       }
     }
   }
-}
 
-// end off 3ds modal
+  .methods-off-places-option {
+    width: 100%;
+  }
+
+}

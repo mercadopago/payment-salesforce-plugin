@@ -5,6 +5,9 @@
     <isif condition="${paymentOption.ID === 'PIX' && pdict.mercadopago.isPixEnabled}">
         <isinclude template="checkout/billing/paymentOptions/pixTab" />
     </isif>
+    <isif condition="${paymentOption.ID === 'CASH' && pdict.mercadopago.isMethodsOffEnabled}">
+        <isinclude template="checkout/billing/paymentOptions/methodsOffTab" />
+    </isif>
     <isif condition="${paymentOption.ID === 'CHECKOUT_PRO'}">
         <isinclude template="checkout/billing/paymentOptions/checkoutProTab" />
     </isif>

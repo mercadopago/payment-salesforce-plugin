@@ -1,4 +1,3 @@
-const PaymentInstrument = require("dw/order/PaymentInstrument");
 const Site = require("dw/system/Site");
 const Resource = require("dw/web/Resource");
 const URLUtils = require("dw/web/URLUtils");
@@ -8,7 +7,7 @@ const MercadopagoUtil = require("*/cartridge/scripts/util/MercadopagoUtil");
 const collections = require("*/cartridge/scripts/util/collections");
 
 const log = Logger.getLogger("int_mercadopago", "mercadopago");
-const { getTotalAmount, validateAndReturnAttribute } = MercadopagoUtil;
+const { getTotalAmount, validateAndReturnAttribute, sortMethodsOff } = MercadopagoUtil;
 
 function MercadopagoHelpers() { }
 
@@ -182,6 +181,19 @@ MercadopagoHelpers.prototype.hasPaymentMethod = (paymentMethods, paymentId) => {
 };
 
 /**
+ * Verifies if a payment method exists among available payment methods
+ */
+MercadopagoHelpers.prototype.hasPaymentMethodType = (paymentMethods, paymentTypeIds) => {
+  let isValidMethod = false;
+  collections.forEach(paymentMethods, (paymentMethod) => {
+    if (paymentTypeIds.includes(paymentMethod.payment_type_id)) {
+      isValidMethod = true;
+    }
+  });
+  return isValidMethod;
+};
+
+/**
  * Access the Mercadopago Preference Rest Api
  */
 MercadopagoHelpers.prototype.preference = {
@@ -208,6 +220,27 @@ MercadopagoHelpers.prototype.preference = {
   }
 };
 
+function getMethodsOffExpiration() {
+  const methodsOffExpirationTime = Site.getCurrent().getCustomPreferenceValue(
+    "mercadopagoMethodsOffExpirationTime"
+  );
+
+  if (!methodsOffExpirationTime || !methodsOffExpirationTime.value) {
+    return null;
+  }
+
+  expirationTime = "" + methodsOffExpirationTime.value;
+
+  const seconds = getSeconds(expirationTime);
+
+  const result = new Date();
+  result.setTime(result.getTime() + seconds * 1000);
+
+  return result;
+}
+
+MercadopagoHelpers.prototype.getExpirationMethodsOff = () => getMethodsOffExpiration();
+
 function getPixExpiration() {
   let pixExpirationTime = Site.getCurrent().getCustomPreferenceValue(
     "mercadopagoPixExpirationTime"
@@ -218,9 +251,22 @@ function getPixExpiration() {
   }
   pixExpirationTime = "" + pixExpirationTime.value;
 
-  const timeUnit = pixExpirationTime.charAt(pixExpirationTime.length - 1);
+  let seconds = getSeconds(pixExpirationTime);
 
-  const amount = pixExpirationTime.substring(0, pixExpirationTime.length - 1);
+  const result = new Date();
+  result.setTime(result.getTime() + seconds * 1000);
+
+  return result;
+}
+
+/**
+ * Return Seconds to mount expiration date Coupoms Information
+ * @returns {value} seconds
+ */
+function getSeconds(expirationTime) {
+  const timeUnit = expirationTime.charAt(expirationTime.length - 1);
+
+  const amount = expirationTime.substring(0, expirationTime.length - 1);
   let seconds;
 
   switch (timeUnit) {
@@ -236,10 +282,7 @@ function getPixExpiration() {
     default:
   }
 
-  const result = new Date();
-  result.setTime(result.getTime() + seconds * 1000);
-
-  return result;
+  return seconds;
 }
 
 /**
@@ -574,9 +617,12 @@ MercadopagoHelpers.prototype.createPaymentPayload = (
   let expirationDate;
 
   collections.forEach(order.getPaymentInstruments(), (payInstrument) => {
-    if (payInstrument.paymentMethod === PaymentInstrument.METHOD_CREDIT_CARD) {
+    if (payInstrument.paymentMethod === MercadopagoUtil.PAYMENT_METHOD.credit_card) {
       paymentMethodId = payInstrument.creditCardType;
       token = payInstrument.creditCardToken;
+    } else if (payInstrument.paymentMethod === MercadopagoUtil.PAYMENT_METHOD.methods_off) {
+      paymentMethodId = payInstrument.custom.paymentOffMethodId;
+      expirationDate = getMethodsOffExpiration();
     } else {
       paymentMethodId = payInstrument.paymentMethod;
       expirationDate = getPixExpiration();
@@ -592,6 +638,7 @@ MercadopagoHelpers.prototype.createPaymentPayload = (
   const payDataObj = {
     payer: payer,
     external_reference: order.orderNo,
+    description: Resource.msgf("payload.description", "mercadopago", null, order.orderNo, Site.getCurrent().getHttpHostName()),
     additional_info: {
       ip_address: order.remoteHost,
       items: items,
@@ -726,6 +773,66 @@ MercadopagoHelpers.prototype.createPreferencePayload = (
   }
 
   return payDataObj;
+};
+
+MercadopagoHelpers.prototype.getPaymentMethodFromPlace = (place) => {
+  const methodList = MercadopagoHelpers.prototype.paymentMethods.retrieve();
+  let result;
+
+  collections.forEach(methodList, (method) => {
+    if (method.payment_places) {
+      const ind = Array.from(method.payment_places)
+        .findIndex((paymentPlace2) => paymentPlace2.payment_option_id === place.value);
+      if (ind > -1) {
+        result = {
+          id: method.id,
+          place: method.payment_places[ind].name
+        };
+      }
+    }
+  });
+  if (!result) {
+    const ind = Array.from(methodList)
+      .findIndex((method) => method.id === place.value);
+    result = {
+      id: methodList[ind].id,
+      place: methodList[ind].name
+    };
+  }
+  return result;
+};
+
+MercadopagoHelpers.prototype.getMethodsOffOptions = (
+  isMethodsOffEnabled,
+  paymentMethods,
+  offTypes
+) => {
+  if (!isMethodsOffEnabled) {
+    return null;
+  }
+  const methodsOffNotAllowed = ["pix", "pse"];
+  const offOptions = [];
+
+  collections.forEach(paymentMethods, (paymentMethod) => {
+    if (offTypes.includes(paymentMethod.payment_type_id) && paymentMethod.status === "active") {
+      if ("payment_places" in paymentMethod) {
+        paymentMethod.payment_places.forEach((paymentPlace) => {
+          if (paymentPlace.status === "active") {
+            offOptions.push({
+              id: paymentPlace.payment_option_id,
+              name: paymentPlace.name,
+              thumbnail: paymentPlace.thumbnail,
+              sort: paymentPlace.sort
+            });
+          }
+        });
+      } else if (!methodsOffNotAllowed.includes(paymentMethod.id)) {
+        offOptions.push(paymentMethod);
+      }
+    }
+  });
+
+  return sortMethodsOff(offOptions);
 };
 
 /**

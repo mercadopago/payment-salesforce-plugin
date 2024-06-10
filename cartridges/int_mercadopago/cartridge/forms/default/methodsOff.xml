@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<form xmlns="http://www.demandware.com/xml/form/2008-04-19">
+
+    <field formid="paymentMethod" type="string" mandatory="true" />
+
+    <field formid="docTypeMethodsOff" label="label.input.payment.docType" type="string" mandatory="true" missing-error="error.message.required"/>
+
+    <field formid="docNumberMethodsOff" label="label.input.payment.docNumber" type="string" mandatory="true" missing-error="error.message.required" />
+
+    <field formid="paymentMethodsOffChecked" label="label.input.payment.paymentMethodsOffChecked" binding="paymentMethodsOffChecked" type="string" mandatory="true" missing-error="error.message.required" />
+
+</form>

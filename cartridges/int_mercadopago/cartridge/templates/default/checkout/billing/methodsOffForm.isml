@@ -1,0 +1,88 @@
+<isset name="methodsOffFields" value="${pdict.forms.billingForm.methodsOffFields}" scope="page"/>
+
+<div id="methods-off-document" class="row">
+    <div class="col-sm-6">
+        <div class="form-group
+            <isif condition=${methodsOffFields.docTypeMethodsOff.mandatory === true}>required</isif>
+            ${methodsOffFields.docTypeMethodsOff.htmlName}">
+
+            <label class="form-control-label" for="docTypeMethodsOff">${Resource.msg('mercadopago.field.doctype', 'mercadopago', null)}</label>
+
+            <select class="form-control" id="docTypeMethodsOff" <isprint value="${methodsOffFields.docTypeMethodsOff.attributes}"
+                encoding="htmlsinglequote" /> >
+            </select>
+
+        </div>
+
+    </div>
+
+    <div class="col-sm-6">
+
+        <div class="form-group
+            <isif condition=${methodsOffFields.docNumberMethodsOff.mandatory === true}>required</isif>
+            ${methodsOffFields.docNumberMethodsOff.htmlName}">
+
+            <label class="form-control-label" for="docNumberMethodsOff">${Resource.msg('mercadopago.field.docnumber', 'mercadopago', null)}</label>
+
+            <input type="text" class="form-control" id="docNumberMethodsOff" <isprint value="${methodsOffFields.docNumberMethodsOff.attributes}"
+                encoding="htmlsinglequote" />
+            autocomplete="docNumberMethodsOff"
+            data-checkout="docNumberMethodsOff"
+            required
+            aria-describedby="docNumberInvalidMessage" 
+            />
+            <div class="invalid-feedback" id="docNumberInvalidMessage"></div>
+        </div>
+    </div>
+    
+    
+</div>
+
+<isset name="methodsOffFieldsOptions" value="${pdict.mercadopago.methodsOffOptions}" scope="page"/>
+<div class="form-group  <isif condition=${methodsOffFields.paymentMethodsOffChecked.mandatory === true}>required</isif>
+            ${methodsOffFields.paymentMethodsOffChecked.htmlName}">
+    <div id="methods-off-title" class="row">
+        <div class="box">
+            <div class="row-title">
+                ${Resource.msg('methodsoff.field.paymentplaces', 'mercadopago', null)}
+            </div>
+            <div class="row-subtitle">
+                ${Resource.msg('methodsoff.field.paymentplaces.detail', 'mercadopago', null)}
+            </div>
+        </div>
+        <ul class="col-md-12 methods-off-places">
+            <isloop items="${methodsOffFieldsOptions}" var="paymentMethodOption" end="5">
+                <li class="col-sm-06 methods-off-places-option">
+                    <input type="radio" class="payment-methods-off-input" name="payment_methods_off" id="payment_methods_off" value="${Resource.msgf('methodsoff.labels', 'mercadopago', null, paymentMethodOption['id'].toLowerCase())}"/>
+                    <img src="${paymentMethodOption['thumbnail']}" alt="alt" width="40px" />
+                    <label>${Resource.msgf('methodsoff.labels', 'mercadopago', null, paymentMethodOption['name'])}</label>
+                </li>
+            </isloop>
+            <isloop items="${methodsOffFieldsOptions}" var="paymentMethodOption" begin="6">
+                <li class="col-sm-06 methods-off-places-option methods-off-places-more-options" hidden="true">
+                    <input type="radio" class="payment-methods-off-input" name="payment_methods_off" id="payment_methods_off" value="${Resource.msgf('methodsoff.labels', 'mercadopago', null, paymentMethodOption['id'].toLowerCase())}"/>
+                    <img src="${paymentMethodOption['thumbnail']}" alt="alt" width="40px" />
+                    <label>${Resource.msgf('methodsoff.labels', 'mercadopago', null, paymentMethodOption['name'])}</label>
+                </li>
+            </isloop>
+            
+        </ul>
+        <isif condition="${methodsOffFieldsOptions.size() >= 6}">
+            <button type="button" class="btn methods-off-options-more col-sm-06" id="methods-off-options-more">
+                <p id="methods-off-options">${Resource.msg('methodsoff.options', 'mercadopago', null)}</p>
+                <p id="methods-off-options-hide" hidden="true">${Resource.msg('methodsoff.options.hide', 'mercadopago', null)}</p>
+            </button>
+        </isif>
+        <div class="form-group col-md-12  <isif condition=${methodsOffFields.paymentMethodsOffChecked.mandatory === true}>required</isif>
+                ${methodsOffFields.paymentMethodsOffChecked.htmlName}" id="methods-off-options-error">
+            <input class="form-control paymentMethodsOffChecked" type="hidden" name="${methodsOffFields.paymentMethodsOffChecked.htmlName}" id="paymentMethodsOffChecked" <isprint value="${methodsOffFields.paymentMethodsOffChecked.attributes}"
+                    encoding="htmlsinglequote" />
+                    required
+                    aria-describedby="paymentMethodsOffCheckedInvalidMessage"
+                    />
+            <img src="${URLUtils.staticURL('/images/icon_error.png')}" alt="this" class="invalid-feedback"/>
+            <div class="invalid-feedback" id="payment-methods-off-checked-invalid-message">
+            </div>
+        </div>
+    </div>
+</div>

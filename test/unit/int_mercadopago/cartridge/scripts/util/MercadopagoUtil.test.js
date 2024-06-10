@@ -109,3 +109,53 @@ describe("Scripts utilities MercadopagoUtil test function validateCpf", () => {
     assert.equal(result, false);
   });
 });
+
+describe("Scripts utilities MercadopagoUtil test function sortMethodsOff", () => {
+  const MercadopagoUtil = proxyquire(scriptPath, proxyquireObject);
+
+  it("should return the sorted array if all options have sort attribute", () => {
+    const methodsOff = importsUtil.MercadopagoHelpers.PAYMENT_OPTIONS_WITH_SORT;
+
+    const result = MercadopagoUtil.sortMethodsOff(methodsOff);
+
+    assert.deepEqual(result, importsUtil.MercadopagoHelpers.PAYMENT_OPTIONS_WITH_SORT_SORTED);
+  });
+
+  it("should return the sorted array with options without sort attribute at the end", () => {
+    const methodsOff = importsUtil.MercadopagoHelpers.PAYMENT_OPTIONS_SOME_WITHOUT_SORT;
+
+    const result = MercadopagoUtil.sortMethodsOff(methodsOff);
+
+    assert.deepEqual(
+      result,
+      importsUtil.MercadopagoHelpers.PAYMENT_OPTIONS_SOME_WITHOUT_SORT_SORTED
+    );
+  });
+
+  it("should return the sorted array with options with sort attribute null at the end", () => {
+    const methodsOff = importsUtil.MercadopagoHelpers.PAYMENT_OPTIONS_WITH_NULL_SORT;
+
+    const result = MercadopagoUtil.sortMethodsOff(methodsOff);
+
+    assert.deepEqual(result, importsUtil.MercadopagoHelpers.PAYMENT_OPTIONS_WITH_NULL_SORT_SORTED);
+  });
+
+  it("should return the array with same order if no option has sort attribute", () => {
+    const methodsOff = importsUtil.MercadopagoHelpers.PAYMENT_OPTIONS_ALL_WITHOUT_SORT;
+
+    const result = MercadopagoUtil.sortMethodsOff(methodsOff);
+
+    assert.deepEqual(result, importsUtil.MercadopagoHelpers.PAYMENT_OPTIONS_ALL_WITHOUT_SORT);
+  });
+
+  it("should return formated date expiration to methods off", () => {
+    let fullDate = "Sat May 18 2024 13:18:29 GMT-0000 (GMT)";
+    let formatedExpiration = "May 18, at 01:18 PM";
+    const date = new Date(fullDate);
+
+    let result = MercadopagoUtil.GetFormatedDateToExpirationField(date);
+
+    assert.deepEqual(formatedExpiration, result);
+
+  });
+});

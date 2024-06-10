@@ -1,5 +1,10 @@
 # Changelog
 
+## [24.3.0] - 2024-06-10
+
+### Added
+- Add payment with methods Off
+
 ## [24.2.1] - 2024-04-08
 
 ### Added

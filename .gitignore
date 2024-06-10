@@ -9,3 +9,4 @@ cartridges/int_mercadopago/cartridge/static/default/css/*.css
 cartridges/app_storefront_base
 cartridges/modules
 metadata.zip
+test-results/

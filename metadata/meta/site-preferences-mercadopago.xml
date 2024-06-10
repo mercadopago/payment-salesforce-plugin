@@ -68,6 +68,42 @@
                     </value-definition>
                 </value-definitions>
             </attribute-definition>
+            <attribute-definition attribute-id="mercadopagoMethodsOffExpirationTime">
+                <display-name xml:lang="x-default">Methods Off expiration time</display-name>
+                <type>enum-of-string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <value-definitions>
+                    <value-definition>
+                        <display xml:lang="x-default">24 hours</display>
+                        <value>24h</value>
+                    </value-definition>
+                    <value-definition>
+                        <display xml:lang="x-default">2 days</display>
+                        <value>2d</value>
+                    </value-definition>
+                    <value-definition>
+                        <display xml:lang="x-default">3 days</display>
+                        <value>3d</value>
+                    </value-definition>
+                    <value-definition>
+                        <display xml:lang="x-default">4 days</display>
+                        <value>4d</value>
+                    </value-definition>
+                    <value-definition>
+                        <display xml:lang="x-default">5 days</display>
+                        <value>5d</value>
+                    </value-definition>
+                    <value-definition>
+                        <display xml:lang="x-default">6 days</display>
+                        <value>6d</value>
+                    </value-definition>
+                    <value-definition>
+                        <display xml:lang="x-default">7 days</display>
+                        <value>7d</value>
+                    </value-definition>
+                </value-definitions>
+            </attribute-definition>
         </custom-attribute-definitions>
         <group-definitions>
             <attribute-group group-id="MercadopagoCredentials">
@@ -82,6 +118,7 @@
             <attribute-group group-id="MercadopagoPaymentsPreferences">
                 <display-name xml:lang="x-default">Mercado Pago Payments Preferences</display-name>
                 <attribute attribute-id="mercadopagoPixExpirationTime"/>
+                <attribute attribute-id="mercadopagoMethodsOffExpirationTime"/>
             </attribute-group>
         </group-definitions>
     </type-extension>

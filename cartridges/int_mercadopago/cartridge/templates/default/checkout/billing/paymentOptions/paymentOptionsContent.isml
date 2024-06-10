@@ -5,6 +5,9 @@
     <isif condition="${paymentOption.ID === 'PIX'}">
         <isinclude template="checkout/billing/paymentOptions/pixContent" />
     </isif>
+    <isif condition="${paymentOption.ID === 'CASH'}">
+        <isinclude template="checkout/billing/paymentOptions/methodsOffContent" />
+    </isif>
     <isif condition="${paymentOption.ID === 'CHECKOUT_PRO'}">
         <isinclude template="checkout/billing/paymentOptions/checkoutProContent" />
     </isif>
