@@ -10,5 +10,3 @@ cartridges/app_storefront_base
 cartridges/modules
 metadata.zip
 test-results/
-.DS_Store
-**/.DS_Store
