@@ -8,7 +8,8 @@ const hookPath =
 
 const proxyquireObject = {
   "dw/web/Resource": importsUtil.Resource,
-  "*/cartridge/scripts/util/MercadopagoUtil": importsUtil.MercadopagoUtil
+  "*/cartridge/scripts/util/MercadopagoUtil": importsUtil.MercadopagoUtil,
+  "*/cartridge/scripts/formErrors": importsUtil.FormErrors
 };
 
 const PAYMENT_METHOD = "PIX";

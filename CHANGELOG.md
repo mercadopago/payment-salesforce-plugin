@@ -1,5 +1,9 @@
 # Changelog
 
+## [24.3.1] - 2024-07-04
+- Correction in the rendering of checkout pro content by country
+- Lint corrections and removal of unused code/files
+
 ## [24.3.0] - 2024-06-10
 
 ### Added

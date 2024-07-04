@@ -10,7 +10,10 @@ const hookPath =
 const proxyquireObject = {
   "*/cartridge/scripts/util/collections": importsUtil.collections,
   "*/cartridge/scripts/util/MercadopagoUtil": importsUtil.MercadopagoUtil,
-  "dw/system/Transaction": importsUtil.Transaction
+  "dw/system/Transaction": importsUtil.Transaction,
+  "dw/system/Site": importsUtil.Site,
+  "dw/web/Resource": importsUtil.Resource,
+  "*/cartridge/scripts/util/MercadopagoHelpers": importsUtil.MercadopagoHelpers,
 };
 
 describe("Hook MERCADOPAGO_PAYMENTS middleware handleMethodsOff test", () => {

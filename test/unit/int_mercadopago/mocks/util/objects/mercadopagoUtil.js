@@ -1,4 +1,5 @@
 const mercadopagoHelpers = require("./mercadopagoHelpers");
+const Resource = require("./resource");
 
 module.exports = {
   validateDocument: (value) => (value === "12345678909" ? value : false),
@@ -25,5 +26,9 @@ module.exports = {
       default:
         return null;
     }
+  },
+  validateAndReturnAttribute: (value) => (true),
+  GetFormatedDateToExpirationField: (value) => {
+    return Resource.msgf("methodsoff.invoice.msg", "mercadopago", null, "May", "12", "11 pm");
   }
 };

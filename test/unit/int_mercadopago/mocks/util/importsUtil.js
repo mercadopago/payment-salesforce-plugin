@@ -10,6 +10,7 @@ const resource = require("./objects/resource");
 const site = require("./objects/site");
 const transaction = require("./objects/transaction");
 const urlUtils = require("./objects/urlUtils");
+const formErrors = require("./objects/formErrors");
 
 const array =
   "../../../../../cartridges/app_storefront_base/cartridge/scripts/util/array.js";
@@ -27,5 +28,6 @@ module.exports = {
   Logger: logger,
   MercadopagoHelpers: mercadopagoHelpers,
   Site: site,
-  URLUtils: urlUtils
+  URLUtils: urlUtils,
+  FormErrors: formErrors
 };

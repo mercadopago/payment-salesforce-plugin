@@ -1,9 +1,5 @@
-module.exports = function Site(customPreferences) {
-  const prefs = customPreferences || {};
-
-  return {
+module.exports = {
     getCurrent: () => ({
-      getCustomPreferenceValue: (key) => prefs[key]
+      defaultLocale: "en_US"
     })
-  };
-};
+}

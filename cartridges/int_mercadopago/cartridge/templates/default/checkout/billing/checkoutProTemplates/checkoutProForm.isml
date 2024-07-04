@@ -1,0 +1,36 @@
+<isscript>
+  let assets = require('*/cartridge/scripts/assets.js');
+  assets.addCss('css/mercadopago.css');
+</isscript>
+
+<div class="box">
+    <div class="row-title">
+        <p class="span15">
+            ${Resource.msg('mercadopago.chopro.title', 'mercadopago', null)}
+        </p>
+    </div>
+    <isif condition="${pdict.mercadopago.siteId === 'MCO'}">
+        <isinclude template="checkout/billing/checkoutProTemplates/checkoutProMCOForm" />
+    </isif>
+    <isif condition="${pdict.mercadopago.siteId === 'MLA'}">
+        <isinclude template="checkout/billing/checkoutProTemplates/checkoutProMLAForm" />
+    </isif>
+    <isif condition="${pdict.mercadopago.siteId === 'MLB'}">
+        <isinclude template="checkout/billing/checkoutProTemplates/checkoutProMLBForm" />
+    </isif>
+    <isif condition="${pdict.mercadopago.siteId === 'MLC'}">
+        <isinclude template="checkout/billing/checkoutProTemplates/checkoutProMLCForm" />
+    </isif>
+    <isif condition="${pdict.mercadopago.siteId === 'MLU'}">
+        <isinclude template="checkout/billing/checkoutProTemplates/checkoutProMLUForm" />
+    </isif>
+    <isif condition="${pdict.mercadopago.siteId === 'MLM'}">
+        <isinclude template="checkout/billing/checkoutProTemplates/checkoutProMLXForm" />
+    </isif>
+    <isif condition="${pdict.mercadopago.siteId === 'MPE'}">
+        <isinclude template="checkout/billing/checkoutProTemplates/checkoutProMPEForm" />
+    </isif>
+    <isif condition="${pdict.mercadopago.siteId === null}">
+        <isinclude template="checkout/billing/checkoutProTemplates/checkoutProMLBForm" />
+    </isif>
+</div>
