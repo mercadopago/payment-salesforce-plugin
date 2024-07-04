@@ -344,6 +344,12 @@ function getUserMPData() {
   }
 }
 
+MercadopagoHelpers.prototype.getSiteId = () => {
+  const userData = getUserMPData();
+
+  return userData.site_id;
+};
+
 /**
  * Retrieves seller information
  * @returns {Object} seller

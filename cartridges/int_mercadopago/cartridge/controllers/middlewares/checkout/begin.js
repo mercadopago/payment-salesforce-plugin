@@ -9,6 +9,7 @@ function begin(req, res, next) {
     paymentMethods,
     methodsOffEnabled
   );
+  const siteId = MercadopagoHelpers.getSiteId();
   viewData.mercadopago = {
     errorMessages: MercadopagoUtil.getErrorMessages(),
     textMessages: MercadopagoUtil.getTextMessages(),
@@ -20,7 +21,8 @@ function begin(req, res, next) {
       isMethodsOffEnabled,
       paymentMethods,
       methodsOffEnabled
-    )
+    ),
+    siteId: siteId
   };
 
   res.setViewData(viewData);

@@ -13,7 +13,8 @@ const proxyquireObject = {
   "dw/web/Resource": importsUtil.Resource,
   "dw/order/Order": importsUtil.Order,
   "dw/order/OrderMgr": importsUtil.OrderMgr,
-  "dw/system/Logger": importsUtil.Logger
+  "dw/system/Logger": importsUtil.Logger,
+  "*/cartridge/scripts/formErrors": importsUtil.FormErrors
 };
 
 describe("Hook MERCADOPAGO_PAYMENTS middleware authorizeCheckoutPro test", () => {

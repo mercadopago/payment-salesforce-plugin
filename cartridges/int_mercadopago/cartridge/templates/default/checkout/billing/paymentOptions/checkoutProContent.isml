@@ -4,8 +4,6 @@
         <iscomment> payment method is CHECKOUT_PRO </iscomment>
         <input type="hidden" class="form-control" name="${pdict.forms.billingForm.paymentMethod.htmlName}"
             value="CHECKOUT_PRO" />
-
-        <isinclude template="checkout/billing/checkoutProForm" />
-
+        <isinclude template="checkout/billing/checkoutProTemplates/checkoutProForm" />
     </fieldset>
 </div>

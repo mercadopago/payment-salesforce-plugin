@@ -2,17 +2,18 @@ const assert = require("assert");
 const proxyquire = require("proxyquire").noCallThru().noPreserveCache();
 const importsUtil = require("../../../mocks/util/importsUtil");
 
-const scriptPath = "*/../../cartridges/int_mercadopago/cartridge/scripts/util/MercadopagoHelpers.js";
+const scriptPath = "../../../../../../cartridges/int_mercadopago/cartridge/scripts/util/MercadopagoHelpers.js";
 
 const proxyquireObject = {
   "dw/web/Resource": importsUtil.Resource,
   "dw/order/PaymentInstrument": importsUtil.PaymentInstrument,
-  "dw/system/Site": importsUtil.Site(),
+  "dw/system/Site": importsUtil.Site,
   "dw/system/Logger": importsUtil.Logger,
   "dw/web/URLUtils": importsUtil.URLUtils,
   "dw/svc/LocalServiceRegistry": {},
   "*/cartridge/scripts/util/MercadopagoUtil": importsUtil.MercadopagoUtil,
-  "*/cartridge/scripts/util/collections": importsUtil.collections
+  "*/cartridge/scripts/util/collections": importsUtil.collections,
+  "*/cartridge/scripts/util/MercadopagoHelpers": importsUtil.MercadopagoHelpers
 };
 
 describe("Scripts utilities MercadopagoHelpers creating payment payload", () => {
@@ -201,5 +202,13 @@ describe("Sript utilities MercadopagoHelpers test function getMethodsOffOptions"
     );
 
     assert.deepEqual(methodsOffOptions, importsUtil.MercadopagoHelpers.PAYMENT_METHODS_WITHOUT_PIX);
+  });
+});
+
+describe("Script test method to returns Seller MP data", () => {
+  it("Should returns data with success", () => {
+    const MercadopagoHelpers = proxyquire(scriptPath, proxyquireObject);
+    const siteId = "MLC";
+    assert.strictEqual(siteId, MercadopagoHelpers.getSiteId());
   });
 });

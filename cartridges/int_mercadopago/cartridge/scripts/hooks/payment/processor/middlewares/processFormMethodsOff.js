@@ -10,7 +10,7 @@ function getViewData(paymentForm, viewFormData) {
   };
   viewData.paymentInformation = {
     docType: {
-      value: paymentForm.methodsOffFields.docTypeMethodsOff.value,
+      value: paymentForm.methodsOffFields.docTypeMethodsOff.selectedOption,
       htmlName: paymentForm.methodsOffFields.docTypeMethodsOff.htmlName
     },
     docNumber: {
@@ -45,7 +45,7 @@ function getMethodsOffErrors(paymentForm) {
 function processFormMethodsOff(req, paymentForm, viewFormData) {
   const methodsOffErrors = getMethodsOffErrors(paymentForm);
 
-  if (Object.keys(methodsOffErrors).length) {
+  if (methodsOffErrors.result != null && Object.keys(methodsOffErrors).length) {
     return {
       fieldErrors: methodsOffErrors,
       error: true

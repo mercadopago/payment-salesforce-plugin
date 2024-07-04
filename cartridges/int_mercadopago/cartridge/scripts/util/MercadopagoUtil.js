@@ -302,6 +302,7 @@ MercadopagoUtil.prototype.sortMethodsOff = (methodsOff) => {
   const toSort = [];
   const endSort = [];
   const nullSort = [];
+  let result = [];
 
   Object.keys(methodsOff).forEach((key) => {
     const method = methodsOff[key];
@@ -317,11 +318,17 @@ MercadopagoUtil.prototype.sortMethodsOff = (methodsOff) => {
 
   toSort.sort((a, b) => parseFloat(a.sort) - parseFloat(b.sort));
 
-  endSort.sort((a, b) => a.id.localeCompare(b.id));
+  if (endSort.length > 0) {
+    endSort.sort((a, b) => a.id.localeCompare(b.id));
+    result = toSort.concat(endSort);
+  }
 
-  nullSort.sort((a, b) => a.id.localeCompare(b.id));
+  if (nullSort.length > 0) {
+    nullSort.sort((a, b) => a.id.localeCompare(b.id));
+    result = toSort.concat(nullSort);
+  }
 
-  return toSort.concat(endSort, nullSort);
+  return result.length > 0 ? result : toSort;
 };
 
 /**
@@ -336,8 +343,6 @@ MercadopagoUtil.prototype.GetFormatedDateToExpirationField = (fullDate) => {
   const month = months[newDate.getMonth()];
   const day = newDate.getDate();
   const hour = locale.includes("en") ? getFormatedHour(newDate) : newDate.getHours();
-
-  const formatedDate = `${month} ${day}, at ${hour}`;
 
   return Resource.msgf("methodsoff.invoice.msg", "mercadopago", null, month, day, hour);
 };

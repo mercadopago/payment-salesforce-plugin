@@ -1,3 +1,5 @@
+const { https } = require("./objects/urlUtils");
+
 function getFormCreditCard() {
   return {
     cardType: {
@@ -87,6 +89,14 @@ function getFormMethodsOff() {
     docNumberMethodsOff: {
       value: "12345678909",
       htmlName: "dwfrm_billing_methodsOffFields_docNumberMethodsOff"
+    },
+    paymentMethodId: {
+      value: "oxxo",
+      htmlName: "dwfrm_billing_methodsFields_paymentMethodId"
+    },
+    paymentMethodsOffChecked: {
+      value: "oxxo",
+      htmlName: "dwfrm_billing_methodsFields_paymentMethodsOffChecked"
     }
   };
 }
@@ -125,6 +135,10 @@ function getPaymentInfoMethodsOff() {
     docNumber: {
       value: "12345678909",
       htmlName: "dwfrm_billing_methodsFields_docNumberMethodsOff"
+    },
+    paymentMethodId : {
+      value: "oxxo",
+      htmlName: "dwfrm_billing_methodsFields_paymentMethodId"
     }
   };
 }

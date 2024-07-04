@@ -10,6 +10,9 @@ module.exports = {
           qr_code: "qr_code",
           qr_code_base64: "qr_code_base64"
         }
+      },
+      transaction_details: {
+        external_resource_url: "teste"
       }
     })
   },
@@ -55,6 +58,7 @@ module.exports = {
       payment_type_id: "ticket",
       payment_places: [
         {
+          id: "7eleven",
           name: "7  Eleven",
           payment_option_id: "7eleven",
           status: "active"
@@ -102,6 +106,7 @@ module.exports = {
       status: "active"
     },
     {
+      id: "7eleven",
       name: "7  Eleven",
       payment_option_id: "7eleven",
       status: "active"
@@ -214,12 +219,14 @@ module.exports = {
   ],
   PAYMENT_OPTIONS_WITH_SORT: [
     {
+      id: "7eleven",
       name: "7  Eleven",
       payment_option_id: "7eleven",
       status: "active",
       sort: 2
     },
     {
+      id: "sorjana",
       name: "Sorjana",
       payment_option_id: "sorjana",
       status: "active",
@@ -249,6 +256,7 @@ module.exports = {
       sort: 1
     },
     {
+      id: "7eleven",
       name: "7  Eleven",
       payment_option_id: "7eleven",
       status: "active",
@@ -262,6 +270,7 @@ module.exports = {
       sort: 4
     },
     {
+      id: "sorjana",
       name: "Sorjana",
       payment_option_id: "sorjana",
       status: "active",
@@ -277,12 +286,14 @@ module.exports = {
       sort: 4
     },
     {
+      id: "7eleven",
       name: "7  Eleven",
       payment_option_id: "7eleven",
       status: "active",
       sort: null
     },
     {
+      id: "sorjana",
       name: "Sorjana",
       payment_option_id: "sorjana",
       status: "active",
@@ -312,12 +323,14 @@ module.exports = {
       sort: 4
     },
     {
+      id: "sorjana",
       name: "Sorjana",
       payment_option_id: "sorjana",
       status: "active",
       sort: 14
     },
     {
+      id: "7eleven",
       name: "7  Eleven",
       payment_option_id: "7eleven",
       status: "active",
@@ -339,12 +352,14 @@ module.exports = {
       status: "active"
     },
     {
+      id: "7eleven",
       name: "7  Eleven",
       payment_option_id: "7eleven",
       status: "active",
       sort: null
     },
     {
+      id: "sorjana",
       name: "Sorjana",
       payment_option_id: "sorjana",
       status: "active",
@@ -360,39 +375,31 @@ module.exports = {
       sort: 4
     },
     {
+      id: "sorjana",
       name: "Sorjana",
       payment_option_id: "sorjana",
       status: "active",
       sort: 14
     },
     {
-      id: "oxxo",
-      name: "OXXO",
-      payment_type_id: "ticket",
-      status: "active"
-    },
-    {
+      id: "7eleven",
       name: "7  Eleven",
       payment_option_id: "7eleven",
       status: "active",
       sort: null
-    }
-  ],
-  PAYMENT_OPTIONS_ALL_WITHOUT_SORT: [
-    {
-      name: "7  Eleven",
-      payment_option_id: "7eleven",
-      status: "active"
-    },
-    {
-      name: "Sorjana",
-      payment_option_id: "sorjana",
-      status: "active"
-    },
+    },    
     {
       id: "oxxo",
       name: "OXXO",
       payment_type_id: "ticket",
+      status: "active"
+    },
+  ],
+  PAYMENT_OPTIONS_ALL_WITHOUT_SORT: [
+    {
+      id: "7eleven",
+      name: "7  Eleven",
+      payment_option_id: "7eleven",
       status: "active"
     },
     {
@@ -400,7 +407,27 @@ module.exports = {
       name: "BBVA Bancomer",
       payment_type_id: "atm",
       status: "active"
+    },
+    {
+      id: "oxxo",
+      name: "OXXO",
+      payment_type_id: "ticket",
+      status: "active"
+    },
+    {
+      id: "sorjana",
+      name: "Sorjana",
+      payment_option_id: "sorjana",
+      status: "active"
     }
   ],
-  ENABLED_METHODS_OFF: ["ticket", "atm", "bank_transfer"]
+  ENABLED_METHODS_OFF: ["ticket", "atm", "bank_transfer"],
+  getExpirationMethodsOff: () => "24 h",
+  getPaymentMethodFromPlace: () => ({
+    id: "oxxo",
+    place: "OXXO"
+  }),
+  getUserMPData: () => ({
+    site_id: "MLC"
+  })
 };

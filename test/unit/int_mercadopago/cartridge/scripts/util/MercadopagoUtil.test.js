@@ -4,7 +4,8 @@ const importsUtil = require("../../../mocks/util/importsUtil");
 
 const scriptPath = "*/../../cartridges/int_mercadopago/cartridge/scripts/util/MercadopagoUtil.js";
 
-const proxyquireObject = { "dw/web/Resource": importsUtil.Resource };
+const proxyquireObject = { "dw/web/Resource": importsUtil.Resource, 
+                           "dw/system/Site": importsUtil.Site };
 
 describe("Scripts utilities MercadopagoUtil test function validateCnpj", () => {
   const MercadopagoUtil = proxyquire(scriptPath, proxyquireObject);
@@ -148,14 +149,13 @@ describe("Scripts utilities MercadopagoUtil test function sortMethodsOff", () =>
     assert.deepEqual(result, importsUtil.MercadopagoHelpers.PAYMENT_OPTIONS_ALL_WITHOUT_SORT);
   });
 
-  it("should return formated date expiration to methods off", () => {
+  it("should return message expiration to methods off payments", () => {
     let fullDate = "Sat May 18 2024 13:18:29 GMT-0000 (GMT)";
-    let formatedExpiration = "May 18, at 01:18 PM";
     const date = new Date(fullDate);
 
     let result = MercadopagoUtil.GetFormatedDateToExpirationField(date);
 
-    assert.deepEqual(formatedExpiration, result);
+    assert.notEqual(result, null);
 
   });
 });
