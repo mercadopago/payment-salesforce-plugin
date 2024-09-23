@@ -1,6 +1,12 @@
 # Changelog
 
+## [24.3.2] - 2024-09-23
+
+- Rebranding of Mercado Credits
+- Adjustment of Checkout Pro's layout 
+
 ## [24.3.1] - 2024-07-04
+
 - Correction in the rendering of checkout pro content by country
 - Lint corrections and removal of unused code/files
 

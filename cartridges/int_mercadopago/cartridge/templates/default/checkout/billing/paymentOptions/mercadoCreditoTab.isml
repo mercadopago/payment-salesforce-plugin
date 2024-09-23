@@ -1,6 +1,6 @@
 <li class="nav-item" data-method-id="${paymentOption.ID}">
     <a class="nav-link checkout-credits-tab" data-toggle="tab" href="#checkout-credits-content" role="tab">
-        <img class="checkout-credits-option" src="${URLUtils.staticURL('/images/payment-mercado-credito.png')}" height="32"
+        <img class="checkout-credits-option" src="${URLUtils.staticURL(Resource.msg('mercadocredito.mercadocredito.img', 'mercadopago', null))}" height="28"
             alt="${Resource.msg('mercadocredito.mercadocredito', 'mercadopago', null)}" title="${paymentOption.name}" />
     </a>
 </li>

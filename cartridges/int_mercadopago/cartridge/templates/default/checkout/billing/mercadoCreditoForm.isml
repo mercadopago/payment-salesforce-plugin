@@ -5,57 +5,63 @@
 
 <div class="box">
   <div class="row-title-2">
-    <p class="span24">${Resource.msg('mercadocredito.title', 'mercadopago', null)}</p>
-  </div>
-  <div class="row-subtitle">
-    <p class="span18">
-      ${Resource.msg('mercadocredito.subtitle', 'mercadopago', null)}
-    </p>
+    <h3 tabindex="0" class="span18-semi-bold">${Resource.msg('mercadocredito.title', 'mercadopago', null)}</h3>
   </div>
   <div class="row-steps">
-    <div class="steps">
-      <div class="step-number">
-        <img src="${URLUtils.staticURL('/images/step_one.png')}" alt="" width="32"/>
-      </div>
-      <div class="step-text">
-        <p class="span14">
-          <b>${Resource.msg('mercadocredito.firststep.partone', 'mercadopago', null)}</b>
-          ${Resource.msg('mercadocredito.firststep.parttwo', 'mercadopago', null)}
-        </p>
-      </div>
-    </div>
-    <div class="steps">
-      <div class="step-number">
-        <img src="${URLUtils.staticURL('/images/step_two.png')}" alt="" width="32"/>
-      </div>
-      <div class="step-text">
-        <p class="span14">
-          ${Resource.msg('mercadocredito.secondstep.partone', 'mercadopago', null)}
-          <b>${Resource.msg('mercadocredito.secondstep.parttwo', 'mercadopago', null)}</b>
-          ${Resource.msg('mercadocredito.secondstep.partthree', 'mercadopago', null)}
-        </p>
-      </div>
-    </div>
-    <div class="steps">
-      <div class="step-number">
-        <img src="${URLUtils.staticURL('/images/step_three.png')}" alt="" width="32"/>
-      </div>
-      <div class="step-text">
-        <p class="span14">
-          <b>${Resource.msg('mercadocredito.thirdstep.partone', 'mercadopago', null)}</b>
-          ${Resource.msg('mercadocredito.thirdstep.parttwo', 'mercadopago', null)}
-        </p>
-      </div>
-    </div>
+    <ul tabindex="0" class="custom-list">
+      <li>
+        <div class="steps">
+          <div class="step-number">
+            <span>1.</span>
+          </div>
+          <div class="step-text">
+            <p class="span14">
+              <b class="semi-bold">${Resource.msg('mercadocredito.firststep.partone', 'mercadopago', null)}</b>
+              ${Resource.msg('mercadocredito.firststep.parttwo', 'mercadopago', null)}
+              <b class="semi-bold">${Resource.msg('mercadocredito.firststep.partthree', 'mercadopago', null)}</b>
+            </p>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div class="steps">
+          <div class="step-number">
+            <span>2.</span>
+          </div>
+          <div class="step-text">
+            <p class="span14">
+              <b class="semi-bold">${Resource.msg('mercadocredito.secondstep.partone', 'mercadopago', null)}</b>
+              ${Resource.msg('mercadocredito.secondstep.parttwo', 'mercadopago', null)}
+            </p>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div class="steps">
+          <div class="step-number">
+            <span>3.</span>
+          </div>
+          <div class="step-text">
+            <p class="span14">
+              <b class="semi-bold">${Resource.msg('mercadocredito.thirdstep.partone', 'mercadopago', null)}</b>
+              ${Resource.msg('mercadocredito.thirdstep.parttwo', 'mercadopago', null)}
+            </p>
+          </div>
+        </div>
+      </li>
+    </ul>
   </div>
-  <div class="box-info row-steps">
+  <div class="box-info">
     <div class="row-info">
       <div class="info-lock-icon">
-        <img src="${URLUtils.staticURL('/images/lock_icon.png')}" alt="" width="10.4"/>
+        <img src="${URLUtils.staticURL('/images/credits_footer.png')}" alt="" width="10.4"/>
       </div>
-      <div class="info-text">
-        <p class="span12-info">${Resource.msg('mercadocredito.info', 'mercadopago', null)}</p>
+      <div>
+        <p tabindex="0" class="span12-info">${Resource.msg('mercadocredito.info', 'mercadopago', null)}</p>
       </div>
+    </div>
+    <div class="info-text">
+      <p tabindex="0">${Resource.msg('mercadocredito.footerinfo', 'mercadopago', null)}</p>
     </div>
   </div>
 </div>

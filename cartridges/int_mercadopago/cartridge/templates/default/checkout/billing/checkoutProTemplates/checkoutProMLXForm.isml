@@ -19,7 +19,7 @@
       <p>${Resource.msg('mercadopago.chopro.cajerpautomatico', 'mercadopago', null)}</p>
     </li>
     <li class="span11 mini-box-2 margin-l">
-      <img src="${URLUtils.staticURL('/images/mercado_credito.png')}" alt="" width="31" height="25" />
+      <img src="${URLUtils.staticURL('/images/mercado_credito.png')}" alt="" width="35" height="25" />
       <p>${Resource.msg('mercadopago.chopro.mercadocredito', 'mercadopago', null)}</p>
     </li>
   </ul>
