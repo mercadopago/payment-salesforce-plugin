@@ -12,6 +12,7 @@ var pixFormHelper = require('./mercadopagoPixForm');
 var cardFormHelper = require('./mercadopagoCardForm');
 var cardFormFields = require('./mercadopagoCardFormFields');
 var methodsOffHelper = require('./mercadopagoMethodsOffForm');
+var savedCardFormHelper = require('./mercadopagoSavedCardForm');
 
 const publicKey = $(".js-mp-form").data("mpPreferences").mercadopagoPublicKey;
 const mp = new MercadoPago(publicKey);
@@ -78,14 +79,27 @@ function submitPayment(paymentMethodId, mpToken, defer) {
                     return defer;
                 }
 
+                var installments = $('.saved-payment-installments').val();
+
+                if(installments === '') {
+                    var installmentsElement = $('.saved-payment-instrument.' +
+                        'saved-payment-installments');
+                    installmentsElement.addClass('is-invalid');
+
+                    defer.reject();
+                    return defer;
+                }
+
                 var $savedPaymentInstrument = $('.saved-payment-instrument' +
                     '.selected-payment'
                 );
 
                 paymentForm += '&storedPaymentUUID=' +
                     $savedPaymentInstrument.data('uuid');
-
-                paymentForm += '&securityCode=' + cvvCode;
+                                       
+                paymentForm += '&dwfrm_billing_savedCreditFields_savedSecurityCode=' + cvvCode;
+                                 
+                paymentForm += '&dwfrm_billing_savedCreditFields_savedInstallments=' + installments;
             }
         }
     }
@@ -231,6 +245,9 @@ function submitPayment(paymentMethodId, mpToken, defer) {
             }
         }
 
+        var amount = "";
+        var savedMethods;
+        var savedCardsInstallments;
         //
         // Local member methods of the Checkout plugin
         //
@@ -279,6 +296,7 @@ function submitPayment(paymentMethodId, mpToken, defer) {
                     return defer;
                 } else if (stage === 'shipping') {
                     cardFormHelper.unmountedCardForm();
+                    savedCardFormHelper.unmountedCardForm();
                     //
                     // Clear Previous Errors
                     //
@@ -349,8 +367,15 @@ function submitPayment(paymentMethodId, mpToken, defer) {
                                 $('body').trigger('checkout:enableButton', '.next-step-button button');
                                 shippingHelpers.methods.shippingFormResponse(defer, data);
 
-                                let amount = "" + data.paymentAmount;
-                                cardFormHelper.createCardForm(amount).mount();
+                                amount = "" + data.paymentAmount;
+                                savedMethods = data.customer.customerPaymentInstruments;
+                                // validate if there is a valid saved card
+                                if (savedMethods != null && savedMethods.some((method) => method.custom.customerIdMercadoPago !== '')) {
+                                    savedCardFormHelper.createCardForm(amount).mount();
+                                    $('body').trigger('checkout:updateSavedCardInstallments');
+                                } else {
+                                    cardFormHelper.createCardForm(amount).mount();
+                                }
                                 pixFormHelper.prepareForm();
                                 methodsOffHelper.prepareMethodsOffForm();
                             },
@@ -376,35 +401,44 @@ function submitPayment(paymentMethodId, mpToken, defer) {
                     let paymentMethodId = $('.payment-information').data('payment-method-id');
 
                     if (paymentMethodId === 'CREDIT_CARD') {
-                        cardFormHelper.getCardForm().createCardToken().then(mpToken => {
-                            defer = submitPayment(paymentMethodId, mpToken, defer);
-                        }).catch(error => {
+                        var $savedPaymentInstrument = $('.saved-payment-instrument' +
+                            '.selected-payment'
+                        );
 
-                            var errors = {};
-                            var codes = [];
+                        const usingSavedPayment =  $savedPaymentInstrument && $savedPaymentInstrument.length > 0 && $savedPaymentInstrument.is(':visible');
+                        if(usingSavedPayment){
+                            defer = submitPayment(paymentMethodId, "", defer);
+                        } else {
+                            cardFormHelper.getCardForm().createCardToken().then(mpToken => {
+                                defer = submitPayment(paymentMethodId, mpToken, defer);
+                            }).catch(error => {
 
-                            if (Array.isArray(error)) {
-                                error.forEach(item => {
-                                    codes.push(item.code);
+                                var errors = {};
+                                var codes = [];
+
+                                if (Array.isArray(error)) {
+                                    error.forEach(item => {
+                                        codes.push(item.code);
+                                    })
+                                } else if (error.cause && Array.isArray(error.cause)) {
+                                    error.cause.forEach(item => {
+                                        codes.push(item.code);
+                                    })
+                                }
+
+                                codes.forEach(code => {
+                                    var fields = cardFormFields.getFieldByFieldCode(code);
+                                    fields.forEach(field => {
+                                        var key = $('#' + field.fieldId).prop('name');
+                                        var value = $(".mp-error-messages").data("mpErrorMessages")[code];
+                                        errors[key] = value;
+                                    });
                                 })
-                            } else if (error.cause && Array.isArray(error.cause)) {
-                                error.cause.forEach(item => {
-                                    codes.push(item.code);
-                                })
-                            }
 
-                            codes.forEach(code => {
-                                var fields = cardFormFields.getFieldByFieldCode(code);
-                                fields.forEach(field => {
-                                    var key = $('#' + field.fieldId).prop('name');
-                                    var value = $(".mp-error-messages").data("mpErrorMessages")[code];
-                                    errors[key] = value;
-                                });
-                            })
-
-                            formHelpers.loadFormErrors('.payment-form', errors);
-                            defer.reject();
-                        });
+                                formHelpers.loadFormErrors('.payment-form', errors);
+                                defer.reject();
+                            });
+                        }
                     } else if (paymentMethodId === 'PIX') {
                         defer = submitPayment(paymentMethodId, "", defer);
                     } else if (paymentMethodId === 'CASH') {
@@ -778,11 +812,35 @@ function submitPayment(paymentMethodId, mpToken, defer) {
                 });
 
                 $('.payment-summary .edit-button', plugin).on('click', function () {
+                    $('body').trigger('checkout:updateSavedCardInstallments');
                     members.gotoStage('payment');
                 });
 
                 $('body').on('click', '.three-ds-modal-box .modal-button-close', function () {
                     $('body').trigger('checkout:close3dsModal', $('.three-ds-modal-box'));
+                });
+
+                // 
+                // Handle saved and new card forms
+                // 
+                $('body').on('click', '.add-payment', function () {
+                    $('.saved-payment-instrument').removeClass('selected-payment');
+                    $('body').trigger('checkout:addPaymentMethod', amount);
+                    $('body').trigger('checkout:updateSavedCardInstallments');
+                });
+                
+                $('body').on('click', '.cancel-new-payment', function () {
+                    $('body').trigger('checkout:cancelAddPaymentMethod', amount);
+                    $('body').trigger('checkout:updateSavedCardInstallments');
+                });
+
+                $('body').on("click", ".saved-payment-instrument", function () {
+                    if (!$(this).hasClass("selected-payment")) {
+                        $('.saved-payment-instrument').removeClass('selected-payment');
+                        $(this).addClass("selected-payment");
+                        $('body').trigger('checkout:savedCardFormRemount', amount);
+                        $('body').trigger('checkout:updateSavedCardInstallments');
+                    }
                 });
 
                 //
@@ -969,6 +1027,54 @@ var exports = {
             $("#methods-off-options").prop('hidden', !$("#methods-off-options").prop('hidden'));
             $("#methods-off-options-hide").prop('hidden', !$("#methods-off-options-hide").prop('hidden'));
         });
+    },
+
+    addPaymentMethod: function () {
+        $('body').on('checkout:addPaymentMethod', function (e, amount) {
+            savedCardFormHelper.unmountedCardForm();
+            cardFormHelper.createCardForm(amount).mount();
+        });
+    },
+    
+    cancelAddPaymentMethod: function () {
+        $('body').on('checkout:cancelAddPaymentMethod', function (e, amount) {
+            cardFormHelper.unmountedCardForm();
+            savedCardFormHelper.createCardForm(amount).mount();
+        });
+    },
+
+    savedCardFormRemount: function () {
+        $('body').on('checkout:savedCardFormRemount', function (e, amount) {
+            savedCardFormHelper.unmountedCardForm();
+            savedCardFormHelper.createCardForm(amount).mount();
+        });
+    },
+
+    updateSavedCardInstallments: function () {
+        $('body').on('checkout:updateSavedCardInstallments', function (e) {
+            const installmentsSelect = document.getElementById("savedInstallments");
+            if (!installmentsSelect) {
+                return;
+            }
+            installmentsSelect.innerHTML = "";
+            const selectedCard = document.querySelector(".row.saved-payment-instrument.selected-payment")
+            if (!selectedCard) {
+                const op = document.createElement("option");
+                op.text = $(".mp-text-messages").data("mpTextMessages")["field.installments"];
+                installmentsSelect.appendChild(op);
+                return;
+            }
+            document.querySelector(".selected-payment #savedSecurityCode").value = "";
+            const cardId = selectedCard.getAttribute("data-uuid");
+            const selectedCardInstallments = savedCardsInstallments.find((item) => item.id === cardId).installments;
+            for (let i = 0; i < selectedCardInstallments.length; i++) {
+                const element = selectedCardInstallments[i];
+                const op = document.createElement("option");
+                op.text = savedCardFormHelper.formatInstallmentsMessage(element);
+                op.value = element.installments;
+                installmentsSelect.appendChild(op);
+            }
+        });;
     }
 };
 

@@ -1,0 +1,14 @@
+<div class="card">
+    <div class="card-header clearfix">
+        <h2 class="pull-left">${Resource.msg('label.payment','account',null)}</h2>
+        <isif condition="${pdict.payment}">
+            <a href="${pdict.viewSavedPaymentsUrl}" class="pull-right" aria-label="${Resource.msg('label.payment.viewsavedpaymentmethods','account',null)}">${Resource.msg('link.view','account',null)}</a>
+        </isif>
+    </div>
+    <isif condition="${pdict.payment}">
+        <div class="card-body card-info-group">
+            <isset name="payment" value="${pdict.payment}" scope="page" />
+            <isinclude template="account/payment/savedPayment"/>
+        </div>
+    </isif>
+</div>

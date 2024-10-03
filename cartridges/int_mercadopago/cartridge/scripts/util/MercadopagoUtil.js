@@ -382,4 +382,31 @@ function getMonths() {
   };
 }
 
+/**
+ * Extracts the installments from the response payerCosts
+ */
+MercadopagoUtil.prototype.extractInstallments = (response) => {
+  const installments = [];
+  if (!response[0] || !response[0].payer_costs) {
+    return installments;
+  }
+  const payerCosts = response[0].payer_costs;
+  for (let index = 0; index < payerCosts.length; index++) {
+    installments.push(payerCosts[index]);
+  }
+
+  return installments;
+};
+
+/**
+ * Capitalizes the first letter of each word in a string
+ */
+MercadopagoUtil.prototype.ucfirstMP = (str) => {
+  if (!str) return ''; 
+  return str
+      .split(' ')               
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1)) 
+      .join(' ');               
+}
+
 module.exports = new MercadopagoUtil();

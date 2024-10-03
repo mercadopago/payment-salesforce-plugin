@@ -1,6 +1,6 @@
 {
   "name": "int_mercadopago",
-  "version": "24.3.2",
+  "version": "24.4.0",
   "description": "Payment Integration cartridge for Mercadopago",
   "main": "index.js",
   "scripts": {
@@ -36,6 +36,7 @@
     "BaseCartridge": "./cartridges/app_storefront_base/"
   },
   "dependencies": {
-    "sass": "^1.54.5"
+    "sass": "^1.54.5",
+    "sinon": "^18.0.1"
   }
 }

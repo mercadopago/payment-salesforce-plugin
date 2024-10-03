@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata xmlns="http://www.demandware.com/xml/impex/metadata/2006-10-31">
+    <type-extension type-id="CustomerPaymentInstrument">
+        <custom-attribute-definitions>
+            <attribute-definition attribute-id="customerIdMercadoPago">
+                <display-name xml:lang="x-default">Customer ID Mercado Pago</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="cardBin">
+                <display-name xml:lang="x-default">Bin of credit card</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="creditCardName">
+                <display-name xml:lang="x-default">Name of credit Card</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+        </custom-attribute-definitions>
+        <group-definitions>
+            <attribute-group group-id="MercadopagoCustomerInfo">
+                <display-name xml:lang="x-default">Mercado Pago Customer Info</display-name>
+                <attribute attribute-id="customerIdMercadoPago"/>
+                <attribute attribute-id="cardBin"/>
+                <attribute attribute-id="creditCardName"/>
+            </attribute-group>
+        </group-definitions>
+    </type-extension>
+</metadata>

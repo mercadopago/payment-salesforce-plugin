@@ -7,6 +7,10 @@ const Status = require("dw/system/Status");
 const PaymentMgr = require("dw/order/PaymentMgr");
 const Transaction = require("dw/system/Transaction");
 const PaymentInstrument = require("dw/order/PaymentInstrument");
+const Logger = require("dw/system/Logger");
+const MercadopagoHelpers = require("*/cartridge/scripts/util/MercadopagoHelpers");
+
+const log = Logger.getLogger("int_mercadopago", "mercadopago");
 
 function callHookProcessor(orderNumber, paymentInstrument, paymentProcessor) {
   const paymentProcessorHook = paymentProcessor.ID.toLowerCase();
@@ -137,6 +141,62 @@ function validatePayment(req, currentBasket) {
 }
 
 /**
+ * saves payment instruemnt to customers wallet
+ * @param {Object} billingData - billing information entered by the user
+ * @param {dw.order.Basket} currentBasket - The current basket
+ * @param {dw.customer.Customer} customer - The current customer
+ * @returns {dw.customer.CustomerPaymentInstrument} newly stored payment Instrument
+ */
+function savePaymentInstrumentToWallet(billingData, currentBasket, customer) {
+  const wallet = customer.getProfile().getWallet();
+
+  const payload = MercadopagoHelpers.saveCardPayload(
+    billingData.paymentInformation.creditCardToken.value, customer.profile.email);
+
+  try {
+    log.info("Requesting Core API to Save Card data");
+    const saveCardresponse = MercadopagoHelpers.customerCard.create(payload);
+    log.info("MercadoPago response status_detail: " + saveCardresponse.status_detail);
+
+    return Transaction.wrap(() => {
+      const storedPaymentInstrument = wallet.createPaymentInstrument(
+        PaymentInstrument.METHOD_CREDIT_CARD
+      );
+
+      storedPaymentInstrument.setCreditCardHolder(
+        currentBasket.billingAddress.fullName
+      );
+      storedPaymentInstrument.setCreditCardNumber(
+        billingData.paymentInformation.cardNumber.value
+      );
+      storedPaymentInstrument.setCreditCardType(
+        billingData.paymentInformation.cardType.value
+      );
+      storedPaymentInstrument.setCreditCardExpirationMonth(
+        billingData.paymentInformation.expirationMonth.value
+      );
+      storedPaymentInstrument.setCreditCardExpirationYear(
+        billingData.paymentInformation.expirationYear.value
+      );
+
+      if (saveCardresponse && saveCardresponse.id) {
+        storedPaymentInstrument.custom.customerIdMercadoPago = saveCardresponse.customer_id;
+        storedPaymentInstrument.custom.cardBin = saveCardresponse.first_six_digits;
+        storedPaymentInstrument.custom.creditCardName = saveCardresponse.issuer.name;
+        storedPaymentInstrument.setCreditCardToken(saveCardresponse.id);
+      }
+      return storedPaymentInstrument;
+    });
+  } catch (error) {
+    log.error("Error saving card: " + error.message);
+  }
+
+  return {
+    error: false
+  };
+}
+
+/**
  * Attempts to place the order
  * @param {dw.order.Order} order - The order object to be placed
  * @param {Object} fraudDetectionStatus - an Object returned by the fraud detection hook
@@ -174,6 +234,7 @@ function placeOrder(order, fraudDetectionStatus) {
 
   return result;
 }
+
 /**
  * Sets the payment transaction amount
  * @returns {Object} an error object
@@ -189,6 +250,7 @@ module.exports = {
   handlePayments: handlePayments,
   validatePayment: validatePayment,
   calculatePaymentTransaction: calculatePaymentTransaction,
+  savePaymentInstrumentToWallet: savePaymentInstrumentToWallet,
   placeOrder: placeOrder
 };
 

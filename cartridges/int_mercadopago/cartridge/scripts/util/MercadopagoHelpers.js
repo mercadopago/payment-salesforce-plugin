@@ -152,6 +152,42 @@ MercadopagoHelpers.prototype.payments = {
 };
 
 /**
+ * Access to MercadoPago Save Cards Api
+ */
+MercadopagoHelpers.prototype.customerCard = {
+  create: (saveCardPayload) => {
+    const requestObject = {
+      endpoint: "/ppcore/prod/transaction-api/customer-cards/v1/cards",
+      httpMethod: "POST",
+      hasApiVersion: false,
+      payload: saveCardPayload
+    };
+
+    return callService(requestObject);
+  },
+  delete: (paymentId, customerId) => {
+    const requestObject = {
+      endpoint: "/ppcore/prod/transaction-api/customer-cards/v1/cards/" + paymentId + "/customers/" + customerId,
+      httpMethod: "DELETE",
+      hasApiVersion: false
+    };
+
+    return callService(requestObject);
+  }
+};
+
+/**
+ * Create card payload
+ */
+MercadopagoHelpers.prototype.saveCardPayload = (token, email) => {
+  const dataObj = {
+    card_token: token,
+    email: email
+  };
+
+  return dataObj;
+};
+/**
  * Access Mercadopago Rest Api to get payment methods availabe for a credential
  */
 MercadopagoHelpers.prototype.paymentMethods = {
@@ -165,6 +201,31 @@ MercadopagoHelpers.prototype.paymentMethods = {
 
     return call;
   }
+};
+
+/**
+ * Access Mercadopago Rest Api to get cardToken for a saved card
+ */
+MercadopagoHelpers.prototype.getCardTokenSavedCard = (cardTokenRequest) => {
+  const requestObject = {
+    endpoint: "/card_tokens?public_key=" + Site.getCurrent().getCustomPreferenceValue("mercadopagoPublicKey"),
+    httpMethod: "POST",
+    payload: cardTokenRequest
+  };
+
+  return callService(requestObject);
+};
+
+/**
+ * Create Card Token payload
+ */
+MercadopagoHelpers.prototype.createTokenPayload = (cardId, securityCode) => {
+  const dataObj = {
+    card_id: cardId,
+    security_code: securityCode
+  };
+
+  return dataObj;
 };
 
 /**
@@ -251,7 +312,7 @@ function getPixExpiration() {
   }
   pixExpirationTime = "" + pixExpirationTime.value;
 
-  let seconds = getSeconds(pixExpirationTime);
+  const seconds = getSeconds(pixExpirationTime);
 
   const result = new Date();
   result.setTime(result.getTime() + seconds * 1000);
@@ -585,6 +646,21 @@ function getAdditionalInfoPayer(order) {
 }
 
 /**
+ * Add info to payer object
+ *
+ * @param {dw.order.Order} order - the order to handle payments for
+ * @param {payload} payload to add payer infos
+ * @returns {Object}
+ */
+MercadopagoHelpers.prototype.addInfoPayerToSavedCreditCard = (order, payload) => {
+  const paymentInstrument = order.customer.profile.wallet.paymentInstruments[0];
+  payload.payer.type = "customer";
+  payload.payer.id = paymentInstrument.custom.customerIdMercadoPago;
+
+  return payload;
+};
+
+/**
  * Converts order objects into a json payload
  *
  * @param {dw.order.Order} order - the order to handle payments for
@@ -850,5 +926,97 @@ MercadopagoHelpers.prototype.getPreferences = () => ({
     "mercadopagoPublicKey"
   )
 });
+
+/**
+ * Access Mercadopago Rest Api to get payment methods availabe for a credential
+ */
+MercadopagoHelpers.prototype.getInstallments = function (bin, amount) {
+  const requestObject = {
+    endpoint: "/payment_methods/installments"
+    + "?public_key=" + Site.getCurrent().getCustomPreferenceValue("mercadopagoPublicKey")
+    + "&bin=" + bin
+    + "&amount=" + Number(amount.replace(/[^0-9-]+/g, "")) / 100,
+    httpMethod: "GET"
+  };
+
+  const installmentsResponse = this.doCallService(requestObject);
+
+  return installmentsResponse;
+};
+
+MercadopagoHelpers.prototype.doCallService = (requestObject) => callService(requestObject);
+
+MercadopagoHelpers.prototype.getSavedCardsInstallments = (
+  customerPaymentInstruments,
+  amount
+) => {
+  const savedCardsInstallments = [];
+  let installmentsResponse;
+  let installments;
+  if (customerPaymentInstruments) {
+    for (let index = 0; index < customerPaymentInstruments.length; index++) {
+      if (
+        customerPaymentInstruments[index].custom &&
+      customerPaymentInstruments[index].custom.cardBin
+      ) {
+        installmentsResponse = MercadopagoHelpers.prototype.getInstallments(
+          customerPaymentInstruments[index].custom.cardBin,
+          amount
+        );
+        installments = MercadopagoUtil.extractInstallments(installmentsResponse);
+        savedCardsInstallments.push({
+          id: customerPaymentInstruments[index].UUID,
+          installments: installments
+        });
+      }
+    }
+  }
+  return savedCardsInstallments;
+};
+
+function getCustId(data) {
+  if (data && data.collector_id) {
+    return data.collector_id.toString();
+  }
+  return data.additional_info.seller.id ? data.additional_info.seller.id.toString() : "";
+}
+
+MercadopagoHelpers.prototype.sendMetric = (value, message, data, target) => {
+  const location = Site.getCurrent().httpsHostName;
+  const siteId = MercadopagoHelpers.prototype.getSiteId();
+  const version = data.metadata ? data.metadata.plugin_version : "";
+  try {
+    const payload = {
+      value: value,
+      message: message,
+      target: target,
+      plugin: version,
+      platform: {
+        name: "salesforce",
+        uri: location,
+        version: version,
+        location: location
+      },
+      details: {
+        site_id: siteId,
+        payment_id: data.id ? data.id.toString() : "",
+        payment_status: data.status ? data.status : "",
+        payment_status_detail: data.status_detail ? data.status_detail : "",
+        cust_id: getCustId(data)
+      }
+    };
+
+    callService(
+      {
+        endpoint: "/ppcore/prod/monitor/v1/event/datadog/big/" + target,
+        httpMethod: "POST",
+        payload: payload,
+        hasApiVersion: false
+      }
+    );
+  } catch (error) {
+    log.error(JSON.stringify(error));
+  }
+};
 
 module.exports = new MercadopagoHelpers();

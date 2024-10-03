@@ -8,5 +8,7 @@ cartridges/int_mercadopago/cartridge/static/default/css/*.css
 .idea
 cartridges/app_storefront_base
 cartridges/modules
+cartridges/bm_app_storefront_base
 metadata.zip
 test-results/
+launch.json

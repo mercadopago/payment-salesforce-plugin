@@ -1,5 +1,13 @@
 # Changelog
 
+## [24.4.0] - 2024-10-03
+
+### Added
+- Add tokenization of saved cards
+- Changed card saving flow
+- Added installments when paying with saved cards
+- Removal of links and buttons to add cards in the customer area
+
 ## [24.3.2] - 2024-09-23
 
 - Rebranding of Mercado Credits

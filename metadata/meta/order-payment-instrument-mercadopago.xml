@@ -156,6 +156,12 @@
                 <externally-managed-flag>false</externally-managed-flag>
                 <min-length>0</min-length>
             </attribute-definition>
+            <attribute-definition attribute-id="saveCardToWallet">
+                <display-name xml:lang="x-default">Save Card to Wallet</display-name>
+                <type>boolean</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
         </custom-attribute-definitions>
         <group-definitions>
             <attribute-group group-id="MercadopagoPaymentInfo">
@@ -182,6 +188,7 @@
                 <attribute attribute-id="paymentPlace"/>
                 <attribute attribute-id="dateOfExpiration"/>
                 <attribute attribute-id="externalUrlInvoice"/>
+                <attribute attribute-id="saveCardToWallet"/>
             </attribute-group>
         </group-definitions>
     </type-extension>

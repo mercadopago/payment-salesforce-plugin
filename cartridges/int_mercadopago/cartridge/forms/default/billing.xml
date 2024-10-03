@@ -12,6 +12,8 @@
 
     <include formid="creditCardFields" name="creditCard"/>
 
+    <include formid="savedCreditFields" name="savedCreditCard"/>
+
     <include formid="pixFields" name="pix"/>
 
     <include formid="methodsOffFields" name="methodsOff"/>

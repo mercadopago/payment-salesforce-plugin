@@ -5,6 +5,7 @@ const OrderMgr = require("dw/order/OrderMgr");
 const Logger = require("dw/system/Logger");
 const MercadopagoUtil = require("*/cartridge/scripts/util/MercadopagoUtil");
 const MercadopagoHelpers = require("*/cartridge/scripts/util/MercadopagoHelpers");
+const savePaymentInformationToWallet = require("*/cartridge/scripts/hooks/payment/processor/middlewares/savePaymentInformation");
 
 const log = Logger.getLogger("int_mercadopago", "mercadopago");
 
@@ -52,6 +53,12 @@ function setPaymentValid(
   });
 }
 
+function verifyLoggedUserAndSaveCard(order) {
+  return (order.customer.authenticated &&
+    order.customer.registered &&
+    order.paymentInstrument.custom.saveCardToWallet);
+}
+
 function savePaymentInformation(paymentInstrument, paymentResponse, order) {
   log.info("Starting order update " + order.orderNo + " after MercadoPago response");
   let error = false;
@@ -68,6 +75,18 @@ function savePaymentInformation(paymentInstrument, paymentResponse, order) {
       order,
       parseResponseStatus
     );
+
+    if (verifyLoggedUserAndSaveCard(order)) {
+      const saveResult = savePaymentInformationToWallet(order);
+
+      if (saveResult) {
+        log.error("Error saving card: " + saveResult);
+        MercadopagoHelpers.sendMetric("fail to save card", saveResult, paymentResponse, "PAY_CCD_CARD_ID");
+      } else {
+        MercadopagoHelpers.sendMetric("success to save card", "Card saved successfully", paymentResponse, "PAY_CCD_CARD_ID");
+      }
+    }
+
     log.info("Order " + order.orderNo + " updated successfully");
   } else {
     Transaction.wrap(() => {
@@ -130,22 +149,63 @@ function getOrder(orderNumber) {
   return OrderMgr.getOrder(orderNumber, orderToken);
 }
 
+function getSavedCreditCardPayment(form) {
+  return (
+    form.savedCreditFields &&
+    form.savedCreditFields.savedSecurityCode.valid &&
+    form.savedCreditFields.savedSecurityCode.value &&
+    form.savedCreditFields.savedSecurityCode.value !== "undefined" &&
+    form.savedCreditFields.savedInstallments.valid &&
+    form.savedCreditFields.savedInstallments.value !== null
+  );
+}
+
+function callSendMetrics(paymentResponse, paymentType, message) {
+  MercadopagoHelpers.sendMetric(
+    paymentResponse.status, message, paymentResponse, paymentType);
+}
+
+// eslint-disable-next-line complexity
 function authorizeCreditCard(orderNumber, paymentInstrument, paymentProcessor) {
   const order = getOrder(orderNumber);
+  let paymentResponse;
+  let paymentData;
+  const form = session.forms.billing;
+  const isSavedCreditCardPayment = getSavedCreditCardPayment(form);
+
   try {
     Transaction.wrap(() => {
       paymentInstrument.paymentTransaction.paymentProcessor = paymentProcessor;
     });
-    const form = session.forms.billing;
-    const installments = parseInt(form.creditCardFields.installments.value, 10);
-    const issuer = parseInt(form.creditCardFields.issuer.value, 10);
-    const paymentData = MercadopagoHelpers.createPaymentPayload(
+    let installments;
+    let issuer;
+    let paymentType;
+    let metricMessage;
+
+    if (isSavedCreditCardPayment) {
+      paymentType = "PAY_CCD_CARD_ID";
+      metricMessage = "Successful payment with saved Card";
+      installments = parseInt(form.savedCreditFields.savedInstallments.value, 10);
+      issuer = "";
+    } else {
+      paymentType = "PAY_CCD_CARD";
+      metricMessage = "Successful payment with new Card";
+      installments = parseInt(form.creditCardFields.installments.value, 10);
+      issuer = parseInt(form.creditCardFields.issuer.value, 10);
+    }
+
+    paymentData = MercadopagoHelpers.createPaymentPayload(
       order,
       installments,
       issuer
     );
+
+    if (isSavedCreditCardPayment) {
+      paymentData = MercadopagoHelpers.addInfoPayerToSavedCreditCard(order, paymentData);
+    }
+
     log.info("Requesting MercadoPago's Api to creates new payment. Order number: " + orderNumber);
-    const paymentResponse = MercadopagoHelpers.payments.create(paymentData);
+    paymentResponse = MercadopagoHelpers.payments.create(paymentData);
     log.info("MercadoPago response status_detail is [" +
       paymentResponse.status_detail +
       "] for transaction [" + paymentResponse.id + "] and order number [" +
@@ -159,13 +219,18 @@ function authorizeCreditCard(orderNumber, paymentInstrument, paymentProcessor) {
       );
 
       if (result.error) {
+        callSendMetrics(paymentResponse, paymentType, paymentResponse.status_detail);
         return authorizationErrorHandler(paymentResponse.status_detail);
       }
+
+      callSendMetrics(paymentResponse, paymentType, metricMessage);
     } else {
       return errorMercadopagoResponse();
     }
   } catch (e) {
     log.error("Error on authorizeCreditCard: " + e.message);
+    MercadopagoHelpers.sendMetric("fail payment", e.message, paymentData, isSavedCreditCardPayment ? "PAY_CCD_CARD_ID" : "PAY_CCD_CARD");
+
     Transaction.wrap(() => {
       order.addNote("Error on authorizeCreditCard", e.message);
     });

@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<form xmlns="http://www.demandware.com/xml/form/2008-04-19">
+
+    <field formid="savedInstallments" label="label.input.payment.installments" type="integer" mandatory="true" missing-error="error.message.required">
+        <options>
+            <option optionid="" label="select.default.installments" value=""/>
+        </options>
+    </field>
+    
+    <field formid="savedSecurityCode" label="profile.securitycode" type="string" mandatory="true" max-length="4" missing-error="error.card.info.missing.securityCode" />
+
+</form>
