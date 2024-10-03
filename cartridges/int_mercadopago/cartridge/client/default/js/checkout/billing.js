@@ -80,4 +80,40 @@ base.methods.updatePaymentInformation = (order) => {
   }
   $paymentSummary.empty().append(htmlToAppend);
 };
+
+base.methods.clearSavedCreditCardForm = () => {
+  $('select[name$="_expirationMonth"]').val("");
+  $('select[name$="_expirationYear"]').val("");
+  $('input[name$="_securityCode"]').val("");
+};
+
+base.addNewPaymentInstrument = () => {
+  $(".btn.add-payment").on("click", (e) => {
+    e.preventDefault();
+    $(".payment-information").data("is-new-payment", true);
+    base.methods.clearSavedCreditCardForm();
+    $(".credit-card-form").removeClass("checkout-hidden");
+    $(".user-payment-instruments").addClass("checkout-hidden");
+  });
+};
+
+/**
+ * Validate and update payment instrument form fields
+ * @param {Object} order - the order model
+ */
+base.methods.validateAndUpdateBillingPaymentInstrument = (order) => {
+  const { billing } = order;
+  if (!billing.payment || !billing.payment.selectedPaymentInstruments
+      || billing.payment.selectedPaymentInstruments.length <= 0) return;
+
+  const form = $("form[name=dwfrm_billing]");
+  if (!form) return;
+
+  const instrument = billing.payment.selectedPaymentInstruments[0];
+  $("select[name$=expirationMonth]", form).val(instrument.expirationMonth);
+  $("select[name$=expirationYear]", form).val(instrument.expirationYear);
+  // Force security code clear
+  $("input[name$=securityCode]", form).val("");
+};
+
 module.exports = base;

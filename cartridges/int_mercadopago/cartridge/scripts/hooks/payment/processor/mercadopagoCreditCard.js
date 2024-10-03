@@ -39,8 +39,8 @@ function processForm(req, paymentForm, viewFormData) {
  * @param {dw.order.Basket} basket - The current basket
  * @param {Object} billingData - payment information
  */
-function savePaymentInformation(req, basket, billingData) {
-  return middlewares.savePaymentInformation(req, basket, billingData);
+function savePaymentInformation() {
+  return {};
 }
 
 exports.Handle = Handle;

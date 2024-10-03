@@ -2,6 +2,11 @@ const MercadopagoHelpers = require("*/cartridge/scripts/util/MercadopagoHelpers"
 const MercadopagoUtil = require("*/cartridge/scripts/util/MercadopagoUtil");
 
 function begin(req, res, next) {
+  if (res.viewData.customer.customerPaymentInstruments) {
+    res.viewData.customer.customerPaymentInstruments.forEach((item) => {
+      item.creditCardType = item.custom.creditCardName;
+    });
+  }
   const viewData = res.getViewData();
   const paymentMethods = MercadopagoHelpers.paymentMethods.retrieve();
   const methodsOffEnabled = ["ticket", "atm", "bank_transfer"];
@@ -22,7 +27,11 @@ function begin(req, res, next) {
       paymentMethods,
       methodsOffEnabled
     ),
-    siteId: siteId
+    siteId: siteId,
+    savedCardsInstallments: MercadopagoHelpers.getSavedCardsInstallments(
+      viewData.customer.customerPaymentInstruments,
+      viewData.order.priceTotal
+    )
   };
 
   res.setViewData(viewData);

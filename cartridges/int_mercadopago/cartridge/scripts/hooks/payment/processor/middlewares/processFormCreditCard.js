@@ -3,17 +3,16 @@ const COHelpers = require("*/cartridge/scripts/checkout/checkoutHelpers");
 const MercadopagoUtil = require("*/cartridge/scripts/util/MercadopagoUtil");
 const array = require("*/cartridge/scripts/util/array");
 
-function getPaymentInstrument(req, viewData) {
+function getPaymentInstrument(req) {
   const { paymentInstruments } = req.currentCustomer.wallet;
   return array.find(
     paymentInstruments,
-    (item) => viewData.storedPaymentUUID === item.UUID
+    (item) => req.form.storedPaymentUUID === item.UUID
   );
 }
 
-function getViewDataAuthenticated(req, viewFormData) {
-  const paymentInstrument = getPaymentInstrument(req, viewFormData);
-
+function getViewDataAuthenticated(req, viewFormData, paymentForm) {
+  const paymentInstrument = getPaymentInstrument(req);
   const viewData = viewFormData;
   viewData.storedPaymentUUID = req.form.storedPaymentUUID;
   viewData.paymentInformation = {
@@ -24,7 +23,7 @@ function getViewDataAuthenticated(req, viewFormData) {
       value: paymentInstrument.creditCardType
     },
     securityCode: {
-      value: req.form.securityCode
+      value: paymentForm.savedCreditFields.savedSecurityCode.value
     },
     expirationMonth: {
       value: paymentInstrument.creditCardExpirationMonth
@@ -32,17 +31,41 @@ function getViewDataAuthenticated(req, viewFormData) {
     expirationYear: {
       value: paymentInstrument.creditCardExpirationYear
     },
-    creditCardToken: paymentInstrument.raw.creditCardToken
+    email: {
+      value: viewFormData.paymentInformation.email.value
+    },
+    paymentMethodId: {
+      value: paymentInstrument.creditCardType
+    },
+    paymentTypeId: {
+      value: paymentInstrument.raw.paymentMethod.toLowerCase()
+    },
+    cardTypeName: {
+      value: paymentInstrument.raw.custom.creditCardName
+    },
+    paymentMethod: {
+      value: viewFormData.paymentInformation.paymentMethod.value
+    },
+    creditCardToken: {
+      value: paymentInstrument.raw.creditCardToken
+    }
   };
   return viewData;
 }
 
 function isAuthenticated(req) {
-  return (
-    req.form.storedPaymentUUID &&
+  if (
     req.currentCustomer.raw.authenticated &&
     req.currentCustomer.raw.registered
-  );
+  ) {
+    if (
+      req.form.storedPaymentUUID &&
+      req.form.storedPaymentUUID !== "undefined"
+    ) {
+      return true;
+    }
+  }
+  return false;
 }
 
 function getViewData(req, paymentForm, viewFormData) {
@@ -105,26 +128,36 @@ function getViewData(req, paymentForm, viewFormData) {
     paymentMethod: {
       value: paymentForm.paymentMethod.value,
       htmlName: paymentForm.paymentMethod.value
+    },
+    saveCard: {
+      value: paymentForm.creditCardFields.saveCard.checked,
+      htmlName: paymentForm.creditCardFields.saveCard.htmlName
     }
   };
-  viewData.saveCard = paymentForm.creditCardFields.saveCard.checked;
 
-  if (isAuthenticated(req)) {
-    getViewDataAuthenticated(req, viewData);
+  if (isAuthenticated(req) === true) {
+    getViewDataAuthenticated(req, viewData, paymentForm);
   }
 
   return viewData;
+}
+
+function handleCreditCardFields(paymentForm) {
+  if (!paymentForm.creditCardFields.docType.htmlValue) {
+    paymentForm.creditCardFields.docNumber.valid = true;
+    paymentForm.creditCardFields.docType.valid = true;
+  }
+  if (paymentForm.savedCreditFields && paymentForm.savedCreditFields.savedInstallments) {
+    paymentForm.savedCreditFields.valid = true;
+    paymentForm.savedCreditFields.savedInstallments.valid = true;
+  }
 }
 
 function getCreditCardErrors(req, paymentForm) {
   let fieldErrors = {};
 
   if (!req.form.storedPaymentUUID) {
-    if (!paymentForm.creditCardFields.docType.htmlValue) {
-      paymentForm.creditCardFields.docNumber.valid = true;
-      paymentForm.creditCardFields.docType.valid = true;
-    }
-
+    handleCreditCardFields(paymentForm);
     fieldErrors = COHelpers.validateCreditCard(paymentForm);
   }
 
