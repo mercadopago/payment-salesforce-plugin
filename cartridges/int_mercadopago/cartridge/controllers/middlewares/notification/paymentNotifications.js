@@ -64,19 +64,30 @@ function validateAmountPaid(order, paymentInfo) {
  * @param {*} paymentInfo  - Object containing the payment information sent by MercadoPago
  */
 function updatePaymentInfo(order, paymentInfo) {
+  if (!paymentInfo || !paymentInfo.payments_details) {
+    throw new Error("Invalid paymentInfo or payments_details");
+  }
+
   const msgErrorDefault = Resource.msg("seller_status_detail.cc_rejected_default", "mercadopago", null);
-  const lastDetail = paymentInfo.payments_details.pop();
-  const msgPaymentStatus = Resource.msg("status." + paymentInfo.status, "mercadopago", null);
-  const msgPaymentReport = Resource.msg(
-    "seller_status_detail." + lastDetail.status_detail, 
-    "mercadopago", 
-    Resource.msg("status_detail." + lastDetail.status_detail, "mercadopago", msgErrorDefault)
-  );
+  const lastDetail = paymentInfo.payments_details && paymentInfo.payments_details.length > 0
+    ? paymentInfo.payments_details.pop()
+    : null;
+  const msgPaymentStatus = Resource.msg(`status.${paymentInfo.status}`, "mercadopago", null);
+  const msgPaymentReport = lastDetail ? Resource.msg(
+    `seller_status_detail.${lastDetail.status_detail}`,
+    "mercadopago",
+    Resource.msg(`status_detail.${lastDetail.status_detail}`, "mercadopago", msgErrorDefault)
+  ) : msgErrorDefault;
 
   Transaction.wrap(() => {
-    order.addNote("Mercadopago Notification status: ", paymentInfo.status);
-    order.custom.paymentStatus = paymentInfo.status + " [ " + msgPaymentStatus + " ]";
-    order.custom.paymentReport = lastDetail.status_detail + " [ " + msgPaymentReport + " ]";
+    try {
+      order.addNote("Mercadopago Notification status: ", paymentInfo.status);
+      order.custom.paymentStatus = paymentInfo.status + " [ " + msgPaymentStatus + " ]";
+      order.custom.paymentReport = lastDetail ? order.custom.paymentReport = lastDetail.status_detail + " [ " + msgPaymentReport + " ]" : "No payment details";
+    } catch (error) {
+      log.error("Error updating payment info:", error);
+      throw error;
+    }
   });
 }
 
@@ -277,5 +288,6 @@ function paymentNotifications(req, res, next) {
 module.exports = {
   paymentNotifications: paymentNotifications,
   getPaymentInfoInMercadopago: getPaymentInfoInMercadopago,
-  savePaymentInformation: savePaymentInformation
+  savePaymentInformation: savePaymentInformation,
+  updatePaymentInfo: updatePaymentInfo
 };

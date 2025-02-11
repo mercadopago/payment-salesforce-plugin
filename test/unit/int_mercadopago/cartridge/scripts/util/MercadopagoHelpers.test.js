@@ -1,4 +1,5 @@
 const assert = require("assert");
+const sinon = require("sinon");
 const proxyquire = require("proxyquire").noCallThru().noPreserveCache();
 const importsUtil = require("../../../mocks/util/importsUtil");
 
@@ -10,7 +11,7 @@ const proxyquireObject = {
   "dw/system/Site": importsUtil.Site,
   "dw/system/Logger": importsUtil.Logger,
   "dw/web/URLUtils": importsUtil.URLUtils,
-  "dw/svc/LocalServiceRegistry": {},
+  "dw/svc/LocalServiceRegistry": importsUtil.LocalServiceRegistry,
   "*/cartridge/scripts/util/MercadopagoUtil": importsUtil.MercadopagoUtil,
   "*/cartridge/scripts/util/collections": importsUtil.collections,
   "*/cartridge/scripts/util/MercadopagoHelpers": importsUtil.MercadopagoHelpers
@@ -202,6 +203,46 @@ describe("Sript utilities MercadopagoHelpers test function getMethodsOffOptions"
     );
 
     assert.deepEqual(methodsOffOptions, importsUtil.MercadopagoHelpers.PAYMENT_METHODS_WITHOUT_PIX);
+  });
+});
+
+describe("Script utilities MercadopagoHelpers test function getInstallments", () => {
+  it("should call installments service with provided bin and amount", () => {
+    const MercadopagoHelpers = proxyquire(scriptPath, proxyquireObject);
+
+    const bin = "123456";
+    const amount = "$123.45";
+
+    const expectedCall = {
+      endpoint: "/payment_methods/installments?public_key=mercadopagoPublicKey&bin=123456&amount=123.45",
+      httpMethod: "GET"
+    };
+
+    sinon.spy(MercadopagoHelpers, "doCallService");
+
+    MercadopagoHelpers.getInstallments(bin, amount);
+
+    const actual = MercadopagoHelpers.doCallService.getCall(-1).args[0];
+
+    assert.deepEqual(actual, expectedCall);
+  });
+});
+
+describe("Script utilities MercadopagoHelpers test function getSavedCardInstallments", () => {
+  it("should get saved installments for provided instrument and amount", () => {
+    const MercadopagoHelpers = proxyquire(scriptPath, proxyquireObject);
+
+    const paymentInstruments = importsUtil.MercadopagoHelpers.PAYMENT_INSTRUMENTS;
+    const amount = "$100.00";
+
+    const expectedInstallments = importsUtil.MercadopagoHelpers.INSTALLMENTS;
+
+    const savedInstallments = MercadopagoHelpers.getSavedCardsInstallments(
+      paymentInstruments,
+      amount
+    );
+
+    assert.deepEqual(savedInstallments, expectedInstallments);
   });
 });
 

@@ -11,6 +11,8 @@ const site = require("./objects/site");
 const transaction = require("./objects/transaction");
 const urlUtils = require("./objects/urlUtils");
 const formErrors = require("./objects/formErrors");
+const savePaymentInformation = require("./objects/savePaymentInformation");
+const localServiceRegistry = require("./objects/localServiceRegistry");
 
 const array =
   "../../../../../cartridges/app_storefront_base/cartridge/scripts/util/array.js";
@@ -29,5 +31,7 @@ module.exports = {
   MercadopagoHelpers: mercadopagoHelpers,
   Site: site,
   URLUtils: urlUtils,
-  FormErrors: formErrors
+  FormErrors: formErrors,
+  SavePaymentInformation: savePaymentInformation,
+  LocalServiceRegistry: localServiceRegistry
 };

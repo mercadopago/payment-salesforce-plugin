@@ -1,3 +1,5 @@
 module.exports = {
-  validateCreditCard: () => ""
+  validateCreditCard: () => "",
+  placeOrder: () => "",
+  sendConfirmationEmail: () => ""
 };

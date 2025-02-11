@@ -54,6 +54,16 @@ function getFormCreditCard() {
     }
   };
 }
+function getFormSavedCreditCard() {
+  return {
+    savedInstallments: {
+      valid: false
+    },
+    savedSecurityCode: {
+      valid: true
+    }
+  };
+}
 
 function getFormPix() {
   return {
@@ -212,6 +222,7 @@ function getPaymentInstrument() {
 
 module.exports = {
   getFormCreditCard: getFormCreditCard,
+  getFormSavedCreditCard: getFormSavedCreditCard,
   getFormPix: getFormPix,
   getFormMethodsOff: getFormMethodsOff,
   getPaymentInfoCreditCard: getPaymentInfoCreditCard,
