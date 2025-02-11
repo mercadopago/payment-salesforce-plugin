@@ -387,13 +387,13 @@ module.exports = {
       payment_option_id: "7eleven",
       status: "active",
       sort: null
-    },    
+    },
     {
       id: "oxxo",
       name: "OXXO",
       payment_type_id: "ticket",
       status: "active"
-    },
+    }
   ],
   PAYMENT_OPTIONS_ALL_WITHOUT_SORT: [
     {
@@ -429,5 +429,71 @@ module.exports = {
   }),
   getUserMPData: () => ({
     site_id: "MLC"
-  })
+  }),
+  customerCard: {
+    delete: () => response = {
+      status_detail: "Ok"
+    }
+  },
+  INSTALLMENTS_RESPONSE: [
+    {
+      payer_costs: [
+        {
+          installments: 1,
+          installment_rate: 0,
+          labels: [],
+          min_allowed_amount: 0,
+          max_allowed_amount: 100000,
+          recommended_message: "Sin interés",
+          installment_amount: 100000,
+          total_amount: 100000
+        },
+        {
+          installments: 2,
+          installment_rate: 0,
+          labels: [],
+          min_allowed_amount: 100001,
+          max_allowed_amount: 200000,
+          recommended_message: "Sin interés",
+          installment_amount: 100000,
+          total_amount: 200000
+        }
+      ]
+    }
+  ],
+  PAYMENT_INSTRUMENTS: [
+    {
+      UUID: "1234567890",
+      custom: {
+        cardBin: "123456"
+      }
+    }
+  ],
+  INSTALLMENTS: [
+    {
+      id: "1234567890",
+      installments: [
+        {
+          installments: 1,
+          installment_rate: 0,
+          labels: [],
+          min_allowed_amount: 0,
+          max_allowed_amount: 100000,
+          recommended_message: "Sin interés",
+          installment_amount: 100000,
+          total_amount: 100000
+        },
+        {
+          installments: 2,
+          installment_rate: 0,
+          labels: [],
+          min_allowed_amount: 100001,
+          max_allowed_amount: 200000,
+          recommended_message: "Sin interés",
+          installment_amount: 100000,
+          total_amount: 200000
+        }
+      ]
+    }
+  ]
 };

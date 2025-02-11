@@ -1,4 +1,4 @@
-export const guestUser = {
+const guestUser = {
   email: process.env.GUEST_EMAIL,
   firstName: "John",
   lastName: "Doe",
@@ -11,3 +11,12 @@ export const guestUser = {
     zipcode: "12345"
   }
 };
+
+const cleanUser = {
+  ...guestUser,
+  email: process.env.CLEAN_USER_EMAIL,
+  pass: process.env.CLEAN_USER_PASS,
+};
+
+
+export { guestUser, cleanUser };

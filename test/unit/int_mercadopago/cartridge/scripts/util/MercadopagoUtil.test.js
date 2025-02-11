@@ -4,8 +4,10 @@ const importsUtil = require("../../../mocks/util/importsUtil");
 
 const scriptPath = "*/../../cartridges/int_mercadopago/cartridge/scripts/util/MercadopagoUtil.js";
 
-const proxyquireObject = { "dw/web/Resource": importsUtil.Resource, 
-                           "dw/system/Site": importsUtil.Site };
+const proxyquireObject = {
+  "dw/web/Resource": importsUtil.Resource,
+  "dw/system/Site": importsUtil.Site
+};
 
 describe("Scripts utilities MercadopagoUtil test function validateCnpj", () => {
   const MercadopagoUtil = proxyquire(scriptPath, proxyquireObject);
@@ -150,12 +152,33 @@ describe("Scripts utilities MercadopagoUtil test function sortMethodsOff", () =>
   });
 
   it("should return message expiration to methods off payments", () => {
-    let fullDate = "Sat May 18 2024 13:18:29 GMT-0000 (GMT)";
+    const fullDate = "Sat May 18 2024 13:18:29 GMT-0000 (GMT)";
     const date = new Date(fullDate);
 
-    let result = MercadopagoUtil.GetFormatedDateToExpirationField(date);
+    const result = MercadopagoUtil.GetFormatedDateToExpirationField(date);
 
     assert.notEqual(result, null);
+  });
+});
 
+describe("Scripts utilities MercadopagoUtil test function extractInstallments", () => {
+  const MercadopagoUtil = proxyquire(scriptPath, proxyquireObject);
+
+  it("should extract installments from response object", () => {
+    const response = importsUtil.MercadopagoHelpers.INSTALLMENTS_RESPONSE;
+    const expected = importsUtil.MercadopagoUtil.INSTALLMENTS;
+
+    const result = MercadopagoUtil.extractInstallments(response);
+
+    assert.deepEqual(result, expected);
+  });
+
+  it("should return empty array if object is empty", () => {
+    const response = [];
+    const expected = [];
+
+    const result = MercadopagoUtil.extractInstallments(response);
+
+    assert.deepEqual(result, expected);
   });
 });

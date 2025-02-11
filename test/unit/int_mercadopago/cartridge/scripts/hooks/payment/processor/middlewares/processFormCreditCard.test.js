@@ -110,11 +110,44 @@ describe("Hook MERCADOPAGO_PAYMENTS middleware processFormCreditCard test", () =
       result.viewData.paymentInformation.email.value,
       creditCardFields.email.value
     );
-    assert.equal(result.viewData.saveCard, creditCardFields.saveCard.checked);
+    assert.equal(
+      result.viewData.paymentInformation.saveCard.value,
+      creditCardFields.saveCard.checked
+    );
     assert.equal(
       result.viewData.paymentInformation.paymentMethod.value,
       PAYMENT_METHOD
     );
+  });
+
+  it("should return an object without error for new card ignoring invalid saved card installments", () => {
+    const creditCardFields = paymentDataUtil.getFormCreditCard();
+    const savedCreditCardFields = paymentDataUtil.getFormSavedCreditCard();
+    const paymentForm = {
+      paymentMethod: {
+        value: PAYMENT_METHOD,
+        htmlName: ""
+      },
+      creditCardFields: creditCardFields,
+      savedCreditCardFields: savedCreditCardFields
+    };
+    const req = {
+      form: {
+        storedPaymentUUID: false,
+        securityCode: "securityCode"
+      },
+      currentCustomer: {
+        raw: {
+          authenticated: true,
+          registered: true
+        }
+      },
+      wallet: {}
+    };
+    const viewFormData = {};
+    const result = processFormCreditCard(req, paymentForm, viewFormData);
+
+    assert.equal(result.error, false);
   });
 
   it("should return an object with field errors", () => {

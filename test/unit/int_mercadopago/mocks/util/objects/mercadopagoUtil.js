@@ -28,7 +28,49 @@ module.exports = {
     }
   },
   validateAndReturnAttribute: (value) => (true),
-  GetFormatedDateToExpirationField: (value) => {
-    return Resource.msgf("methodsoff.invoice.msg", "mercadopago", null, "May", "12", "11 pm");
-  }
+  GetFormatedDateToExpirationField: (value) => Resource.msgf("methodsoff.invoice.msg", "mercadopago", null, "May", "12", "11 pm"),
+  INSTALLMENTS: [
+    {
+      installments: 1,
+      installment_rate: 0,
+      labels: [],
+      min_allowed_amount: 0,
+      max_allowed_amount: 100000,
+      recommended_message: "Sin interés",
+      installment_amount: 100000,
+      total_amount: 100000
+    },
+    {
+      installments: 2,
+      installment_rate: 0,
+      labels: [],
+      min_allowed_amount: 100001,
+      max_allowed_amount: 200000,
+      recommended_message: "Sin interés",
+      installment_amount: 100000,
+      total_amount: 200000
+    }
+  ],
+  extractInstallments: () => ([
+    {
+      installments: 1,
+      installment_rate: 0,
+      labels: [],
+      min_allowed_amount: 0,
+      max_allowed_amount: 100000,
+      recommended_message: "Sin interés",
+      installment_amount: 100000,
+      total_amount: 100000
+    },
+    {
+      installments: 2,
+      installment_rate: 0,
+      labels: [],
+      min_allowed_amount: 100001,
+      max_allowed_amount: 200000,
+      recommended_message: "Sin interés",
+      installment_amount: 100000,
+      total_amount: 200000
+    }
+  ])
 };

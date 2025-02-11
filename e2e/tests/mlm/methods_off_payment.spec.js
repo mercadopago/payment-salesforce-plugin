@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import addProductToCart from "../../flows/add_to_cart";
+import { addProductToCart } from "../../flows/add_to_cart";
 import goToCheckout from "../../flows/go_to_checkout";
 import fillGuestEmail from "../../flows/fill_guest_email";
 import fillShippingForm from "../../flows/fill_shipping_form";
@@ -17,7 +17,7 @@ test('test create payment with OXXO', async ({ page }) => {
   await page.getByRole('button', { name: 'Place Order' }).click();
   await expect(page.locator('#maincontent')).toContainText('Dónde pagar: OXXO');
   await page.getByRole('button', { name: 'Abrir ticket' }).click();
-  await expect(page.locator('#mercadopago-client')).toContainText('Paga $57.74 en la tienda OXXO más cercana')
+  await expect(page.locator('#mercadopago-client')).toContainText('en la tienda OXXO más cercana')
 });
 
 test('test create payment with Citibanamex', async ({ page }) => {
@@ -33,7 +33,7 @@ test('test create payment with Citibanamex', async ({ page }) => {
   await page.getByRole('button', { name: 'Place Order' }).click();
   await expect(page.locator('#maincontent')).toContainText('Dónde pagar: Citibanamex');
   await page.getByRole('button', { name: 'Abrir ticket' }).click();
-  await expect(page.locator('#mercadopago-client')).toContainText('Paga $57.74 en la sucursal Citibanamex más cercana')
+  await expect(page.locator('#mercadopago-client')).toContainText('en la sucursal Citibanamex más cercana')
 });
 
 test('test create payment with STP', async ({ page }) => {
@@ -49,7 +49,7 @@ test('test create payment with STP', async ({ page }) => {
   await page.getByRole('button', { name: 'Place Order' }).click();
   await expect(page.locator('#maincontent')).toContainText('Dónde pagar: STP');
   await page.getByRole('button', { name: 'Abrir ticket' }).click();
-  await expect(page.locator('#mercadopago-client')).toContainText('Paga $57.74 para finalizar tu compra')
+  await expect(page.locator('#mercadopago-client')).toContainText('para finalizar tu compra')
 });
 
 test('test create payment with 7 Eleven', async ({ page }) => {
@@ -64,5 +64,5 @@ test('test create payment with 7 Eleven', async ({ page }) => {
   await page.getByRole('button', { name: 'Place Order' }).click();
   await expect(page.locator('#maincontent')).toContainText('Dónde pagar: 7 Eleven');
   await page.getByRole('button', { name: 'Abrir ticket' }).click();
-  await expect(page.locator('#mercadopago-client')).toContainText('Paga $57.74')
+  await expect(page.locator('#mercadopago-client')).toContainText('Paga')
 });

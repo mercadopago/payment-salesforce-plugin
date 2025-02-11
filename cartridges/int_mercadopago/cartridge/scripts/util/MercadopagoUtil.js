@@ -73,7 +73,8 @@ MercadopagoUtil.prototype.getTextMessages = () => ({
   "field.mercadocredito.billing.message": Resource.msg("mercadocredito.billing.message", "mercadopago", null),
   "field.installments.itensText": Resource.msg("mercadopago.field.installments.itensText", "mercadopago", null),
   "field.methodsoff.invoice.place": Resource.msg("methodsoff.info.place", "mercadopago", null),
-  "field.methodsoff.invoice.expire": Resource.msg("methodsoff.info.expiration", "mercadopago", null)
+  "field.methodsoff.invoice.expire": Resource.msg("methodsoff.info.expiration", "mercadopago", null),
+  "field.chopro.billing.message": Resource.msg("mercadopago.chopro.selectedpayment", "mercadopago", null)
 });
 
 /**

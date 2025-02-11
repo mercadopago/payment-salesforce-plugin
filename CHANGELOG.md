@@ -1,5 +1,14 @@
 # Changelog
 
+## [25.4.1] - 2025-02-11
+
+### Fix
+- Added error handling when updating order details in the notification flow
+- Fixed ChoPro text on the Place Order screen
+
+### Added
+- Added tests end to end
+
 ## [24.4.0] - 2024-10-03
 
 ### Added

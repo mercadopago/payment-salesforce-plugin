@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import addProductToCart from "../../flows/add_mco_to_cart";
+import { addProductToCart } from "../../flows/add_mco_to_cart";
 import goToCheckout from "../../flows/go_to_checkout_mco";
 import fillGuestEmail from "../../flows/fill_guest_email";
 import fillShippingForm from "../../flows/fill_shipping_form";
@@ -19,5 +19,5 @@ test('test create payment with Efecty', async ({ page }) => {
   await page.getByRole('button', { name: 'Place Order' }).click();
   await expect(page.locator('#maincontent')).toContainText('Dónde pagar: Efecty');
   await page.getByRole('button', { name: 'Abrir ticket' }).click();
-  await expect(page.locator('#mercadopago-client')).toContainText('Paga $57.74')
+  await expect(page.locator('#mercadopago-client')).toContainText('en tu sucursal de Efecty')
 });

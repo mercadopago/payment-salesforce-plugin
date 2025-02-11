@@ -1,4 +1,5 @@
 const assert = require("assert");
+const sinon = require("sinon");
 const proxyquire = require("proxyquire").noCallThru().noPreserveCache();
 const importsUtil = require("../../../../../../mocks/util/importsUtil");
 const paymentDataUtil = require("../../../../../../mocks/util/paymentDataUtil");
@@ -6,9 +7,13 @@ const paymentDataUtil = require("../../../../../../mocks/util/paymentDataUtil");
 const hookPath =
   "*/../../cartridges/int_mercadopago/cartridge/scripts/hooks/payment/processor/middlewares/authorizeCreditCard.js";
 
+const savePaymentInformation = sinon.stub();
+savePaymentInformation.prototype.savePaymentInformation = sinon.stub().returns(null);
+
 const proxyquireObject = {
   "*/cartridge/scripts/util/MercadopagoHelpers": importsUtil.MercadopagoHelpers,
   "*/cartridge/scripts/util/MercadopagoUtil": importsUtil.MercadopagoUtil,
+  "*/cartridge/scripts/hooks/payment/processor/middlewares/savePaymentInformation": savePaymentInformation,
   "dw/system/Transaction": importsUtil.Transaction,
   "dw/web/Resource": importsUtil.Resource,
   "dw/order/Order": importsUtil.Order,
