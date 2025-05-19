@@ -1,8 +1,12 @@
 <div class="cho-pro-img">
-    <img src="${URLUtils.staticURL('/images/payment-mercado-pago.png')}" height="32"
+    <img src="${URLUtils.staticURL('/images/payment-mercado-pago.svg')}" height="32"
         alt="${Resource.msg('mercadopago.chopro.mercadopago', 'mercadopago', null)}"
-        title="${Resource.msg('mercadopago.chopro.creditcard', 'mercadopago', null)}" 
+        title="${Resource.msg('mercadopago.chopro.creditcard', 'mercadopago', null)}"
         style="margin: 10px 0px" />
+    <span
+        style="padding-left: 6px">
+        ${Resource.msg('mercadopago.chopro.tab', 'mercadopago', null)}
+    </span>
 </div>
 <div class="cho-pro-msg">
     <span>${Resource.msg('mercadopago.chopro.selectedpayment', 'mercadopago', null)}</span>

@@ -1,5 +1,22 @@
 # Changelog
 
+## [25.5.0] - 2025-05-19
+
+### Updated
+- Updated the Mercado Pago branding across all checkouts, admin panel, and success pages.
+- Updated of document form for offline media, pix and credit card
+- Improving error message for the buyer when card_token_id is invalid
+
+### Added
+- Added Payer address in payment payload if payment type is "bolbradesco"
+- Added default expiration value for payment for PIX
+- Added default expiration value for payment for methods off
+
+### Fix
+- Fix of sending document type in methods off
+- Fix validation of document fields
+- Fix QR code for PIX in congrats screen
+
 ## [25.4.1] - 2025-02-11
 
 ### Fix

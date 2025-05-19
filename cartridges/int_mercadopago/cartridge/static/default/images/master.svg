@@ -1,0 +1,7 @@
+<svg width="32" height="24" viewBox="0 0 32 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="0.5" y="0.5" width="31" height="23" rx="3.5" fill="white"/>
+<rect x="0.5" y="0.5" width="31" height="23" rx="3.5" stroke="#E5E5E5"/>
+<ellipse cx="12.1678" cy="12" rx="6.16777" ry="6" fill="#EA001B"/>
+<ellipse cx="19.8318" cy="12" rx="6.16777" ry="6" fill="#F79F1A"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M15.9998 16.7023C17.4229 15.6032 18.3355 13.9056 18.3355 12.0006C18.3355 10.0956 17.4229 8.39794 15.9998 7.29883C14.5767 8.39794 13.6641 10.0956 13.6641 12.0006C13.6641 13.9056 14.5767 15.6032 15.9998 16.7023Z" fill="#FF5F01"/>
+</svg>

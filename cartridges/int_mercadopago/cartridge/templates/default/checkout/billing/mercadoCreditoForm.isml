@@ -3,7 +3,7 @@
   assets.addCss('css/mercadopago.css');
 </isscript>
 
-<div class="box">
+<div class="box credits-box">
   <div class="row-title-2">
     <h3 tabindex="0" class="span18-semi-bold">${Resource.msg('mercadocredito.title', 'mercadopago', null)}</h3>
   </div>
@@ -51,10 +51,10 @@
       </li>
     </ul>
   </div>
-  <div class="box-info">
+  <div class="box-info credits-footer">
     <div class="row-info">
       <div class="info-lock-icon">
-        <img src="${URLUtils.staticURL('/images/credits_footer.png')}" alt="" width="10.4"/>
+        <img src="${URLUtils.staticURL('/images/grey_logo.svg')}" alt=""/>
       </div>
       <div>
         <p tabindex="0" class="span12-info">${Resource.msg('mercadocredito.info', 'mercadopago', null)}</p>

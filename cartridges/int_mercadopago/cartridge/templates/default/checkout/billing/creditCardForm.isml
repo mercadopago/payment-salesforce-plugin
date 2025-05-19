@@ -30,40 +30,46 @@
     </div>
 </div>
 
-<div id="payer-documents" class="row">
-    <div class="col-sm-6">
-        <div class="form-group
-            <isif condition=${creditFields.docType.mandatory === true}>required</isif>
-            ${creditFields.docType.htmlName}">
+<div id="payer-documents">
+    <div class="row">
+        <div class="col-12">
+            <div class="form-group m-0 <isif condition=${creditFields.docType.mandatory === true}>required</isif>
+                    ${creditFields.docType.htmlName}">
 
-            <label class="form-control-label" for="docType">${Resource.msg('mercadopago.field.doctype', 'mercadopago', null)}</label>
+                <label class="form-control-label" for="docType">${Resource.msg('mercadopago.field.document', 'mercadopago', null)}</label>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group
+                <isif condition=${creditFields.docType.mandatory === true}>required</isif>
+                ${creditFields.docType.htmlName}">
 
-            <select class="form-control" id="docType" <isprint value="${creditFields.docType.attributes}"
-                encoding="htmlsinglequote" /> >
-            </select>
+                <select class="form-control" id="docType" <isprint value="${creditFields.docType.attributes}"
+                    encoding="htmlsinglequote" /> >
+                </select>
 
-            <div class="invalid-feedback" id="docTypeInvalidMessage"></div>
+                <div class="invalid-feedback" id="docTypeInvalidMessage"></div>
+            </div>
         </div>
 
-    </div>
+        <div class="col-sm-6">
 
-    <div class="col-sm-6">
-
-        <div class="form-group
+            <div class="form-group
             <isif condition=${creditFields.docNumber.mandatory === true}>required</isif>
             ${creditFields.docNumber.htmlName}">
 
-            <label class="form-control-label" for="docNumber">${Resource.msg('mercadopago.field.docnumber', 'mercadopago', null)}</label>
+                <input type="text" class="form-control" id="docNumber" <isprint
+                    value="${creditFields.docNumber.attributes}" encoding="htmlsinglequote" />
+                autocomplete="docNumber"
+                data-checkout="docNumber"
+                required
+                aria-describedby="docNumberInvalidMessage"
+                />
+                <div class="invalid-feedback" id="docNumberInvalidMessage"></div>
 
-            <input type="text" class="form-control" id="docNumber" <isprint value="${creditFields.docNumber.attributes}"
-                encoding="htmlsinglequote" />
-            autocomplete="docNumber"
-            data-checkout="docNumber"
-            required
-            aria-describedby="docNumberInvalidMessage"
-            />
-            <div class="invalid-feedback" id="docNumberInvalidMessage"></div>
-
+            </div>
         </div>
     </div>
 </div>
@@ -109,14 +115,10 @@
             <label class="form-control-label" for="cardNumber">${Resource.msg('field.credit.card.number', 'creditCard', null)}</label>
             <div class="card-number-wrapper">
                 <input type="text" class="form-control cardNumber" id="cardNumber"
-                    name="${creditFields.cardNumber.htmlName}" 
-                    value="${pdict.order.billing.payment.selectedPaymentInstruments 
-                        && pdict.order.billing.payment.selectedPaymentInstruments.length > 0 
-                        ? pdict.order.billing.payment.selectedPaymentInstruments[0].maskedCreditCardNumber 
-                        || '' : ''}" 
-                    <isprint value=${creditFields.cardNumber.attributes} encoding="off" />
-                    autocomplete="cc-number"
-                    aria-describedby="cardNumberInvalidMessage"
+                    name="${creditFields.cardNumber.htmlName}" value="${pdict.order.billing.payment.selectedPaymentInstruments && pdict.order.billing.payment.selectedPaymentInstruments
+                                                                      .length > 0 ? pdict.order.billing.payment.selectedPaymentInstruments[0].maskedCreditCardNumber || '' : ''}" <isprint value=${creditFields.cardNumber.attributes} encoding="off" />
+                autocomplete="cc-number"
+                aria-describedby="cardNumberInvalidMessage"
                 >
                 <div class="invalid-feedback" id="cardNumberInvalidMessage"></div>
             </div>
@@ -206,7 +208,8 @@
 
             <label class="form-control-label" for="issuer">${Resource.msg('mercadopago.field.issuer', 'mercadopago', null)}</label>
 
-            <select class="form-control" id="issuer" <isprint value=${creditFields.issuer.attributes} encoding="htmlsinglequote" />
+            <select class="form-control" id="issuer" <isprint value=${creditFields.issuer.attributes}
+                encoding="htmlsinglequote" />
             >
             </select>
         </div>

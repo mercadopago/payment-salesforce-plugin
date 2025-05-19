@@ -1,5 +1,4 @@
 repos:
-  # Websec hook is MANDATORY, DO NOT comment it.
   - repo: https://github.com/melisource/fury_websec-git-hooks
     rev: v2.0.0
     hooks:
@@ -7,6 +6,7 @@ repos:
         stages: [pre-commit]
       - id: post_commit_hook
         stages: [post-commit]
+        
   - repo: https://github.com/melisource/fury_datasec-git-hooks
     rev: 1.2.2
     hooks:

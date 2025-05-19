@@ -12,7 +12,7 @@
             <div class="loading-container" id="loading-container">
                 <div class="loading-challenge" id="loading-challenge">
                     <div class="loading-image" id="loading-image">
-                        <img class="loading-image-image" src="${URLUtils.staticURL('/images/modal_loading.png')}" alt="loading" />
+                        <img class="loading-image-image" src="${URLUtils.staticURL('/images/modal_loading.svg')}" alt="loading" />
                     </div>
                     <div class="loading-message" id="loading-message">
                         <p class="loading-message-info">
@@ -41,7 +41,7 @@
                 <div class="modal-info-box">
                     <div class="blue-bar"></div>
                     <div class="modal-info-box-row">
-                        <img class="modal-info-box-logo" src="${URLUtils.staticURL('/images/icon_info.png')}" alt="info_icon" />
+                        <img class="modal-info-box-logo" src="${URLUtils.staticURL('/images/icon_info.svg')}" alt="info_icon" />
                         <div class="modal-info-box-info">
                             ${Resource.msg('challenge.validation.info', 'mercadopago', null)}
                         </div>
@@ -56,7 +56,7 @@
             <div class="confirmation-container">
                 <div class="loading-image-row">
                     <div class="loading-image">
-                        <img class="loading-confirmation-image" src="${URLUtils.staticURL('/images/modal_loading.png')}" alt="loading" />
+                        <img class="loading-confirmation-image" src="${URLUtils.staticURL('/images/modal_loading.svg')}" alt="loading" />
                     </div>
                 </div>
                 <div class="loading-confirmation-message">

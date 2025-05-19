@@ -1,6 +1,7 @@
 <li class="nav-item" data-method-id="${paymentOption.ID}">
     <a class="nav-link checkout-pro-tab" data-toggle="tab" href="#checkout-pro-content" role="tab">
-        <img class="checkout-pro-option" src="${URLUtils.staticURL('/images/payment-mercado-pago.png')}" height="28"
-            alt="${Resource.msg('mercadopago.chopro.mercadopago', 'mercadopago', null)}" title="${paymentOption.name}" />
+        <img class="checkout-pro-option" src="${URLUtils.staticURL('/images/payment-mercado-pago.svg')}" height="32"
+            alt="" />
+        <span class="checkout-pro-tab-text">${Resource.msg('mercadopago.chopro.tab', 'mercadopago', null)}</span>
     </a>
 </li>

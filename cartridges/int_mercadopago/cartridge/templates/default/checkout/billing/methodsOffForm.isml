@@ -1,41 +1,44 @@
 <isset name="methodsOffFields" value="${pdict.forms.billingForm.methodsOffFields}" scope="page"/>
 
-<div id="methods-off-document" class="row">
-    <div class="col-sm-6">
-        <div class="form-group
-            <isif condition=${methodsOffFields.docTypeMethodsOff.mandatory === true}>required</isif>
-            ${methodsOffFields.docTypeMethodsOff.htmlName}">
+<div id="methods-off-document">
+    <div class="row">
+        <div class="col-12">
+            <div class="form-group m-0
+                <isif condition=${methodsOffFields.docTypeMethodsOff.mandatory === true}>required</isif>
+                ${methodsOffFields.docTypeMethodsOff.htmlName}">
 
-            <label class="form-control-label" for="docTypeMethodsOff">${Resource.msg('mercadopago.field.doctype', 'mercadopago', null)}</label>
-
-            <select class="form-control" id="docTypeMethodsOff" <isprint value="${methodsOffFields.docTypeMethodsOff.attributes}"
-                encoding="htmlsinglequote" /> >
-            </select>
-
-        </div>
-
-    </div>
-
-    <div class="col-sm-6">
-
-        <div class="form-group
-            <isif condition=${methodsOffFields.docNumberMethodsOff.mandatory === true}>required</isif>
-            ${methodsOffFields.docNumberMethodsOff.htmlName}">
-
-            <label class="form-control-label" for="docNumberMethodsOff">${Resource.msg('mercadopago.field.docnumber', 'mercadopago', null)}</label>
-
-            <input type="text" class="form-control" id="docNumberMethodsOff" <isprint value="${methodsOffFields.docNumberMethodsOff.attributes}"
-                encoding="htmlsinglequote" />
-            autocomplete="docNumberMethodsOff"
-            data-checkout="docNumberMethodsOff"
-            required
-            aria-describedby="docNumberInvalidMessage" 
-            />
-            <div class="invalid-feedback" id="docNumberInvalidMessage"></div>
+                <label class="form-control-label" for="docTypeMethodsOff">${Resource.msg('mercadopago.field.document', 'mercadopago', null)}</label>  
+            </div>
         </div>
     </div>
-    
-    
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group
+                <isif condition=${methodsOffFields.docTypeMethodsOff.mandatory === true}>required</isif>
+                ${methodsOffFields.docTypeMethodsOff.htmlName}">
+
+                <select class="form-control" id="docTypeMethodsOff" <isprint value="${methodsOffFields.docTypeMethodsOff.attributes}"
+                    encoding="htmlsinglequote" /> >
+                </select>
+            </div>
+        </div>
+
+        <div class="col-sm-6">
+            <div class="form-group
+                <isif condition=${methodsOffFields.docNumberMethodsOff.mandatory === true}>required</isif>
+                ${methodsOffFields.docNumberMethodsOff.htmlName}">
+
+                <input type="text" class="form-control" id="docNumberMethodsOff" <isprint value="${methodsOffFields.docNumberMethodsOff.attributes}"
+                    encoding="htmlsinglequote" />
+                autocomplete="docNumberMethodsOff"
+                data-checkout="docNumberMethodsOff"
+                required
+                aria-describedby="docNumberInvalidMessage" 
+                />
+                <div class="invalid-feedback" id="docNumberInvalidMessage"></div>
+            </div>
+        </div>
+    </div> 
 </div>
 
 <isset name="methodsOffFieldsOptions" value="${pdict.mercadopago.methodsOffOptions}" scope="page"/>

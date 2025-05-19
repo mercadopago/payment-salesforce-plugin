@@ -1,5 +1,6 @@
 const base = module.superModule;
 const collections = require("*/cartridge/scripts/util/collections");
+const MercadopagoHelpers = require("*/cartridge/scripts/util/MercadopagoHelpers");
 
 /**
  * Creates an array of objects containing selected payment information
@@ -32,6 +33,7 @@ function getSelectedPaymentInstruments(selectedPaymentInstruments) {
       results.checkoutProLink = paymentInstrument.custom.checkoutProLink;
     } else if (paymentInstrument.paymentMethod === "MERCADO_CREDITO") {
       results.mercadoCreditoLink = paymentInstrument.custom.mercadoCreditoLink;
+      results.siteId = MercadopagoHelpers.getSiteId();
     } else if (paymentInstrument.paymentMethod === "CASH") {
       results.dateOfExpiration = paymentInstrument.custom.dateOfExpiration;
       results.paymentMethodOff = paymentInstrument.custom.paymentOffMethodId;
