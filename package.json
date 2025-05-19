@@ -1,6 +1,6 @@
 {
   "name": "int_mercadopago",
-  "version": "25.4.1",
+  "version": "25.5.0",
   "description": "Payment Integration cartridge for Mercadopago",
   "main": "index.js",
   "scripts": {
@@ -26,7 +26,13 @@
     "sgmf-scripts": "^2.3.0",
     "stylelint": "^8.4.0",
     "stylelint-config-standard": "^17.0.0",
-    "stylelint-scss": "^2.5.0"
+    "stylelint-scss": "^2.5.0",
+    "better-console": "1.0.1"
+  },
+  "overrides": {
+    "sgmf-scripts": {
+      "better-console": "$better-console"
+    }
   },
   "browserslist": [
     "last 2 versions",

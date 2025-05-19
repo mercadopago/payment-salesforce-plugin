@@ -1,6 +1,8 @@
+<isset name="siteId" value="${pdict.mercadopago.siteId}" scope="page" />
 <li class="nav-item" data-method-id="${paymentOption.ID}">
     <a class="nav-link checkout-credits-tab" data-toggle="tab" href="#checkout-credits-content" role="tab">
-        <img class="checkout-credits-option" src="${URLUtils.staticURL(Resource.msg('mercadocredito.mercadocredito.img', 'mercadopago', null))}" height="28"
+        <img class="checkout-credits-option" src="${URLUtils.staticURL(Resource.msg('mercadocredito.mercadocredito.img', 'mercadopago', null))}" height="32"
             alt="${Resource.msg('mercadocredito.mercadocredito', 'mercadopago', null)}" title="${paymentOption.name}" />
+        <span class="checkout-credits-tab-text">${Resource.msg('mercadocredito.tab.' + siteId, 'mercadopago', null)}</span>
     </a>
 </li>

@@ -161,8 +161,7 @@ function getSavedCreditCardPayment(form) {
 }
 
 function callSendMetrics(paymentResponse, paymentType, message) {
-  MercadopagoHelpers.sendMetric(
-    paymentResponse.status, message, paymentResponse, paymentType);
+  MercadopagoHelpers.sendMetric(paymentResponse.status, message, paymentResponse, paymentType);
 }
 
 // eslint-disable-next-line complexity

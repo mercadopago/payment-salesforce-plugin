@@ -1,30 +1,48 @@
-<div class="row-payments">
-  <ul class="box-img">
-    <li class="span11 mini-box">
-      <img src="${URLUtils.staticURL('/images/credit_card.png')}" alt="" width="31" />
-      <p>${Resource.msg('mercadopago.chopro.creditcard', 'mercadopago', null)}</p>
-    </li>
-    <li class="span11 margin-tb mini-box margin-l">
-      <img src="${URLUtils.staticURL('/images/debit_card.png')}" alt="" width="31" />
-      <p>${Resource.msg('mercadopago.chopro.debitcard', 'mercadopago', null)}</p>
-    </li>
-    <li class="span11 margin-tb mini-box margin-l">
-      <img src="${URLUtils.staticURL('/images/cash.png')}" alt="" width="31" />
-      <p>${Resource.msg('mercadopago.chopro.efectivo', 'mercadopago', null)}</p>
-    </li>
-  </ul>
-  <ul class="box-img">
-    <li class="span11 mini-box-2 margin-first">
-      <img src="${URLUtils.staticURL('/images/internet.png')}" alt="" width="25" class="img-pix mb-img" />
-      <p>${Resource.msg('mercadopago.chopro.cajerpautomatico', 'mercadopago', null)}</p>
-    </li>
-    <li class="span11 mini-box-2 margin-l">
-      <img src="${URLUtils.staticURL('/images/mercado_credito.png')}" alt="" width="35" height="25" />
-      <p>${Resource.msg('mercadopago.chopro.mercadocredito', 'mercadopago', null)}</p>
-    </li>
+  <div class="row-title-cho-pro">
+    <h3 class="span15-cho-pro"  tabindex="0">
+      ${Resource.msg('mercadopago.chopro.title.MLM', 'mercadopago', null)}
+    </h3>
+  </div> 
+
+<div class="row-payments-cho-pro">
+  <div class="box-img" id="cho-pro-box-image">
+    <div class="span11-cho-pro mini-box mini-box-cho-pro cho-pro-icons">
+      <img src="${URLUtils.staticURL('/images/protected_purchase.svg')}" alt="" />
+      <p tabindex="0">
+        <b class="semi-bold">${Resource.msg('mercadopago.chopro.protected.MLM.bold', 'mercadopago', null)}</b>
+        ${Resource.msg('mercadopago.chopro.protected.MLM', 'mercadopago', null)}
+      </p>
+    </div>
+    <div class="span11-cho-pro margin-tb mini-box mini-box-cho-pro cho-pro-icons">
+      <img src="${URLUtils.staticURL('/images/coin.svg')}" alt=""/>
+      <p tabindex="0">
+        <b class="semi-bold">${Resource.msg('mercadopago.chopro.credit.MLM.bold', 'mercadopago', null)}</b>
+        ${Resource.msg('mercadopago.chopro.credit.MLM', 'mercadopago', null)}
+      </p>
+    </div>
+  </div>
+  <h2 id="titulo-oculto" style="display: none">Opciones de pago</h2>
+  <ul tabindex="0" title="Opciones de pago" class="box-img" aria-labelledby="titulo-oculto" id="cho-pro-box-flags">
+    <li><img src="${URLUtils.staticURL('/images/visa.svg')}" alt="Visa" /></li>
+    <li><img src="${URLUtils.staticURL('/images/master.svg')}" alt="Mastercard" /></li>
+    <li><img src="${URLUtils.staticURL('/images/amex.svg')}" alt="American Express" /></li>
+    <li><img src="${URLUtils.staticURL('/images/oxxo.svg')}" alt="OXXO" /></li>
+    <li><img src="${URLUtils.staticURL('/images/spe.svg')}" alt="Sistema de Pagos Electrónicos Interbancarios" /></li>
+    <li><img src="${URLUtils.staticURL('/images/bbva.svg')}" alt="BBVA" /></li>
+    <li><img src="${URLUtils.staticURL('/images/account_money.svg')}" alt="Saldo disponible en Mercado Pago Wallet" /></li>
   </ul>
 </div>
-<div class="row-footer">
-  <p class="span12">${Resource.msg('mercadopago.chopro.acceptedflags', 'mercadopago', null)}:</p>
-  <img src="${URLUtils.staticURL('/images/flags_mex.png')}" alt="" />
+
+<div class="box-info cho-pro-footer">
+  <div class="row-info row-info-cho-pro">
+    <div class="info-lock-icon">
+      <img src="${URLUtils.staticURL('/images/grey_logo.svg')}" align="left" alt=""/>
+    </div>
+    <div>
+      <p tabindex="0" class="span12-info">${Resource.msg('mercadopago.chopro.redirect', 'mercadopago', null)}</p>
+    </div>
+    <div class="info-text">
+      <p tabindex="0" class="span12-info-chopro">${Resource.msg('mercadopago.chopro.email', 'mercadopago', null)}</p>
+    </div>
+  </div>
 </div>

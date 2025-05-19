@@ -68,12 +68,22 @@
 </div>
 
 <div class="row">
+    <div class="col-sm-12">
+        <div class="form-group m-0
+            <isif condition=${pixFields.docTypePix.mandatory === true}>required</isif>
+            ${pixFields.docTypePix.htmlName}">
+
+            <label class="form-control-label" for="docTypePix">${Resource.msg('mercadopago.field.document', 'mercadopago', null)}</label>
+        </div>
+
+    </div>
+</div>
+
+<div class="row">
     <div class="col-sm-6">
         <div class="form-group
             <isif condition=${pixFields.docTypePix.mandatory === true}>required</isif>
             ${pixFields.docTypePix.htmlName}">
-
-            <label class="form-control-label" for="docTypePix">${Resource.msg('mercadopago.field.doctype', 'mercadopago', null)}</label>
 
             <select class="form-control" id="docTypePix" <isprint value="${pixFields.docTypePix.attributes}"
                 encoding="htmlsinglequote" /> >
@@ -88,8 +98,6 @@
         <div class="form-group
             <isif condition=${pixFields.docNumberPix.mandatory === true}>required</isif>
             ${pixFields.docNumberPix.htmlName}">
-
-            <label class="form-control-label" for="docNumberPix">${Resource.msg('mercadopago.field.docnumber', 'mercadopago', null)}</label>
 
             <input type="text" class="form-control" id="docNumberPix" <isprint value="${pixFields.docNumberPix.attributes}"
                 encoding="htmlsinglequote" />

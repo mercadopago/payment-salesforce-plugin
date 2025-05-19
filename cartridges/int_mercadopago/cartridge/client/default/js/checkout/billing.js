@@ -45,12 +45,12 @@ base.methods.updatePaymentInformation = (order) => {
           htmlToAppend += "</div>";
         } else if (selectedPaymentInstrument.paymentMethod === "CHECKOUT_PRO") {
           const mercadoPagoImage = $(".checkout-pro-option")[0].currentSrc;
-          const mercadoPagoText = $(".mp-text-messages").data("mpTextMessages")["field.chopro.billing.message"];
+          const mercadoPagoText = $(".mp-text-messages").data("mpTextMessages")["field.checkoutpro.title"];
+          htmlToAppend += "<div style='padding-top: 10px'>";
           htmlToAppend += "<img src='" + mercadoPagoImage + "' ";
           htmlToAppend += "height='32' ";
           htmlToAppend += "alt='CHECKOUT_PRO' ";
           htmlToAppend += "title='CHECKOUT_PRO' ";
-          htmlToAppend += "style='margin-top: 10px' ";
           htmlToAppend += "/>";
           htmlToAppend += "<div>";
           htmlToAppend += "<p style='line-height: 21px;margin-top: 10px'>" + mercadoPagoText;
@@ -58,15 +58,18 @@ base.methods.updatePaymentInformation = (order) => {
           htmlToAppend += "</div>";
         } else if (selectedPaymentInstrument.paymentMethod === "MERCADO_CREDITO") {
           const mercadoPagoImage = $(".checkout-pro-option")[0].currentSrc;
-          const mercadoPagoText = $(".mp-text-messages").data("mpTextMessages")["field.mercadocredito.billing.message"];
+          const mercadoCreditoTitleText = $(".checkout-credits-tab-text")[0].innerText;
+          const mercadoCreditoText = $(".mp-text-messages").data("mpTextMessages")["field.mercadocredito.billing.message"];
+          htmlToAppend += "<div style='padding-top: 10px'>";
           htmlToAppend += "<img src='" + mercadoPagoImage + "' ";
           htmlToAppend += "height='32' ";
           htmlToAppend += "alt='CHECKOUT_PRO' ";
           htmlToAppend += "title='CHECKOUT_PRO' ";
-          htmlToAppend += "style='margin-top: 10px' ";
           htmlToAppend += "/>";
+          htmlToAppend += "<span style='padding-left: 8px'>" + mercadoCreditoTitleText + "</span>";
+          htmlToAppend += "</div>";
           htmlToAppend += "<div>";
-          htmlToAppend += "<p style='line-height: 21px;margin-top: 10px'>" + mercadoPagoText;
+          htmlToAppend += "<p style='line-height: 21px;margin-top: 10px'>" + mercadoCreditoText;
           htmlToAppend += "</p>";
           htmlToAppend += "</div>";
         } else if (selectedPaymentInstrument.paymentMethod === "CASH") {

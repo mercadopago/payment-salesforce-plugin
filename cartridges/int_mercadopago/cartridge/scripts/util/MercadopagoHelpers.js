@@ -133,13 +133,25 @@ function callService(requestObject) {
  */
 MercadopagoHelpers.prototype.payments = {
   create: (createPaymentPayload) => {
-    const requestObject = {
-      endpoint: "/asgard/payments",
-      httpMethod: "POST",
-      payload: createPaymentPayload
-    };
+    try {
+      const requestObject = {
+        endpoint: "/asgard/payments",
+        httpMethod: "POST",
+        payload: createPaymentPayload
+      };
 
-    return callService(requestObject);
+      return callService(requestObject);
+    } catch (error) {
+      if (error.message.includes("Invalid card_token_id")) {
+        return {
+          error: true,
+          status_detail: "invalid_card_token_id",
+          status: 400
+        };
+      }
+
+      throw error;
+    }
   },
   retrieve: (paymentId) => {
     const requestObject = {
@@ -562,7 +574,7 @@ function getAdditionalInfoPaymentInfo(order) {
  * @param {Object} order - An object containing the order attributes
  * @returns {object} - Returns an object containing two other objects with payer data
  */
-function getAdditionalInfoPayer(order) {
+function getAdditionalInfoPayer(order, paymentMethodId) {
   let docType = null;
   let docNumber = null;
   let firstName = null;
@@ -641,6 +653,22 @@ function getAdditionalInfoPayer(order) {
     last_name: lastName,
     identification: additionalInfoPayer.identification
   };
+  /**
+   * Tratamento criado para adicionar o endereço do pagador no payload devido a
+   * obrigatoriedade de envio do endereço para boleto no Brasil
+   * Atualmente meios off (Boleto) nao e utilizada por Sellers no Brasil, mas foi adicionado para
+   * evitar problemas futuros
+   */
+  if (paymentMethodId === "bolbradesco") {
+    payer.address = {
+      street_name: address.street_name,
+      street_number: address.number,
+      neighborhood: address.city,
+      city: address.city,
+      federal_unit: address.state,
+      zip_code: address.zip_code
+    };
+  }
 
   return { additionalInfoPayer: additionalInfoPayer, payer: payer };
 }
@@ -711,7 +739,7 @@ MercadopagoHelpers.prototype.createPaymentPayload = (
     }
   });
 
-  const { additionalInfoPayer, payer } = getAdditionalInfoPayer(order);
+  const { additionalInfoPayer, payer } = getAdditionalInfoPayer(order, paymentMethodId);
 
   const threeDSecureMode = "optional";
 
@@ -813,7 +841,7 @@ MercadopagoHelpers.prototype.createPreferencePayload = (
   collections.forEach(order.getPaymentInstruments(), (payInstrument) => {
     paymentMethodId = payInstrument.paymentMethod;
   });
-  const { additionalInfoPayer, payer } = getAdditionalInfoPayer(order);
+  const { additionalInfoPayer, payer } = getAdditionalInfoPayer(order, paymentMethodId);
 
   const transactionAmount = getTotalAmount(order);
 

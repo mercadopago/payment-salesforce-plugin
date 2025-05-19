@@ -1,7 +1,7 @@
 <li class="nav-item" data-method-id="${paymentOption.ID}">
   <a class="nav-link methods-off-tab" data-toggle="tab" href="#methods-off-content" role="tab">
-    <img class="method-off-option" src="${URLUtils.staticURL('/images/cash.png')}" width="24"
-    alt="${Resource.msg('methodsoff.invoice', 'mercadopago', null)}" title="${paymentOption.name}" />
+    <img class="method-off-option" src="${URLUtils.staticURL('/images/cash.svg')}" width="24"
+    alt=""/>
     <p>${Resource.msg('methodsoff.invoice', 'mercadopago', null)}</p>
   </a>
 </li>

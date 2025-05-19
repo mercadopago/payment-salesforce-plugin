@@ -1,8 +1,13 @@
+<isset name="siteId" value="${payment.siteId}" scope="page" />
 <div class="cho-credits-img">
-    <img src="${URLUtils.staticURL('/images/payment-mercado-pago.png')}" height="32"
+    <img src="${URLUtils.staticURL('/images/payment-mercado-pago.svg')}" height="32"
         alt="${Resource.msg('mercadopago.chopro.mercadopago', 'mercadopago', null)}"
-        title="${Resource.msg('mercadopago.chopro.creditcard', 'mercadopago', null)}" 
+        title="${Resource.msg('mercadopago.chopro.creditcard', 'mercadopago', null)}"
         style="margin: 10px 0px" />
+    <span
+        style="padding-left: 6px">
+        ${Resource.msg('mercadocredito.tab.' + siteId, 'mercadopago', null)}
+    </span>
 </div>
 <div class="cho-credits-msg">
     <span>${Resource.msg('mercadopago.chopro.selectedpayment', 'mercadopago', null)}</span>

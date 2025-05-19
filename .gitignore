@@ -12,3 +12,4 @@ cartridges/bm_app_storefront_base
 metadata.zip
 test-results/
 launch.json
+.DS_Store

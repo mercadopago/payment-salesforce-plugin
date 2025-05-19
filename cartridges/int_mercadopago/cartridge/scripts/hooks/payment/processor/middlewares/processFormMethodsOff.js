@@ -10,7 +10,7 @@ function getViewData(paymentForm, viewFormData) {
   };
   viewData.paymentInformation = {
     docType: {
-      value: paymentForm.methodsOffFields.docTypeMethodsOff.selectedOption,
+      value: paymentForm.methodsOffFields.docTypeMethodsOff.value,
       htmlName: paymentForm.methodsOffFields.docTypeMethodsOff.htmlName
     },
     docNumber: {
@@ -32,6 +32,23 @@ function getViewData(paymentForm, viewFormData) {
 function getMethodsOffErrors(paymentForm) {
   let fieldErrors = {};
   fieldErrors = formErrors.getFormErrors(paymentForm.methodsOffFields);
+
+  if (paymentForm.methodsOffFields.docNumberMethodsOff.value) {
+    const docNumber = MercadopagoUtil.validateDocument(
+      paymentForm.methodsOffFields.docNumberMethodsOff.value,
+      paymentForm.methodsOffFields.docTypeMethodsOff.htmlValue
+    );
+    if (docNumber) {
+      paymentForm.methodsOffFields.docNumberMethodsOff.value = docNumber;
+    } else {
+      fieldErrors[paymentForm.methodsOffFields.docNumberMethodsOff.htmlName] = Resource.msg(
+        "error.324",
+        "mercadopago",
+        null
+      );
+    }
+  }
+
   if (paymentForm.methodsOffFields.paymentMethodsOffChecked.value == null) {
     fieldErrors[paymentForm.methodsOffFields.paymentMethodsOffChecked.htmlName] = Resource.msg(
       "error.methodsoff.options",
@@ -45,7 +62,7 @@ function getMethodsOffErrors(paymentForm) {
 function processFormMethodsOff(req, paymentForm, viewFormData) {
   const methodsOffErrors = getMethodsOffErrors(paymentForm);
 
-  if (methodsOffErrors.result != null && Object.keys(methodsOffErrors).length) {
+  if (Object.keys(methodsOffErrors).length) {
     return {
       fieldErrors: methodsOffErrors,
       error: true

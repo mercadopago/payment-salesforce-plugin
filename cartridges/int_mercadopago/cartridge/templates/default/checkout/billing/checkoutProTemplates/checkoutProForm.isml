@@ -3,12 +3,8 @@
   assets.addCss('css/mercadopago.css');
 </isscript>
 
-<div class="box">
-    <div class="row-title">
-        <p class="span15">
-            ${Resource.msg('mercadopago.chopro.title', 'mercadopago', null)}
-        </p>
-    </div>
+<div class="box cho-pro-box">
+
     <isif condition="${pdict.mercadopago.siteId === 'MCO'}">
         <isinclude template="checkout/billing/checkoutProTemplates/checkoutProMCOForm" />
     </isif>
