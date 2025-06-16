@@ -3,6 +3,7 @@ const Resource = require("dw/web/Resource");
 const URLUtils = require("dw/web/URLUtils");
 const LocalServiceRegistry = require("dw/svc/LocalServiceRegistry");
 const Logger = require("dw/system/Logger");
+const System = require('dw/system/System');
 const MercadopagoUtil = require("*/cartridge/scripts/util/MercadopagoUtil");
 const collections = require("*/cartridge/scripts/util/collections");
 
@@ -952,7 +953,9 @@ MercadopagoHelpers.prototype.getMethodsOffOptions = (
 MercadopagoHelpers.prototype.getPreferences = () => ({
   mercadopagoPublicKey: Site.getCurrent().getCustomPreferenceValue(
     "mercadopagoPublicKey"
-  )
+  ),
+  pluginVersion: Resource.msg("int_mercadopago.version", "mercadopagoPreferences", null),
+  platformVersion: System.getCompatibilityMode()
 });
 
 /**
