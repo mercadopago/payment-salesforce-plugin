@@ -1,5 +1,14 @@
 # Changelog
 
+## [25.5.1] - 2025-06-11
+
+### Fix
+Added translation keys for MLB
+
+### Updated
+- Updated Readme file
+- Replaces metrics calls from directly calling Melidata to calling Core Monitor.
+
 ## [25.5.0] - 2025-05-19
 
 ### Updated

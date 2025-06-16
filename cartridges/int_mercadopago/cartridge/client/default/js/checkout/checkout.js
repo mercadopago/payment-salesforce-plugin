@@ -14,8 +14,8 @@ var cardFormFields = require('./mercadopagoCardFormFields');
 var methodsOffHelper = require('./mercadopagoMethodsOffForm');
 var savedCardFormHelper = require('./mercadopagoSavedCardForm');
 
-const publicKey = $(".js-mp-form").data("mpPreferences").mercadopagoPublicKey;
-const mp = new MercadoPago(publicKey);
+const pluginVersion = $(".js-mp-form").data("mpPreferences").pluginVersion;
+const platformVersion = $(".js-mp-form").data("mpPreferences").platformVersion;
 
 function submitPayment(paymentMethodId, mpToken, defer) {
     var billingAddressForm = $('#dwfrm_billing .billing-address-block :input').serialize();
@@ -563,7 +563,7 @@ function submitPayment(paymentMethodId, mpToken, defer) {
 
                     } catch (error) {
                         const message = error.message || error;
-                        members.sendMetric('mp_3ds_sales_error_load_challenge_info', message, threeDsData);
+                        members.sendMetric('mp_3ds_sales_load_challenge_info', 'error', message, threeDsData);
                     }
                 }, 3000)
             },
@@ -584,10 +584,10 @@ function submitPayment(paymentMethodId, mpToken, defer) {
                     members.loadCardInformations(threeDsData);
                     members.loadChallengeInfo(threeDsData);
                     members.addListenerResponseChallenge(threeDsData);
-                    members.sendMetric('mp_3ds_sales_success_modal', '3ds modal challenge opened sales', threeDsData);
+                    members.sendMetric('mp_3ds_sales_modal', 'success', '3ds modal challenge opened sales', threeDsData);
                 } catch (error) {
                     const message = error.message || error;
-                    members.sendMetric('mp_3ds_sales_error_modal', message, threeDsData);
+                    members.sendMetric('mp_3ds_sales_modal', 'error', message, threeDsData);
 
                 }
             },
@@ -645,13 +645,13 @@ function submitPayment(paymentMethodId, mpToken, defer) {
                             $('body').trigger('checkout:close3dsModal', $('.three-ds-modal-box'));
                             clearInterval(intervalId);
                             members.authorizePayment(threeDsData);
-                            members.sendMetric('mp_3ds_sales_success_pooling_time', 'Pooling time: ' + elapsedTime.toString() + ' ms', threeDsData);
+                            members.sendMetric('mp_3ds_sales_pooling_time', 'success', 'Pooling time: ' + elapsedTime.toString() + ' ms', threeDsData);
                         }
                         elapsedTime += interval;
                     }, interval);
                 } catch (error) {
                     const message = error.message || error;
-                    members.sendMetric('mp_3ds_sales_error_pooling_time', message, threeDsData);
+                        members.sendMetric('mp_3ds_sales_pooling_time', 'error', message, threeDsData);
                 }
             },
 
@@ -685,21 +685,24 @@ function submitPayment(paymentMethodId, mpToken, defer) {
             * @param {string} message
             * @param {*} threeDsData
             */
-            sendMetric(name, message, threeDsData) {
-                const url = 'https://api.mercadopago.com/v1/plugins/melidata/errors';
+            sendMetric(event_type, value, message, data) {
+                const url = "https://api.mercadopago.com/ppcore/prod/monitor/v1/event/datadog/big/" + event_type;
                 const payload = {
-                    name,
-                    message,
-                    target: 'mp_sales_credit_card_three_ds',
-                    plugin: {
-                        version: threeDsData.plugin_version,
-                    },
+                    value: value,
+                    message: message,
+                    plugin_version: data.plugin_version ? data.plugin_version : pluginVersion,
                     platform: {
-                        name: 'salesforce',
-                        uri: window.location.href,
-                        version: threeDsData.platform_id,
-                        location: window.location.href,
+                        name: "salesforce",
+                        version: platformVersion,
+                        uri: window.location.pathname,
+                        url: window.location.origin,
                     },
+                    details: {
+                        order_id: data.orderID ? data.orderID : "",
+                        payment_status: data.status ? data.status : "",
+                        payment_status_detail: data.status_detail ? data.status_detail : "",
+                        transaction_id: data.transactionID ? data.transactionID : ""
+                    }
                 };
 
                 navigator.sendBeacon(url, JSON.stringify(payload));
