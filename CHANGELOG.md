@@ -1,5 +1,10 @@
 # Changelog
 
+## [25.5.2] - 2025-07-10
+
+### Added
+- Show installments taxes for MLA
+
 ## [25.5.1] - 2025-06-11
 
 ### Fix

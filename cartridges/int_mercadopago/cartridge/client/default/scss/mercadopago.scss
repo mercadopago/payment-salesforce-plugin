@@ -1013,6 +1013,48 @@ body {
   }
 }
 
+// css Tax Info
+
+.mp-tax-info {
+  display: none;
+  flex-direction: row;
+  margin-top: 8px;
+  margin-left: 6px;
+  color: #737373;
+}
+
+.text-tea {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0;
+  color: #737373;
+}
+
+.text-tna {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0;
+  color: #737373;
+}
+
+.text-cft {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: 0;
+  color: #737373;
+}
+
+.text-tea:not(:empty)::before,
+.text-tna:not(:empty)::before {
+  content: "-";
+  margin: 0 6px;
+}
+
+// end css Tax Info
+
 @media (max-width: 1000px) {
   .steps {
     margin-left: 20px;

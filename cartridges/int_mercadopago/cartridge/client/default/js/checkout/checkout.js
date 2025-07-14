@@ -823,6 +823,13 @@ function submitPayment(paymentMethodId, mpToken, defer) {
                     $('body').trigger('checkout:close3dsModal', $('.three-ds-modal-box'));
                 });
 
+                $('#savedInstallments').on('change', function() {
+                    $('body').trigger('checkout:addInstallmentsTaxes', {
+                        installments: this.value, 
+                        tax: this.options[this.selectedIndex].getAttribute('data-tax')
+                    });
+                });
+
                 // 
                 // Handle saved and new card forms
                 // 
@@ -1057,6 +1064,10 @@ var exports = {
         $('body').on('checkout:updateSavedCardInstallments', function (e) {
             const installmentsSelect = document.getElementById("savedInstallments");
             if (!installmentsSelect) {
+                $('body').trigger('checkout:addInstallmentsTaxes', {
+                    installments: null, 
+                    tax: null
+                });
                 return;
             }
             installmentsSelect.innerHTML = "";
@@ -1065,6 +1076,11 @@ var exports = {
                 const op = document.createElement("option");
                 op.text = $(".mp-text-messages").data("mpTextMessages")["field.installments"];
                 installmentsSelect.appendChild(op);
+
+                $('body').trigger('checkout:addInstallmentsTaxes', {
+                    installments: null, 
+                    tax: null
+                });
                 return;
             }
             document.querySelector(".selected-payment #savedSecurityCode").value = "";
@@ -1075,9 +1091,72 @@ var exports = {
                 const op = document.createElement("option");
                 op.text = savedCardFormHelper.formatInstallmentsMessage(element);
                 op.value = element.installments;
+
+                const tax = element.labels;
+                if(tax.length > 0){
+                    for (var l = 0; l < tax.length; l++) {
+                        if (tax[l].indexOf('CFT_') !== -1){
+                            op.setAttribute('data-tax', tax[l]);
+                        }
+                    }
+                }
                 installmentsSelect.appendChild(op);
             }
+            $('body').trigger('checkout:addInstallmentsTaxes', {
+                installments: installmentsSelect.value, 
+                tax: installmentsSelect.options[installmentsSelect.selectedIndex].getAttribute('data-tax')
+            });
         });;
+    },
+
+    addInstallmentsTaxes: function () {
+        $('body').on('checkout:addInstallmentsTaxes', function (e, data) {
+
+            const {installments, tax} = data;
+
+            if(parseInt(installments) <= 1 || tax == null) {
+                $('.mp-tax-info').hide();
+                return;
+            }
+
+            const taxSplit = tax.split('|');
+            const formatedFees = {};
+            taxSplit.forEach(function(item) {
+                let feeName = null;
+                let label = null;
+
+                switch (true) {
+                    case item.includes('TNA'):
+                        feeName = 'TNA';
+                        label = null;
+                        break;
+                    case item.includes('TEA'):
+                        feeName = 'TEA';
+                        label = null;
+                        break;
+                    case item.includes('CFT'):
+                        feeName = 'CFT';
+                        label = 'CFTEA';
+                        break;
+                }
+                formatedFees[feeName] = item.replace(`${feeName}_`, `${(label ? label : feeName)}: `);
+            });
+
+            // If CFT is defined, we need to check if TEA and TNA is defined, if not, add then as 0,00%.
+            if (formatedFees.CFT !== undefined) {
+                if (formatedFees.TEA === undefined) {
+                    formatedFees.TEA = 'TEA: 0,00%';
+                }
+                if (formatedFees.TNA === undefined) {
+                    formatedFees.TNA = 'TNA: 0,00%';
+                }
+            }
+
+            Object.entries(formatedFees).forEach(([key, value])  => {
+                $(`.text-${key.toLowerCase()}`).text(value);
+            });
+            $('.mp-tax-info').show();
+        });
     }
 };
 

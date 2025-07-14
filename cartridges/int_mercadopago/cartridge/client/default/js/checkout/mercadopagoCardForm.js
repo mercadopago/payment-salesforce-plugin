@@ -102,12 +102,41 @@ function createCardForm(totalAmount) {
             if (data.payer_costs[i].installment_rate_collector[0] === "THIRD_PARTY") {
               select[0].options[i].text += " " + cardFormFields.getFieldByMpName("installments").itensText;
             }
+
+            const tax = data.payer_costs[i].labels;
+            if (tax.length > 0) {
+              for (let l = 0; l < tax.length; l++) {
+                if (tax[l].indexOf("CFT_") !== -1) {
+                  select[0].options[i].setAttribute("data-tax", tax[l]);
+                }
+              }
+            }
           }
+          $("body").trigger("checkout:addInstallmentsTaxes", {
+            installments: select.val(),
+            tax: select.find("option:selected").data("tax")
+          });
+
+          select.off("change");
+          $("#installments").on("change", function () {
+            $("body").trigger("checkout:addInstallmentsTaxes", {
+              installments: this.value,
+              tax: this.options[this.selectedIndex].getAttribute("data-tax")
+            });
+          });
         });
       },
       onIdentificationTypesReceived: (error, identificationTypes) => {
         if (!identificationTypes.length) {
           $("#payer-documents").hide();
+        }
+      },
+      onBinChange: (bin) => {
+        if (bin.length <= 0) {
+          $("body").trigger("checkout:addInstallmentsTaxes", {
+            installments: null,
+            tax: null
+          });
         }
       }
     }
