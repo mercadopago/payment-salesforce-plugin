@@ -225,6 +225,9 @@
             <select id="installments" class="form-control" <isprint value=${creditFields.installments.attributes}
                 encoding="htmlsinglequote" /> >
             </select>
+            <p class="mp-tax-info">
+                <span class="text-cft"></span><span class="text-tna"></span><span class="text-tea"></span><span>.&nbsp;<span class="text-fixed-rate">${Resource.msg('mercadopago.field.installments.tax.fixedRate', 'mercadopago', null)}</span></span>
+            </p>
         </div>
     </div>
 </div>

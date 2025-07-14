@@ -67,6 +67,9 @@
 
             <select id="savedInstallments" class="form-control saved-payment-installments" <isprint value=${savedCreditFields.savedInstallments.attributes} encoding="htmlsinglequote" />>
             </select>
+            <p class="mp-tax-info">
+                <span class="text-cft"></span><span class="text-tna"></span><span class="text-tea"></span><span>.&nbsp;<span class="text-fixed-rate">${Resource.msg('mercadopago.field.installments.tax.fixedRate', 'mercadopago', null)}</span></span>
+            </p>
             
         </div>
     </div>
