@@ -1,5 +1,10 @@
 # Changelog
 
+## [25.5.3] - 2025-07-16
+
+### Added
+- Do not show installments taxes for MLA if not received from API
+
 ## [25.5.2] - 2025-07-10
 
 ### Added

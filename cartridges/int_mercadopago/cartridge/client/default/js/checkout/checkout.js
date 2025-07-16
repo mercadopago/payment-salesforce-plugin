@@ -1142,16 +1142,6 @@ var exports = {
                 formatedFees[feeName] = item.replace(`${feeName}_`, `${(label ? label : feeName)}: `);
             });
 
-            // If CFT is defined, we need to check if TEA and TNA is defined, if not, add then as 0,00%.
-            if (formatedFees.CFT !== undefined) {
-                if (formatedFees.TEA === undefined) {
-                    formatedFees.TEA = 'TEA: 0,00%';
-                }
-                if (formatedFees.TNA === undefined) {
-                    formatedFees.TNA = 'TNA: 0,00%';
-                }
-            }
-
             Object.entries(formatedFees).forEach(([key, value])  => {
                 $(`.text-${key.toLowerCase()}`).text(value);
             });
