@@ -1,0 +1,11 @@
+<div class="tab-pane fintoc-content" id="fintoc-content" role="tabpanel">
+    <fieldset class="payment-form-fields payment-form-fields-fintoc">
+
+        <iscomment> payment method is FINTOC </iscomment>
+        <input type="hidden" class="form-control" name="${pdict.forms.billingForm.paymentMethod.htmlName}"
+            value="FINTOC" />
+
+        <isinclude template="checkout/billing/fintocForm" />
+
+    </fieldset>
+</div>

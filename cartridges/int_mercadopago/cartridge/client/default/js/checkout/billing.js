@@ -82,6 +82,23 @@ base.methods.updatePaymentInformation = (order) => {
           htmlToAppend += "<div class='methods-off-info' style='margin-top: 6px;'>";
           htmlToAppend += "<span>" + methodsOffExpire + dateOfExpiration + "</span>";
           htmlToAppend += "</div>";
+        } else if (selectedPaymentInstrument.paymentMethod === "FINTOC") {
+            const fintocImage = $(".fintoc-option")[0].currentSrc;
+            const fintocText = $(".mp-text-messages").data("mpTextMessages")["field.fintoc.billing.message"];
+            htmlToAppend += `
+            <img 
+                src='${fintocImage}' 
+                height='32' 
+                alt='FINTOC' 
+                title='FINTOC' 
+                style='margin-top: 10px' 
+            />
+            <div>
+                <p style='line-height: 21px; margin-top: 10px; font-weight: 600;'>
+                    ${fintocText}
+                </p>
+            </div>
+        `;
         }
       }
     );

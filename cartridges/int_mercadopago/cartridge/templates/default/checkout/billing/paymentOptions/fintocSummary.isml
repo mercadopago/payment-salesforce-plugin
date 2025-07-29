@@ -1,0 +1,9 @@
+<div class="fintoc-img">
+    <img src="${URLUtils.staticURL('/images/fintoc-logo.png')}" height="32"
+        alt="Fintoc"
+        title="Fintoc" 
+        style="margin: 10px 0px" />
+</div>
+<div class="fintoc-msg">
+    <span>${Resource.msg('fintoc.tab', 'mercadopago', null)}</span>
+</div>

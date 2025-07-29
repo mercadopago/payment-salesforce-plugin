@@ -67,4 +67,30 @@
         <enabled-flag>false</enabled-flag>
         <processor-id>MERCADOPAGO_MERCADO_CREDITO</processor-id>
     </payment-method>
+    <payment-method method-id="FINTOC">
+        <name xml:lang="x-default">Bank transfer</name>
+        <name xml:lang="es">Transferencia con tu banco</name>
+        <name xml:lang="es-AR">Transferencia con tu banco</name>
+        <name xml:lang="es-MX">Transferencia con tu banco</name>
+        <name xml:lang="es-CO">Transferencia con tu banco</name>
+        <name xml:lang="es-PE">Transferencia con tu banco</name>
+        <name xml:lang="es-UY">Transferencia con tu banco</name>
+        <name xml:lang="es-CL">Transferencia con tu banco</name>
+        <name xml:lang="pt">Transferência com seu banco</name>
+        <name xml:lang="pt-BR">Transferência com seu banco</name>
+        <name xml:lang="en">Buy now pay later</name>
+        <description xml:lang="x-default">Pay quickly and securely with Fintoc</description>
+        <description xml:lang="es">Paga rápido y seguro con Fintoc</description>
+        <description xml:lang="es-AR">Paga rápido y seguro con Fintoc</description>
+        <description xml:lang="es-MX">Paga rápido y seguro con Fintoc</description>
+        <description xml:lang="es-CO">Paga rápido y seguro con Fintoc</description>
+        <description xml:lang="es-PE">Paga rápido y seguro con Fintoc</description>
+        <description xml:lang="es-UY">Paga rápido y seguro con Fintoc</description>
+        <description xml:lang="es-CL">Paga rápido y seguro con Fintoc</description>
+        <description xml:lang="pt">Ofereça parcelamento em até 12x sem cartão, direto no checkout.</description>
+        <description xml:lang="pt-BR">Pague com rapidez e segurança com Fintoc</description>
+        <description xml:lang="en">Pay quickly and securely with Fintoc</description>
+        <enabled-flag>true</enabled-flag>
+        <processor-id>MERCADOPAGO_FINTOC</processor-id>
+    </payment-method>
 </payment-settings>

@@ -1,0 +1,9 @@
+<li class="nav-item" data-method-id="${paymentOption.ID}">
+    <a class="nav-link fintoc-tab" data-toggle="tab" href="#fintoc-content" role="tab">
+        <img class="fintoc-option" src="${URLUtils.staticURL(Resource.msg('fintoc.fintoc.img', 'mercadopago', null))}" height="32"
+            alt="${Resource.msg('fintoc.fintoc', 'mercadopago', null)}" title="${paymentOption.name}" />
+        <div class="fintoc-tab-text-container">
+            <span class="fintoc-tab-text">${Resource.msg('fintoc.tab', 'mercadopago', null)}</span>
+        </div>
+    </a>
+</li>

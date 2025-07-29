@@ -1,5 +1,10 @@
 # Changelog
 
+## [25.6.0] - 2025-07-29
+
+### Added
+- Add new payment method to MLC - FINTOC
+
 ## [25.5.3] - 2025-07-16
 
 ### Added

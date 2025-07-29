@@ -294,8 +294,150 @@ body {
   white-space: pre-line;
 }
 
-.span24 {
+.span14-fintoc {
+  color: #0000008C;
+  font-size: 14px;
+  font-style: normal;
+  line-height: 18px;
+  /* 128.571% */
+  margin-bottom: 0 !important;
+}
+
+.fintoc-tab {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.fintoc-tab-text-container {
+  max-width: 90px;
+  height: 30px;
+  display: inline-block;
+  text-align: left;
+}
+
+.fintoc-tab-text {
+  line-height: 15px;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.9);
+  display: inline-block;
+}
+
+.row-steps-fintoc {
+  text-align: left;
+}
+
+.payment-form-fields-fintoc {
+  background-color: #FFFFFF;
+}
+
+.box-fintoc {
+  background-color: #FFFFFF;
+}
+
+.fintoc-content-section {
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.row-fintoc-title {
+  h1 {
+    font-family: "Proxima Nova", sans-serif;
+  }
+}
+
+.fintoc-title {
   color: var(--text-andes-text-color-primary, rgba(0, 0, 0, 0.90));
+  text-align: center;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 22px;
+  /* 125% */
+  white-space: pre-line;
+}
+
+.steps-fintoc {
+  display: flex;
+  overflow: hidden;
+  padding-inline-start: 0px !important;
+  align-items: center;
+}
+
+.custom-list-fintoc {
+  display: flex !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  flex-direction: column;
+  gap: 24px;
+  height: auto !important;
+}
+
+.step-number-fintoc {
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 24px;
+  color: #3753ff;
+  background-color: rgba(55, 83, 255, 0.1);
+  border-radius: 50%;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.step-text-fintoc {
+  font-family: "Proxima Nova", sans-serif;
+  margin-left: 12px;
+  line-height: 30px;
+}
+
+.fintoc-payments {
+  display: flex;
+  justify-content: center;
+  height: 24px;
+}
+
+.list-payments-fintoc {
+  display: flex !important;
+  list-style: none;
+  gap: 8px;
+  height: 24px !important;
+  padding: 0 !important;
+
+  li img {
+    width: 32px;
+    height: 24px;
+  }
+}
+
+.box-info-fintoc {
+  text-align: center;
+  height: 47px;
+  gap: 8px;
+  padding: 16px 0 16px 0;
+  background-color: var(--all-andes-gray-040-solid, #F5F5F5);
+}
+
+.info-text-fintoc {
+  font-family: "Proxima Nova", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 15px;
+  color: #0000008C;
+  height: 15px;
+}
+
+.span24 {
+  color: var(--text-andes-text-color-primary, #0000008C);
   text-align: center;
   font-size: 24px;
   font-style: normal;
@@ -323,6 +465,128 @@ body {
 
   li {
     margin: 0;
+  }
+}
+
+#fintoc-flags {
+  display: flex;
+  justify-content: center;
+  width: 272px;
+  height: 24px;
+  padding: 0 !important;
+  margin-bottom: 40px;
+}
+
+.list-payments {
+  margin-left: 0;
+  list-style: none;
+  display: flex;
+  gap: 8px;
+}
+
+@media (max-width: 1000px) {
+  .steps {
+    margin-left: 20px;
+  }
+
+  .span14 {
+    padding-left: 0;
+
+  }
+
+  .step-text {
+    margin-left: 8px;
+  }
+
+  .box .box-img {
+    padding: 0px 10px;
+    height: auto;
+  }
+
+  .box .margin-l {
+    margin-left: 0px !important;
+  }
+
+  .box .mini-box {
+    margin-top: 10px;
+    display: block;
+    width: 100%;
+    float: none;
+    height: 75px;
+    margin-left: 0px !important;
+
+  }
+
+  .box .mini-box-2 {
+    margin-top: 10px;
+    display: block;
+    width: 100%;
+    float: none;
+    height: 75px;
+    margin-left: 0px !important;
+
+  }
+
+  .box .row-title {
+    padding: 10px 16px;
+  }
+
+  .box .row-footer {
+    padding: 10px 0px;
+  }
+
+  .row-steps {
+    text-align: left;
+    margin-right: 20px;
+  }
+
+  .row-steps-fintoc {
+    text-align: left;
+  }
+
+  .box-info {
+    padding: 16px 20px 16px 20px;
+    height: 87px;
+  }
+
+  .row-title-2 {
+    margin: 40px 20px 32px 20px;
+  }
+
+  .fintoc-content-section {
+    padding: 40px 20px;
+  }
+
+  .row-fintoc-title {
+    display: flex;
+  }
+
+  .fintoc-title {
+    margin-bottom: 0px;
+    text-align: left;
+  }
+
+  .steps-fintoc {
+    align-items: none;
+    margin-left: 0px;
+    align-items: normal;
+  }
+
+  .fintoc-payments {
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+
+  .list-payments-fintoc {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .box-info-fintoc {
+    padding: 16px 20px;
+    height: 62px;
+    text-align: left;
+    margin-top: 24px;
   }
 }
 

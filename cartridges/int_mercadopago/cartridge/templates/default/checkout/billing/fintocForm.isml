@@ -1,0 +1,71 @@
+<isscript>
+  let assets = require('*/cartridge/scripts/assets.js');
+  assets.addCss('css/mercadopago.css');
+</isscript>
+
+<div class="box box-fintoc">
+  <section class="fintoc-content-section">
+    <div class="row-fintoc-title">
+      <h1 class="fintoc-title">${Resource.msg('fintoc.title', 'mercadopago', null)}</h1>
+    </div>
+    <div class="row-steps-fintoc">
+      <ul class="custom-list-fintoc">
+        <li>
+          <div class="steps-fintoc">
+            <div class="step-number-fintoc" aria-label="${Resource.msg('fintoc.step.one', 'mercadopago', null)}">
+              <span aria-hidden="true">1</span>
+            </div>
+            <div class="step-text-fintoc">
+              <p class="span14-fintoc">
+                <b class="semi-bold">${Resource.msg('fintoc.firststep.partone', 'mercadopago', null)}</b>
+                ${Resource.msg('fintoc.firststep.parttwo', 'mercadopago', null)}
+              </p>
+            </div>
+          </div>
+        </li>
+        <li>
+          <div class="steps-fintoc">
+            <div class="step-number-fintoc" aria-label="${Resource.msg('fintoc.step.two', 'mercadopago', null)}">
+              <span aria-hidden="true">2</span>
+            </div>
+            <div class="step-text-fintoc">
+              <p class="span14-fintoc">
+                <b class="semi-bold">${Resource.msg('fintoc.secondstep.partone', 'mercadopago', null)}</b>
+                ${Resource.msg('fintoc.secondstep.parttwo', 'mercadopago', null)}
+              </p>
+            </div>
+          </div>
+        </li>
+        <li>
+          <div class="steps-fintoc">
+            <div class="step-number-fintoc" aria-label="${Resource.msg('fintoc.step.three', 'mercadopago', null)}">
+              <span aria-hidden="true">3</span>
+            </div>
+            <div class="step-text-fintoc">
+              <p class="span14-fintoc">
+                <b class="semi-bold">${Resource.msg('fintoc.thirdstep.partone', 'mercadopago', null)}</b>
+                ${Resource.msg('fintoc.thirdstep.parttwo', 'mercadopago', null)}
+              </p>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="fintoc-payments">
+      <ul title="${Resource.msg('fintoc.listpayments', 'mercadopago', null)}" class="list-payments-fintoc" aria-labelledby="titulo-oculto">
+        <li><img src="${URLUtils.staticURL('/images/fintoc-banks/banco-estado.png')}" alt="${Resource.msg('fintoc.banks.state', 'mercadopago', null)}" /></li>
+        <li><img src="${URLUtils.staticURL('/images/fintoc-banks/banco-de-chile.png')}" alt="${Resource.msg('fintoc.banks.chile', 'mercadopago', null)}" /></li>
+        <li><img src="${URLUtils.staticURL('/images/fintoc-banks/banco-santander.png')}" alt="${Resource.msg('fintoc.banks.santander', 'mercadopago', null)}" /></li>
+        <li><img src="${URLUtils.staticURL('/images/fintoc-banks/banco-bci.png')}" alt="${Resource.msg('fintoc.banks.bci', 'mercadopago', null)}" /></li>
+        <li><img src="${URLUtils.staticURL('/images/fintoc-banks/banco-itau.png')}" alt="${Resource.msg('fintoc.banks.itau', 'mercadopago', null)}" /></li>
+        <li><img src="${URLUtils.staticURL('/images/fintoc-banks/banco-falabella.png')}" alt="${Resource.msg('fintoc.banks.falabella', 'mercadopago', null)}" /></li>
+        <li><img src="${URLUtils.staticURL('/images/fintoc-banks/banco-scotiabank.png')}" alt="${Resource.msg('fintoc.banks.scotiabank', 'mercadopago', null)}" /></li>
+      </ul>
+    </div>
+  </section>
+  <footer class="box-info-fintoc">
+    <div class="info-text-fintoc">
+      <p>${Resource.msg('fintoc.footerinfo', 'mercadopago', null)}</p>
+    </div>
+  </footer>
+</div>

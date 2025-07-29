@@ -14,4 +14,7 @@
     <isif condition="${paymentOption.ID === 'MERCADO_CREDITO' && pdict.mercadopago.isCreditsEnabled}">
         <isinclude template="checkout/billing/paymentOptions/mercadoCreditoTab" />
     </isif>
+        <isif condition="${paymentOption.ID === 'FINTOC' && pdict.mercadopago.isFintocEnabled}">
+        <isinclude template="checkout/billing/paymentOptions/fintocTab" />
+    </isif>
 </isloop>
