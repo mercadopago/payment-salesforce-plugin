@@ -421,6 +421,46 @@ module.exports = {
       status: "active"
     }
   ],
+  PAYMENT_METHODS_WITH_FINTOC: [
+    {
+      id: "fintoc",
+      name: "FINTOC",
+      payment_type_id: "bank_transfer",
+      status: "active"
+    },
+    {
+      id: "master",
+      name: "Mastercard",
+      payment_type_id: "credit_card",
+      status: "active"
+    },
+    {
+      id: "pec",
+      name: "Pagamento na lotérica sem boleto",
+      payment_type_id: "ticket",
+      status: "active"
+    },
+    {
+      id: "bolbradeesco",
+      name: "Boleto",
+      payment_type_id: "ticket",
+      status: "active"
+    }
+  ],
+  PAYMENT_METHODS_WITHOUT_FINTOC: [
+    {
+      id: "pec",
+      name: "Pagamento na lotérica sem boleto",
+      payment_type_id: "ticket",
+      status: "active"
+    },
+    {
+      id: "bolbradeesco",
+      name: "Boleto",
+      payment_type_id: "ticket",
+      status: "active"
+    }
+  ],
   ENABLED_METHODS_OFF: ["ticket", "atm", "bank_transfer"],
   getExpirationMethodsOff: () => "24 h",
   getPaymentMethodFromPlace: () => ({

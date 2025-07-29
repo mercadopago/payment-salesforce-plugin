@@ -8,7 +8,8 @@ MercadopagoUtil.prototype.PAYMENT_METHOD = {
   pix: "PIX",
   checkout_pro: "CHECKOUT_PRO",
   mercado_credito: "MERCADO_CREDITO",
-  methods_off: "CASH"
+  methods_off: "CASH",
+  fintoc: "FINTOC"
 };
 
 MercadopagoUtil.prototype.DOCUMENT_TYPE = {
@@ -77,7 +78,8 @@ MercadopagoUtil.prototype.getTextMessages = () => ({
   "field.installments.tax.fixedRate": Resource.msg("mercadopago.field.installments.tax.fixedRate", "mercadopago", null),
   "field.methodsoff.invoice.place": Resource.msg("methodsoff.info.place", "mercadopago", null),
   "field.methodsoff.invoice.expire": Resource.msg("methodsoff.info.expiration", "mercadopago", null),
-  "field.chopro.billing.message": Resource.msg("mercadopago.chopro.selectedpayment", "mercadopago", null)
+  "field.chopro.billing.message": Resource.msg("mercadopago.chopro.selectedpayment", "mercadopago", null),
+  "field.fintoc.billing.message": Resource.msg("fintoc.tab", "mercadopago", null)
 });
 
 /**

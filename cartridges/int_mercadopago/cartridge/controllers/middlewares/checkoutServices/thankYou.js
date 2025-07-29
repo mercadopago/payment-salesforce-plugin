@@ -15,6 +15,8 @@ function thankYou(req, res, next) {
       paymentInstrument.custom.status = "";
       paymentInstrument.custom.statusDetail = "";
       paymentInstrument.custom.mercadoCreditoLink = "";
+      paymentInstrument.custom.fintocExternalReferenceId = "";
+      paymentInstrument.custom.fintocExternalUrl = "";
     });
   }
 

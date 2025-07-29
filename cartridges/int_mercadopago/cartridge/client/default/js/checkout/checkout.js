@@ -14,6 +14,9 @@ var cardFormFields = require('./mercadopagoCardFormFields');
 var methodsOffHelper = require('./mercadopagoMethodsOffForm');
 var savedCardFormHelper = require('./mercadopagoSavedCardForm');
 
+const publicKey = $(".js-mp-form").data("mpPreferences").mercadopagoPublicKey;
+const mp = new MercadoPago(publicKey);
+const fintoc = mp.fintoc();
 const pluginVersion = $(".js-mp-form").data("mpPreferences").pluginVersion;
 const platformVersion = $(".js-mp-form").data("mpPreferences").platformVersion;
 
@@ -448,6 +451,8 @@ function submitPayment(paymentMethodId, mpToken, defer) {
                         defer = submitPayment(paymentMethodId, "", defer);
                     } else if (paymentMethodId === 'MERCADO_CREDITO') {
                         defer = submitPayment(paymentMethodId, "", defer);
+                    } else if (paymentMethodId === 'FINTOC') {
+                        defer = submitPayment(paymentMethodId, "", defer);
                     }
                     return defer;
                 } else if (stage === 'placeOrder') {
@@ -465,6 +470,10 @@ function submitPayment(paymentMethodId, mpToken, defer) {
                                 if (data.status_detail) {
                                     if (data.status_detail === "pending_challenge") {
                                         members.openModalChallenge(data);
+                                    }
+
+                                    if(data.status_detail === "pending_waiting_transfer") {
+                                        members.callFintocService(data);
                                     }
 
                                 }
@@ -680,10 +689,11 @@ function submitPayment(paymentMethodId, mpToken, defer) {
             },
 
             /**
-            * Retrieves the payment status.
-            * @param {string} name 
+            * Send metrics to Datadog.
+            * @param {string} event_type
+            * @param {string} value
             * @param {string} message
-            * @param {*} threeDsData
+            * @param {object} data
             */
             sendMetric(event_type, value, message, data) {
                 const url = "https://api.mercadopago.com/ppcore/prod/monitor/v1/event/datadog/big/" + event_type;
@@ -710,23 +720,26 @@ function submitPayment(paymentMethodId, mpToken, defer) {
 
             /**
             * Updates order status.
-            * @param {*} threeDsData
+            * @param {*} paymentData
             */
-            authorizePayment: function (threeDsData) {
-
-                var queryString = '?orderID=' + threeDsData.orderID;
-                queryString += '&orderToken=' + threeDsData.orderToken;
-                queryString += '&transactionID=' + threeDsData.transactionID;
+            authorizePayment: function (paymentData) {
+                const params = new URLSearchParams({
+                    orderID: paymentData.orderID,
+                    orderToken: paymentData.orderToken,
+                    transactionID: paymentData.transactionID,
+                  });
 
                 $.ajax({
-                    url: 'CheckoutServices-AuthorizePayment' + queryString,
+                    url: 'CheckoutServices-AuthorizePayment?' + params.toString(),
                     type: "POST",
                     dataType: "html",
                     async: false,
                     success: function (data) {
                         const dataParse = JSON.parse(data);
 
-                        if (dataParse.status === 'rejected' || dataParse.statusDetail === 'pending_challenge') {
+                        if (dataParse.status === 'rejected' || 
+                            dataParse.statusDetail === 'pending_challenge' || 
+                            dataParse.statusDetail === 'pending_waiting_transfer') {
                             members.showErrorMessage(dataParse.errorMessage);
                         } else {
                             $('.error-message').remove();
@@ -739,6 +752,35 @@ function submitPayment(paymentMethodId, mpToken, defer) {
                 });
             },
 
+            callFintocService: function (fintocData){
+                try {
+                    fintoc.open({
+                        institutionId: "",
+                        username: "",
+                        widgetToken: fintocData.external_reference_id,
+                        onSuccess,
+                        onExit,
+                        onEvent,
+                    });
+                    this.sendMetric('PAY_FINTOC', 'success_open_fintoc_modal', 'success open modal', fintocData);
+                } catch (error) {
+                    members.sendMetric('PAY_FINTOC', 'fail_open_fintoc_modal', error.message, fintocData);
+                }
+
+                function onSuccess() {
+                    members.authorizePayment(fintocData);
+                    members.sendMetric('PAY_FINTOC', 'payment_success_fintoc_modal', 'finished payment', fintocData);
+                }
+
+                function onExit() {
+                    members.showErrorMessage(fintocData.mpErrorMessage);
+                    members.sendMetric('PAY_FINTOC', 'closed_fintoc_modal', 'closed fintoc modal', fintocData);
+                }
+
+                function onEvent(event) { 
+                    console.log("onEvent", event);
+                }
+            },
             /**
             * Show error message.
             * @param {string} message

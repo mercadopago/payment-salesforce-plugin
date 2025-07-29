@@ -142,25 +142,25 @@
                 <externally-managed-flag>false</externally-managed-flag>
                 <min-length>0</min-length>
             </attribute-definition>
-            <attribute-definition attribute-id="dateOfExpiration">
-                <display-name xml:lang="x-default">Date Expiration Payment</display-name>
-                <type>string</type>
-                <mandatory-flag>false</mandatory-flag>
-                <externally-managed-flag>false</externally-managed-flag>
-                <min-length>0</min-length>
-            </attribute-definition>
-            <attribute-definition attribute-id="externalUrlInvoice">
-                <display-name xml:lang="x-default">External Url Invoice</display-name>
-                <type>string</type>
-                <mandatory-flag>false</mandatory-flag>
-                <externally-managed-flag>false</externally-managed-flag>
-                <min-length>0</min-length>
-            </attribute-definition>
             <attribute-definition attribute-id="saveCardToWallet">
                 <display-name xml:lang="x-default">Save Card to Wallet</display-name>
                 <type>boolean</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
+            <attribute-definition attribute-id="fintocExternalReferenceId">
+                <display-name xml:lang="x-default">External Reference Id Fintoc</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="fintocExternalUrl">
+                <display-name xml:lang="x-default">External Url Fintoc</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
             </attribute-definition>
         </custom-attribute-definitions>
         <group-definitions>
@@ -186,9 +186,9 @@
                 <attribute attribute-id="dateOfExpiration"/>
                 <attribute attribute-id="externalUrlInvoice"/>
                 <attribute attribute-id="paymentPlace"/>
-                <attribute attribute-id="dateOfExpiration"/>
-                <attribute attribute-id="externalUrlInvoice"/>
                 <attribute attribute-id="saveCardToWallet"/>
+                <attribute attribute-id="fintocExternalReferenceId"/>
+                <attribute attribute-id="fintocExternalUrl"/>
             </attribute-group>
         </group-definitions>
     </type-extension>

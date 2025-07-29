@@ -210,7 +210,7 @@ function placeOrder(order, fraudDetectionStatus) {
       const { paymentInstruments } = order;
       const [paymentInstrument] = paymentInstruments;
 
-      if (paymentInstrument.custom.statusDetail === "pending_challenge") {
+      if (paymentInstrument.custom.statusDetail === "pending_challenge" || paymentInstrument.custom.statusDetail === "pending_waiting_transfer") {
         OrderMgr.failOrder(order, true);
       } else {
         const placeOrderStatus = OrderMgr.placeOrder(order);

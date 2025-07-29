@@ -3,7 +3,7 @@ const Resource = require("dw/web/Resource");
 const URLUtils = require("dw/web/URLUtils");
 const LocalServiceRegistry = require("dw/svc/LocalServiceRegistry");
 const Logger = require("dw/system/Logger");
-const System = require('dw/system/System');
+const System = require("dw/system/System");
 const MercadopagoUtil = require("*/cartridge/scripts/util/MercadopagoUtil");
 const collections = require("*/cartridge/scripts/util/collections");
 
@@ -48,6 +48,7 @@ function getServiceDefinition() {
       svc.addHeader("x-integrator-id", integratorId);
 
       if (requestObject.payload) {
+
         if (!requestObject.payload.metadata) {
           requestObject.payload.metadata = {};
         }
@@ -303,7 +304,7 @@ function getMethodsOffExpiration() {
     return null;
   }
 
-  expirationTime = "" + methodsOffExpirationTime.value;
+  const expirationTime = "" + methodsOffExpirationTime.value;
 
   const seconds = getSeconds(expirationTime);
 
@@ -765,7 +766,8 @@ MercadopagoHelpers.prototype.createPaymentPayload = (
       "MercadopagoNotification-PaymentNotifications"
     ).toString(),
     point_of_interaction: {
-      type: "CHECKOUT"
+      type: "CHECKOUT",
+      sub_type: "INTER_PSP"
     },
     three_d_secure_mode: threeDSecureMode
   };
@@ -921,7 +923,7 @@ MercadopagoHelpers.prototype.getMethodsOffOptions = (
   if (!isMethodsOffEnabled) {
     return null;
   }
-  const methodsOffNotAllowed = ["pix", "pse"];
+  const methodsOffNotAllowed = ["pix", "pse", "fintoc"];
   const offOptions = [];
 
   collections.forEach(paymentMethods, (paymentMethod) => {
@@ -1005,17 +1007,24 @@ MercadopagoHelpers.prototype.getSavedCardsInstallments = (
   return savedCardsInstallments;
 };
 
-function getCustId(data) {
-  if (data && data.collector_id) {
-    return data.collector_id.toString();
-  }
-  return data.additional_info.seller.id ? data.additional_info.seller.id.toString() : "";
-}
+MercadopagoHelpers.prototype.mountMetricData = (paymentInfo) => {
+  const data = {
+    id: paymentInfo.payments_details[0].id,
+    status: paymentInfo.status,
+    status_detail: paymentInfo.payments_details[0].status_detail,
+    metadata: {
+      plugin_version: paymentInfo.payments_metadata.plugin_version
+    }
+  };
+
+  return data;
+};
 
 MercadopagoHelpers.prototype.sendMetric = (value, message, data, target) => {
   const location = Site.getCurrent().httpsHostName;
   const siteId = MercadopagoHelpers.prototype.getSiteId();
   const version = data.metadata ? data.metadata.plugin_version : "";
+  const sellerInfo = getUserMPData();
   try {
     const payload = {
       value: value,
@@ -1033,7 +1042,7 @@ MercadopagoHelpers.prototype.sendMetric = (value, message, data, target) => {
         payment_id: data.id ? data.id.toString() : "",
         payment_status: data.status ? data.status : "",
         payment_status_detail: data.status_detail ? data.status_detail : "",
-        cust_id: getCustId(data)
+        cust_id: sellerInfo.id.toString()
       }
     };
 

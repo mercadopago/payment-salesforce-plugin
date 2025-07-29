@@ -45,4 +45,13 @@
             <production/>
         </preferences>
     </payment-processor>
+    <payment-processor processor-id="MERCADOPAGO_FINTOC">
+        <description>Mercado Pago payment processor with Fintoc</description>
+        <preferences>
+            <all-instances/>
+            <development/>
+            <staging/>
+            <production/>
+        </preferences>
+    </payment-processor>
 </payment-processors>

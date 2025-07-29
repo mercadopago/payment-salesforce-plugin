@@ -15,5 +15,8 @@
         <isif condition="${payment.paymentMethod === 'MERCADO_CREDITO'}">
             <isinclude template="checkout/billing/paymentOptions/mercadoCreditoSummary" />
         </isif>
+        <isif condition="${payment.paymentMethod === 'FINTOC'}">
+            <isinclude template="checkout/billing/paymentOptions/fintocSummary" />
+        </isif>
     </isloop>
 </div>

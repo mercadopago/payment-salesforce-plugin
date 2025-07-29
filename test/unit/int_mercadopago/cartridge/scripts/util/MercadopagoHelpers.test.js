@@ -204,6 +204,23 @@ describe("Sript utilities MercadopagoHelpers test function getMethodsOffOptions"
 
     assert.deepEqual(methodsOffOptions, importsUtil.MercadopagoHelpers.PAYMENT_METHODS_WITHOUT_PIX);
   });
+
+  it("should return payment method list without fintoc if present in payment methods", () => {
+    const MercadopagoHelpers = proxyquire(scriptPath, proxyquireObject);
+
+    const isMethodsOffEnabled = true;
+    const paymentMethods = importsUtil.MercadopagoHelpers.PAYMENT_METHODS_WITH_FINTOC;
+    const enabledMethods = importsUtil.MercadopagoHelpers.ENABLED_METHODS_OFF;
+
+    const methodsOffOptions = MercadopagoHelpers.getMethodsOffOptions(
+      isMethodsOffEnabled,
+      paymentMethods,
+      enabledMethods
+    );
+
+    assert.deepEqual(methodsOffOptions,
+      importsUtil.MercadopagoHelpers.PAYMENT_METHODS_WITHOUT_FINTOC);
+  });
 });
 
 describe("Script utilities MercadopagoHelpers test function getInstallments", () => {

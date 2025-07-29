@@ -22,6 +22,7 @@ function begin(req, res, next) {
     isPixEnabled: MercadopagoHelpers.hasPaymentMethod(paymentMethods, "pix"),
     isCreditsEnabled: MercadopagoHelpers.hasPaymentMethod(paymentMethods, "consumer_credits"),
     isMethodsOffEnabled: isMethodsOffEnabled,
+    isFintocEnabled: MercadopagoHelpers.hasPaymentMethod(paymentMethods, "fintoc"),
     methodsOffOptions: MercadopagoHelpers.getMethodsOffOptions(
       isMethodsOffEnabled,
       paymentMethods,
