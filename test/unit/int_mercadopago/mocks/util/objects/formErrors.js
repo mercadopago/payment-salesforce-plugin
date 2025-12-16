@@ -1,5 +1,3 @@
 module.exports = {
-    getFormErrors: (form) => ({
-        result: null
-    })
+    getFormErrors: (form) => ({})
 }

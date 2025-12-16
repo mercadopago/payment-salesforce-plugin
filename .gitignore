@@ -13,3 +13,7 @@ metadata.zip
 test-results/
 launch.json
 .DS_Store
+.cursor
+
+# Cursor
+.history

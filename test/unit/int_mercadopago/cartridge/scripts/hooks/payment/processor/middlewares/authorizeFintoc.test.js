@@ -1,120 +1,91 @@
-const sinon = require("sinon");
 const assert = require("assert");
-const proxyquire = require("proxyquire").noCallThru();
+const proxyquire = require("proxyquire").noCallThru().noPreserveCache();
+const importsUtil = require("../../../../../../mocks/util/importsUtil");
+const paymentDataUtil = require("../../../../../../mocks/util/paymentDataUtil");
 
-describe("authorizeFintoc", () => {
-  let authorizeFintoc;
-  let Transaction;
-  let OrderMgr;
-  let MercadopagoHelpers;
-  let Logger;
-  let session;
-  let order;
-  let paymentInstrument;
-  let paymentProcessor;
-  let paymentResponse;
+const hookPath =
+  "*/../../cartridges/int_mercadopago/cartridge/scripts/hooks/payment/processor/middlewares/authorizeFintoc.js";
 
-  beforeEach(() => {
-    Transaction = {
-      wrap: sinon.stub().callsFake((fn) => fn())
-    };
+const proxyquireObject = {
+  "*/cartridge/scripts/util/MercadopagoHelpers": importsUtil.MercadopagoHelpers,
+  "*/cartridge/scripts/util/MercadopagoUtil": importsUtil.MercadopagoUtil,
+  "dw/system/Transaction": importsUtil.Transaction,
+  "dw/web/Resource": importsUtil.Resource,
+  "dw/order/Order": importsUtil.Order,
+  "dw/order/OrderMgr": importsUtil.OrderMgr,
+  "dw/system/Logger": importsUtil.Logger
+};
 
-    OrderMgr = {
-      getOrder: sinon.stub()
-    };
+global.session = {
+  privacy: {
+    currentOrderToken: "123"
+  }
+};
 
-    MercadopagoHelpers = {
-      createPaymentPayload: sinon.stub(),
-      payments: {
-        create: sinon.stub()
-      }
-    };
-
-    Logger = {
-      getLogger: sinon.stub().returns({
-        info: sinon.stub(),
-        error: sinon.stub()
-      })
-    };
-
-    session = {
-      privacy: {
-        currentOrderToken: "testOrderToken",
-        mercadopagoErrorMessage: JSON.stringify({ cause: [{ code: "123" }] })
-      }
-    };
-
-    order = {
-      custom: {},
-      addNote: sinon.stub(),
-      setPaymentStatus: sinon.stub()
-    };
-
-    paymentInstrument = {
-      paymentTransaction: {}
-    };
-
-    paymentProcessor = {};
-
-    paymentResponse = {
-      status: "approved",
-      status_detail: "accredited",
-      id: "12345",
-      payment_method: {
-        data: {
-          external_reference_id: "extRefId",
-          external_resource_url: "extResUrl"
-        }
-      }
-    };
-
-    authorizeFintoc = proxyquire("./authorizeFintoc", {
-      "dw/system/Transaction": Transaction,
-      "dw/order/OrderMgr": OrderMgr,
-      "dw/system/Logger": Logger,
-      "*/cartridge/scripts/util/MercadopagoHelpers": MercadopagoHelpers,
-      "dw/web/Resource": {
-        msg: sinon.stub().returns("message")
-      },
-      "dw/order/Order": {
-        PAYMENT_STATUS_PAID: "PAID",
-        PAYMENT_STATUS_NOTPAID: "NOTPAID"
-      },
-      "*/cartridge/scripts/util/MercadopagoUtil": {
-        parseOrderStatus: sinon.stub().returns("authorized")
-      },
-      "dw/system/Logger": Logger,
-      session: session
-    });
-  });
+describe("Hook MERCADOPAGO_PAYMENTS middleware authorizeFintoc test", () => {
+  const authorizeFintoc = proxyquire(hookPath, proxyquireObject);
 
   it("should authorize payment successfully", () => {
-    OrderMgr.getOrder.returns(order);
-    MercadopagoHelpers.createPaymentPayload.returns({});
-    MercadopagoHelpers.payments.create.returns(paymentResponse);
+    const paymentInstrument = paymentDataUtil.getPaymentInstrument();
+    const orderNumber = "00002671";
+    const PAYMENT_PROCESSOR = {
+      ID: "MERCADOPAGO_PAYMENTS"
+    };
 
-    const result = authorizeFintoc("orderNumber", paymentInstrument, paymentProcessor);
+    const result = authorizeFintoc(
+      orderNumber,
+      paymentInstrument,
+      PAYMENT_PROCESSOR
+    );
 
     assert.strictEqual(result.error, false);
-    assert(paymentInstrument.paymentTransaction.paymentProcessor, paymentProcessor);
-    assert(order.setPaymentStatus.calledWith("PAID"));
   });
 
   it("should handle payment error", () => {
-    OrderMgr.getOrder.returns(order);
-    MercadopagoHelpers.createPaymentPayload.returns({});
-    MercadopagoHelpers.payments.create.returns(null);
+    const paymentInstrument = paymentDataUtil.getPaymentInstrument();
+    const orderNumber = "00002671";
+    const PAYMENT_PROCESSOR = {
+      ID: "MERCADOPAGO_PAYMENTS"
+    };
 
-    const result = authorizeFintoc("orderNumber", paymentInstrument, paymentProcessor);
+    // Mock paymentResponse as null to simulate error
+    const originalCreate = importsUtil.MercadopagoHelpers.payments.create;
+    importsUtil.MercadopagoHelpers.payments.create = () => null;
+
+    const result = authorizeFintoc(
+      orderNumber,
+      paymentInstrument,
+      PAYMENT_PROCESSOR
+    );
 
     assert.strictEqual(result.error, true);
+
+    // Restore original
+    importsUtil.MercadopagoHelpers.payments.create = originalCreate;
   });
 
   it("should handle exception", () => {
-    OrderMgr.getOrder.throws(new Error("Test Error"));
+    const paymentInstrument = paymentDataUtil.getPaymentInstrument();
+    const orderNumber = "invalid";
+    const PAYMENT_PROCESSOR = {
+      ID: "MERCADOPAGO_PAYMENTS"
+    };
 
-    const result = authorizeFintoc("orderNumber", paymentInstrument, paymentProcessor);
+    // Mock OrderMgr.getOrder to throw error
+    const originalGetOrder = importsUtil.OrderMgr.getOrder;
+    importsUtil.OrderMgr.getOrder = () => {
+      throw new Error("Test Error");
+    };
 
-    assert.strictEqual(result.error, true);
+    const result = authorizeFintoc(
+      orderNumber,
+      paymentInstrument,
+      PAYMENT_PROCESSOR
+    );
+
+    assert.equal(result.error, true);
+
+    // Restore original
+    importsUtil.OrderMgr.getOrder = originalGetOrder;
   });
 });

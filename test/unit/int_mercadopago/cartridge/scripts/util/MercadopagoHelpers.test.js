@@ -9,6 +9,7 @@ const proxyquireObject = {
   "dw/web/Resource": importsUtil.Resource,
   "dw/order/PaymentInstrument": importsUtil.PaymentInstrument,
   "dw/system/Site": importsUtil.Site,
+  "dw/system/System": importsUtil.System,
   "dw/system/Logger": importsUtil.Logger,
   "dw/web/URLUtils": importsUtil.URLUtils,
   "dw/svc/LocalServiceRegistry": importsUtil.LocalServiceRegistry,
@@ -31,7 +32,15 @@ describe("Scripts utilities MercadopagoHelpers creating payment payload", () => 
           }
         }
       ],
-      billingAddress: {},
+      billingAddress: {
+        countryCode: {
+          displayValue: "BR"
+        }
+      },
+      customer: {
+        profile: {},
+        registered: false
+      },
       defaultShipment: {
         shippingAddress: {}
       }
@@ -78,7 +87,15 @@ describe("Scripts utilities MercadopagoHelpers creating payment payload", () => 
             }
           }
         ],
-        billingAddress: {},
+        billingAddress: {
+          countryCode: {
+            displayValue: "BR"
+          }
+        },
+        customer: {
+          profile: {},
+          registered: false
+        },
         defaultShipment: {
           shippingAddress: {}
         }

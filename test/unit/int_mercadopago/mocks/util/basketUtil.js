@@ -13,7 +13,8 @@ module.exports = {
   }),
   getPaymentInstruments: () => ({
     empty: true,
-    length: 0
+    length: 0,
+    toArray: () => []
   }),
   removePaymentInstrument: () => ({
     empty: true,
@@ -28,7 +29,13 @@ module.exports = {
     custom: {
       customerDocType: "",
       customerDocNumber: "",
-      mercadoPagoPaymentTypeId: ""
+      mercadoPagoPaymentTypeId: "",
+      paymentTypeId: "",
+      cardTypeName: "",
+      payerEmail: "",
+      payerDocType: "",
+      payerDocNumber: "",
+      saveCardToWallet: false
     }
   })
 };

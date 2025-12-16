@@ -816,9 +816,8 @@ MercadopagoHelpers.prototype.createPreferencePayload = (
         ? validateAndReturnAttribute(prodLineItem.product.primaryCategory, "displayName") : null;
     }
 
-    const unitPrice = validateAndReturnAttribute(prodLineItem.adjustedPrice, "value") / prodLineItem.quantityValue;
     item.quantity = prodLineItem.quantityValue;
-    item.unit_price = Number(unitPrice.toFixed(5));
+    item.unit_price = prodLineItem.basePrice.value;
 
     return item;
   });
@@ -827,15 +826,12 @@ MercadopagoHelpers.prototype.createPreferencePayload = (
     items.push({ id: "salesTax", title: "Sales Tax", quantity: 1, unit_price: order.totalTax.value });
   }
 
-  let orderDiscount = 0;
-  for (let i = 0; i < order.priceAdjustments.length; i++) {
-    orderDiscount += order.priceAdjustments[i].priceValue;
-  }
-
-  orderDiscount = Number(orderDiscount.toFixed(5));
+  const merchandizeTotalPrice = order.getMerchandizeTotalPrice();
+  const adjustedMerchandizeTotalPrice = order.getAdjustedMerchandizeTotalPrice();
+  const orderDiscount = merchandizeTotalPrice.subtract(adjustedMerchandizeTotalPrice).value;
 
   if (orderDiscount) {
-    items.push({ id: "orderDiscount", title: "Order Discount", quantity: 1, unit_price: orderDiscount });
+    items.push({ id: "orderDiscount", title: "Order Discount", quantity: 1, unit_price: -orderDiscount });
   }
 
   let paymentMethodId;

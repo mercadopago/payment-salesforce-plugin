@@ -7,6 +7,15 @@ module.exports = {
       paymentStatus: "",
       paymentReport: ""
     },
+    customer: {
+      authenticated: false,
+      registered: false
+    },
+    paymentInstrument: {
+      custom: {
+        saveCardToWallet: false
+      }
+    },
     setPaymentStatus: (value) => ({
       status: value
     }),

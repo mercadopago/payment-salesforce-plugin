@@ -1,5 +1,10 @@
 # Changelog
 
+## [25.6.1] - 2025-12-16
+
+### Fixed
+- Update unit price calculation in preference to use SFCC api.
+
 ## [25.6.0] - 2025-07-29
 
 ### Added

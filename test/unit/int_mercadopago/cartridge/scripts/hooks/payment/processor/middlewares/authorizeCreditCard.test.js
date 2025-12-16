@@ -21,6 +21,7 @@ const proxyquireObject = {
   "dw/system/Logger": importsUtil.Logger
 };
 
+// Configure global.session before loading the module
 global.session = {
   forms: {
     billing: {
@@ -40,7 +41,29 @@ global.session = {
 };
 
 describe("Hook MERCADOPAGO_PAYMENTS middleware authorizeCreditCard test", () => {
-  const authorizeCreditCard = proxyquire(hookPath, proxyquireObject);
+  let authorizeCreditCard;
+
+  beforeEach(() => {
+    // Ensure session is set before loading module
+    global.session = {
+      forms: {
+        billing: {
+          creditCardFields: {
+            installments: {
+              value: "1"
+            },
+            issuer: {
+              value: "1"
+            }
+          }
+        }
+      },
+      privacy: {
+        currentOrderToken: "123"
+      }
+    };
+    authorizeCreditCard = proxyquire(hookPath, proxyquireObject);
+  });
 
   it("should return an object without error", () => {
     const paymentInstrument = paymentDataUtil.getPaymentInstrument();

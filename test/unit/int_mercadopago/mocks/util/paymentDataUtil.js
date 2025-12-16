@@ -93,8 +93,10 @@ function getFormPix() {
 function getFormMethodsOff() {
   return {
     docTypeMethodsOff: {
+      value: "CPF",
       selectedOption: "CPF",
-      htmlName: "dwfrm_billing_methodsOffFields_docTypeMethods"
+      htmlName: "dwfrm_billing_methodsOffFields_docTypeMethods",
+      htmlValue: "CPF"
     },
     docNumberMethodsOff: {
       value: "12345678909",
@@ -168,6 +170,7 @@ function getPaymentInfoCreditCard() {
       htmlName: "dwfrm_billing_creditCardFields_securityCode"
     },
     expirationMonth: {
+      value: 7,
       selectedOption: 7,
       htmlName: "dwfrm_billing_creditCardFields_expirationMonth"
     },
@@ -180,6 +183,7 @@ function getPaymentInfoCreditCard() {
       htmlName: "dwfrm_billing_creditCardFields_token"
     },
     docType: {
+      value: "CPF",
       selectedOption: "CPF",
       htmlName: "dwfrm_billing_creditCardFields_docType"
     },
@@ -201,6 +205,13 @@ function getPaymentInfoCreditCard() {
     },
     paymentMethodId: {
       value: "visa"
+    },
+    saveCard: {
+      value: false,
+      checked: false
+    },
+    creditCardToken: {
+      value: "123456789"
     }
   };
 }

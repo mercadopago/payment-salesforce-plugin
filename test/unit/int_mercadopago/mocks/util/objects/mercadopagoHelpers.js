@@ -1,5 +1,7 @@
 module.exports = {
   createPaymentPayload: () => ({}),
+  sendMetric: () => {},
+  addInfoPayerToSavedCreditCard: (order, paymentData) => paymentData,
   payments: {
     create: () => ({
       id: "1234567890",

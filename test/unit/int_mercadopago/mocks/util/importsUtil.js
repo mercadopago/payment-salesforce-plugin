@@ -13,6 +13,7 @@ const urlUtils = require("./objects/urlUtils");
 const formErrors = require("./objects/formErrors");
 const savePaymentInformation = require("./objects/savePaymentInformation");
 const localServiceRegistry = require("./objects/localServiceRegistry");
+const system = require("./objects/system");
 
 const array =
   "../../../../../cartridges/app_storefront_base/cartridge/scripts/util/array.js";
@@ -33,5 +34,6 @@ module.exports = {
   URLUtils: urlUtils,
   FormErrors: formErrors,
   SavePaymentInformation: savePaymentInformation,
-  LocalServiceRegistry: localServiceRegistry
+  LocalServiceRegistry: localServiceRegistry,
+  System: system
 };

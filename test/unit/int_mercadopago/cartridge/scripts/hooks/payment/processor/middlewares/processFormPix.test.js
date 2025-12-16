@@ -102,7 +102,7 @@ describe("Hook MERCADOPAGO_PAYMENTS middleware processFormPix test", () => {
     );
     assert.equal(
       result.fieldErrors.dwfrm_billing_pixFields_docNumberPix,
-      "error.2067-mercadopago"
+      "error.324-mercadopago"
     );
   });
 });

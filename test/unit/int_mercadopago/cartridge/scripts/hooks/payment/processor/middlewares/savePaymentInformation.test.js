@@ -70,7 +70,8 @@ describe("savePaymentInformation", () => {
       creditCardToken: "token123",
       custom: {
         customerIdMercadoPago: "customerId123",
-        cardBin: "411111"
+        cardBin: "411111",
+        creditCardName: "Visa"
       }
     };
 
@@ -93,7 +94,8 @@ describe("savePaymentInformation", () => {
       creditCardToken: "token123",
       custom: {
         customerIdMercadoPago: "customerId123",
-        cardBin: "411111"
+        cardBin: "411111",
+        creditCardName: "Visa"
       },
       raw: saveCardResult
     }));
@@ -213,7 +215,8 @@ describe("savePaymentInformation", () => {
       creditCardToken: "token123",
       custom: {
         customerIdMercadoPago: "customerId123",
-        cardBin: "411111"
+        cardBin: "411111",
+        creditCardName: "Visa"
       }
     };
 
