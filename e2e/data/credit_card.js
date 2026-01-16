@@ -2,7 +2,7 @@ const amexApro = {
   name: "APRO",
   number: process.env.CC_AMEX,
   month: "11",
-  year: "2025",
+  year: "2030",
   code: "1234",
   document: process.env.CPF,
   cardType: 'amex',

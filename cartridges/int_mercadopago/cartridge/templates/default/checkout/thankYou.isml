@@ -1,8 +1,8 @@
 <div class="checkout">
     <div class="payerauth">
-        <form action="${URLUtils.url('Order-Confirm')}" method="post" id="orderConfirmForm" name="orderConfirmForm">
-            <input type="hidden" name="orderID" value="${pdict.orderID}">
-            <input type="hidden" name="orderToken" value="${pdict.orderToken}">
+        <form action="${pdict.isPending ? URLUtils.url('Order-Confirm', 'isPending', 'true') : URLUtils.url('Order-Confirm')}" method="post" id="orderConfirmForm" name="orderConfirmForm">
+            <input type="hidden" name="orderID" value="${pdict.orderID}" />
+            <input type="hidden" name="orderToken" value="${pdict.orderToken}" />
         </form>
         <script language="javascript">
             var loaded = false;

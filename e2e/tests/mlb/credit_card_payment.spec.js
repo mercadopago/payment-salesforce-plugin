@@ -22,6 +22,7 @@ test("test success pay as guest with amex", async ({ page }) => {
   await page.getByRole("button", { name: "Next: Place Order" }).click();
   await page.waitForTimeout(1000);
   await page.getByRole("button", { name: "Place Order" }).click();
+  await page.waitForURL((url) => url.pathname.includes('Order-Confirm'), { timeout: 10000 });
   await expect(page.locator("h1")).toContainText("Thank You");
   await expect(page.locator("#maincontent")).toContainText("Credit American Express");
 });
@@ -37,6 +38,7 @@ test("test success pay as guest with master", async ({ page }) => {
   await page.getByRole("button", { name: "Next: Place Order" }).click();
   await page.waitForTimeout(1000);
   await page.getByRole("button", { name: "Place Order" }).click();
+  await page.waitForURL((url) => url.pathname.includes('Order-Confirm'), { timeout: 10000 });
   await expect(page.locator("h1")).toContainText("Thank You");
   await expect(page.locator("#maincontent")).toContainText("Credit Master");
 });
@@ -51,7 +53,7 @@ test("test success pay new and saved amex card, and deleting card in the end", a
   await page.getByRole('button', { name: 'Next: Place Order' }).click();
   await page.waitForTimeout(1000);
   await page.getByRole('button', { name: 'Place Order' }).click();
-  await page.waitForTimeout(2000);
+  await page.waitForURL((url) => url.pathname.includes('Order-Confirm'), { timeout: 10000 });
   await expect(page.locator("h1")).toContainText("Thank You");
   await expect(page.locator("#maincontent")).toContainText("Credit " + amexApro.cardName);
   await validateSavedCard(page, amexApro);
@@ -62,7 +64,7 @@ test("test success pay new and saved amex card, and deleting card in the end", a
   await page.getByRole('button', { name: 'Next: Place Order' }).click();
   await page.waitForTimeout(1000);
   await page.getByRole('button', { name: 'Place Order' }).click();
-  await page.waitForTimeout(2000);
+  await page.waitForURL((url) => url.pathname.includes('Order-Confirm'), { timeout: 10000 });
   await expect(page.locator("h1")).toContainText("Thank You");
   await expect(page.locator("#maincontent")).toContainText("Credit " + amexApro.cardName);
   await validateSavedCard(page, amexApro);
@@ -80,7 +82,7 @@ test("test success pay with mastercard as logged user with no saved card", async
   await page.getByRole('button', { name: 'Next: Place Order' }).click();
   await page.waitForTimeout(1000);
   await page.getByRole('button', { name: 'Place Order' }).click();
-  await page.waitForTimeout(2000);
+  await page.waitForURL((url) => url.pathname.includes('Order-Confirm'), { timeout: 10000 });
   await expect(page.locator("h1")).toContainText("Thank You");
   await expect(page.locator("#maincontent")).toContainText("Credit " + masterAproBr.cardName);
   await validateSavedCard(page, masterAproBr);
@@ -91,7 +93,7 @@ test("test success pay with mastercard as logged user with no saved card", async
   await page.getByRole('button', { name: 'Next: Place Order' }).click();
   await page.waitForTimeout(1000);
   await page.getByRole('button', { name: 'Place Order' }).click();
-  await page.waitForTimeout(2000);
+  await page.waitForURL((url) => url.pathname.includes('Order-Confirm'), { timeout: 10000 });
   await expect(page.locator("h1")).toContainText("Thank You");
   await expect(page.locator("#maincontent")).toContainText("Credit " + masterAproBr.cardName);
   await validateSavedCard(page, masterAproBr);

@@ -1,6 +1,6 @@
 {
   "name": "int_mercadopago",
-  "version": "25.6.1",
+  "version": "25.7.0",
   "description": "Payment Integration cartridge for Mercadopago",
   "main": "index.js",
   "scripts": {
@@ -8,6 +8,7 @@
     "lint:fix": "sgmf-scripts --lint js --fix",
     "upload": "sgmf-scripts --upload -- ",
     "test": "sgmf-scripts --test test/unit/**/*.js",
+    "test:coverage": "sgmf-scripts --cover test/unit/**/*.js",
     "uploadCartridge": "sgmf-scripts --uploadCartridge int_mercadopago",
     "watch": "sgmf-scripts --watch",
     "compile:js": "sgmf-scripts --compile js",

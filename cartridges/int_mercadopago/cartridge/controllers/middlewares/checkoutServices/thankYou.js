@@ -2,8 +2,9 @@ const OrderMgr = require("dw/order/OrderMgr");
 const Transaction = require("dw/system/Transaction");
 
 function thankYou(req, res, next) {
-  const { orderID, orderToken, tryAgain } = req.querystring;
-
+  const { orderID, orderToken, tryAgain, isPending } = req.querystring;
+  const pending = isPending === true || isPending === "true";
+  
   if (!tryAgain) {
     const order = OrderMgr.getOrder(orderID, orderToken);
     const { paymentInstruments } = order;
@@ -22,7 +23,8 @@ function thankYou(req, res, next) {
 
   res.render("checkout/thankYou.isml", {
     orderID: orderID,
-    orderToken: orderToken
+    orderToken: orderToken,
+    isPending: pending
   });
 
   return next();

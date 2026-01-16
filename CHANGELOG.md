@@ -1,5 +1,11 @@
 # Changelog
 
+## [25.7.0] - 2026-01-15
+
+### Added
+- Url parameter has been added within the callback URL in the preference.
+- Correction of E2E tests.
+
 ## [25.6.1] - 2025-12-16
 
 ### Fixed

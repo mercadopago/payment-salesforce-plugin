@@ -845,10 +845,11 @@ MercadopagoHelpers.prototype.createPreferencePayload = (
   const transactionAmount = getTotalAmount(order);
 
   const thankYouUrl = URLUtils.https("CheckoutServices-ThankYou", "orderID", order.orderNo, "orderToken", order.orderToken).toString();
+  const thankYouWithPendingUrl = URLUtils.https("CheckoutServices-ThankYou", "orderID", order.orderNo, "orderToken", order.orderToken, "isPending", true).toString();
   const thankYouWithTryAgainUrl = URLUtils.https("CheckoutServices-ThankYou", "orderID", order.orderNo, "orderToken", order.orderToken, "tryAgain", true).toString();
   const backUrls = {
     success: thankYouUrl,
-    pending: thankYouUrl,
+    pending: thankYouWithPendingUrl,
     failure: thankYouWithTryAgainUrl
   };
 

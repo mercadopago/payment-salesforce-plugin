@@ -7,6 +7,7 @@ const guestUser = {
     country: "US",
     state: "AE",
     street: "Rua Tabapuã",
+    neighborhood: "Downtown",
     city: "San Francisco",
     zipcode: "12345"
   }

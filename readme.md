@@ -42,6 +42,7 @@ npm install
 - `npm run lint:fix`: Automatically fixes linting issues
 - `npm run upload`: Uploads the cartridge
 - `npm run test`: Runs unit tests
+- `npm run test:coverage`: Runs unit tests with coverage
 - `npm run uploadCartridge`: Specifically uploads the int_mercadopago cartridge
 - `npm run watch`: Starts watch mode for development
 - `npm run compile:js`: Compiles JavaScript files
