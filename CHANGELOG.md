@@ -1,5 +1,11 @@
 # Changelog
 
+## [26.7.1] - 2026-03-16
+
+### Fixed
+- Fixed setting order export status ready on 3DS pending flow.
+- Added setting order export status ready to authorization flow.
+
 ## [25.7.0] - 2026-01-15
 
 ### Added

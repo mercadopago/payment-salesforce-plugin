@@ -210,13 +210,16 @@ function placeOrder(order, fraudDetectionStatus) {
       const { paymentInstruments } = order;
       const [paymentInstrument] = paymentInstruments;
 
-      if (paymentInstrument.custom.statusDetail === "pending_challenge" || paymentInstrument.custom.statusDetail === "pending_waiting_transfer") {
+      const is3DSPending = paymentInstrument.custom.statusDetail === "pending_challenge" || paymentInstrument.custom.statusDetail === "pending_waiting_transfer";
+
+      if (is3DSPending) {
         OrderMgr.failOrder(order, true);
       } else {
         const placeOrderStatus = OrderMgr.placeOrder(order);
         if (placeOrderStatus === Status.ERROR) {
           throw new Error();
         }
+        order.setExportStatus(Order.EXPORT_STATUS_READY);
       }
 
       if (fraudDetectionStatus.status === "flag") {
@@ -224,8 +227,6 @@ function placeOrder(order, fraudDetectionStatus) {
       } else {
         order.setConfirmationStatus(Order.CONFIRMATION_STATUS_CONFIRMED);
       }
-
-      order.setExportStatus(Order.EXPORT_STATUS_READY);
     });
   } catch (e) {
     Transaction.wrap(() => { OrderMgr.failOrder(order, true); });

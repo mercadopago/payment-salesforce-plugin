@@ -1,4 +1,5 @@
 const OrderMgr = require("dw/order/OrderMgr");
+const Order = require("dw/order/Order");
 const Status = require("dw/system/Status");
 const Logger = require("dw/system/Logger");
 const BasketMgr = require("dw/order/BasketMgr");
@@ -78,6 +79,8 @@ function processOrder(order, viewData, paymentInfo, paramMap, res) {
     if (placeOrderStatus === Status.ERROR) {
       throw new Error();
     }
+
+    order.setExportStatus(Order.EXPORT_STATUS_READY);
 
     const basket = BasketMgr.getCurrentBasket();
     if (basket) {
