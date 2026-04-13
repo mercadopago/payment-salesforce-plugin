@@ -1,8 +1,5 @@
 module.exports = {
-  map: (value) => {
-    const args = Array.from(value);
-    let list = args[0];
-    const callback = args[1];
+  map: (list, callback) => {
     if (list && Object.prototype.hasOwnProperty.call(list, "toArray")) {
       list = list.toArray();
     }

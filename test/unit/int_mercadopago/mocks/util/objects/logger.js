@@ -5,7 +5,8 @@ module.exports = {
       msg: msg,
       args: args
     }),
-    info: (msg) => msg
+    info: (msg) => msg,
+    debug: (msg) => msg
   }),
   error: (msg, args) => ({
     msg: msg,

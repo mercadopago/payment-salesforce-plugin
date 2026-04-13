@@ -4,6 +4,7 @@ const URLUtils = require("dw/web/URLUtils");
 const LocalServiceRegistry = require("dw/svc/LocalServiceRegistry");
 const Logger = require("dw/system/Logger");
 const System = require("dw/system/System");
+const TaxMgr = require("dw/order/TaxMgr");
 const MercadopagoUtil = require("*/cartridge/scripts/util/MercadopagoUtil");
 const collections = require("*/cartridge/scripts/util/collections");
 
@@ -719,7 +720,7 @@ MercadopagoHelpers.prototype.createPaymentPayload = (
     }
 
     item.quantity = prodLineItem.quantityValue;
-    item.unit_price = validateAndReturnAttribute(prodLineItem.adjustedGrossPrice, "value") / prodLineItem.quantityValue;
+    item.unit_price = validateAndReturnAttribute(prodLineItem.basePrice, "value");
 
     return item;
   });
@@ -746,6 +747,13 @@ MercadopagoHelpers.prototype.createPaymentPayload = (
   const threeDSecureMode = "optional";
 
   const transactionAmount = getTotalAmount(order);
+
+  log.debug(
+    "createPaymentPayload" +
+    " | order: " + order.orderNo +
+    " | method: " + paymentMethodId +
+    " | transaction_amount: " + transactionAmount.value
+  );
 
   const payDataObj = {
     payer: payer,
@@ -822,18 +830,6 @@ MercadopagoHelpers.prototype.createPreferencePayload = (
     return item;
   });
 
-  if (order.totalTax && order.totalTax.value) {
-    items.push({ id: "salesTax", title: "Sales Tax", quantity: 1, unit_price: order.totalTax.value });
-  }
-
-  const merchandizeTotalPrice = order.getMerchandizeTotalPrice();
-  const adjustedMerchandizeTotalPrice = order.getAdjustedMerchandizeTotalPrice();
-  const orderDiscount = merchandizeTotalPrice.subtract(adjustedMerchandizeTotalPrice).value;
-
-  if (orderDiscount) {
-    items.push({ id: "orderDiscount", title: "Order Discount", quantity: 1, unit_price: -orderDiscount });
-  }
-
   let paymentMethodId;
   let token;
 
@@ -843,6 +839,33 @@ MercadopagoHelpers.prototype.createPreferencePayload = (
   const { additionalInfoPayer, payer } = getAdditionalInfoPayer(order, paymentMethodId);
 
   const transactionAmount = getTotalAmount(order);
+
+  const shippingGross = order.adjustedShippingTotalPrice.value;
+
+  const isGrossTax = TaxMgr.getTaxationPolicy() === TaxMgr.TAX_POLICY_GROSS;
+  if (!isGrossTax && order.totalTax && order.totalTax.value) {
+    items.push({ id: "salesTax", title: "Sales Tax", quantity: 1, unit_price: order.totalTax.value });
+  }
+
+  const nonShippingDiscount = order.getGiftCertificatePaymentInstruments().toArray().reduce(
+    (discount, gc) => gc.paymentTransaction && gc.paymentTransaction.amount
+      ? discount.add(gc.paymentTransaction.amount)
+      : discount,
+    order.merchandizeTotalPrice.subtract(order.adjustedMerchandizeTotalPrice)
+  );
+  if (nonShippingDiscount.value > 0) {
+    items.push({ id: "orderDiscount", title: "Order Discount", quantity: 1, unit_price: -nonShippingDiscount.value });
+  }
+
+  log.debug(
+    "createPreferencePayload" +
+    " | order: " + order.orderNo +
+    " | taxPolicy: " + (isGrossTax ? "GROSS" : "NET") +
+    " | tax: " + (isGrossTax ? 0 : (order.totalTax ? order.totalTax.value : 0)) +
+    " | discount: " + nonShippingDiscount.value +
+    " | shipping: " + shippingGross +
+    " | transaction_amount: " + transactionAmount.value
+  );
 
   const thankYouUrl = URLUtils.https("CheckoutServices-ThankYou", "orderID", order.orderNo, "orderToken", order.orderToken).toString();
   const thankYouWithPendingUrl = URLUtils.https("CheckoutServices-ThankYou", "orderID", order.orderNo, "orderToken", order.orderToken, "isPending", true).toString();
@@ -866,7 +889,7 @@ MercadopagoHelpers.prototype.createPreferencePayload = (
       payment: getAdditionalInfoPaymentInfo(order)
     },
     shipments: {
-      cost: order.adjustedShippingTotalPrice.value,
+      cost: shippingGross,
       mode: "not_specified"
     },
     payment_method_id: paymentMethodId.toLowerCase(),
