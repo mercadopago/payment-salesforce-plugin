@@ -1,9 +1,14 @@
 # Changelog
 
+## [26.7.3] - 2026-04-27
+
+### Fixed
+- Updated GET notification endpoint from Bifrost SalesForce to Asgard Notification.
+
 ## [26.7.2] - 2026-04-13
 
 ### Fixed
-- Correct item pricing in Checkout Pro preference payload
+- Correct item pricing in Checkout Pro preference payload.
 
 ## [26.7.1] - 2026-03-16
 

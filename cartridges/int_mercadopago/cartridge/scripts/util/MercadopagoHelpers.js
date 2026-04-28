@@ -48,6 +48,10 @@ function getServiceDefinition() {
       svc.addHeader("x-product-id", productId);
       svc.addHeader("x-integrator-id", integratorId);
 
+      if (requestObject.headers) {
+        Object.keys(requestObject.headers).forEach((key) => svc.addHeader(key, requestObject.headers[key]));
+      }
+
       if (requestObject.payload) {
 
         if (!requestObject.payload.metadata) {
@@ -158,8 +162,9 @@ MercadopagoHelpers.prototype.payments = {
   },
   retrieve: (paymentId) => {
     const requestObject = {
-      endpoint: "/bifrost/notification/status/" + paymentId,
-      httpMethod: "GET"
+      endpoint: "/asgard/notification/" + paymentId,
+      httpMethod: "GET",
+      headers: { "X-Remove-Null-Fields": "true" }
     };
 
     return callService(requestObject);

@@ -344,6 +344,67 @@ describe("Script utilities MercadopagoHelpers test function getSavedCardInstallm
   });
 });
 
+describe("Script utilities MercadopagoHelpers test function payments.retrieve", () => {
+  it("should call notification endpoint with /asgard/notification/ path and GET method", () => {
+    const callSpy = sinon.spy();
+    const localServiceRegistryWithSpy = {
+      createService: () => ({
+        call: (requestObject) => {
+          callSpy(requestObject);
+          return { ok: true, object: {} };
+        }
+      })
+    };
+
+    const po = {
+      ...proxyquireObject,
+      "dw/svc/LocalServiceRegistry": localServiceRegistryWithSpy
+    };
+
+    const MercadopagoHelpers = proxyquire(scriptPath, po);
+
+    const paymentId = "P-129781912860";
+    MercadopagoHelpers.payments.retrieve(paymentId);
+
+    const actual = callSpy.getCall(-1).args[0];
+
+    assert.deepEqual(actual, {
+      endpoint: "/asgard/notification/" + paymentId,
+      httpMethod: "GET",
+      headers: { "X-Remove-Null-Fields": "true" }
+    });
+  });
+
+  it("should not use bifrost endpoint for notification retrieval", () => {
+    const callSpy = sinon.spy();
+    const localServiceRegistryWithSpy = {
+      createService: () => ({
+        call: (requestObject) => {
+          callSpy(requestObject);
+          return { ok: true, object: {} };
+        }
+      })
+    };
+
+    const po = {
+      ...proxyquireObject,
+      "dw/svc/LocalServiceRegistry": localServiceRegistryWithSpy
+    };
+
+    const MercadopagoHelpers = proxyquire(scriptPath, po);
+
+    const paymentId = "P-129781912860";
+    MercadopagoHelpers.payments.retrieve(paymentId);
+
+    const actual = callSpy.getCall(-1).args[0];
+
+    assert.ok(
+      !actual.endpoint.includes("bifrost"),
+      "Endpoint should not contain bifrost"
+    );
+  });
+});
+
 describe("Script test method to returns Seller MP data", () => {
   it("Should returns data with success", () => {
     const MercadopagoHelpers = proxyquire(scriptPath, proxyquireObject);

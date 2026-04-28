@@ -1,6 +1,6 @@
 {
   "name": "int_mercadopago",
-  "version": "26.7.2",
+  "version": "26.7.3",
   "description": "Payment Integration cartridge for Mercadopago",
   "main": "index.js",
   "scripts": {
