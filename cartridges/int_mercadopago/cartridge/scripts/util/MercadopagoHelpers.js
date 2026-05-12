@@ -213,8 +213,9 @@ MercadopagoHelpers.prototype.saveCardPayload = (token, email) => {
 MercadopagoHelpers.prototype.paymentMethods = {
   retrieve: () => {
     const requestObject = {
-      endpoint: "/asgard/payment-methods",
-      httpMethod: "GET"
+      endpoint: "/ppcore/prod/payment-methods/v1/payment-methods",
+      httpMethod: "GET",
+      hasApiVersion: false
     };
 
     const call = callService(requestObject);

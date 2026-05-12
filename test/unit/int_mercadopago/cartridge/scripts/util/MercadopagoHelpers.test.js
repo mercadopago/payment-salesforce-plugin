@@ -405,6 +405,65 @@ describe("Script utilities MercadopagoHelpers test function payments.retrieve", 
   });
 });
 
+describe("Script utilities MercadopagoHelpers test function paymentMethods.retrieve", () => {
+  it("should call ppcore endpoint with correct path and no apiVersion prefix", () => {
+    const callSpy = sinon.spy();
+    const localServiceRegistryWithSpy = {
+      createService: () => ({
+        call: (requestObject) => {
+          callSpy(requestObject);
+          return { ok: true, object: {} };
+        }
+      })
+    };
+
+    const po = {
+      ...proxyquireObject,
+      "dw/svc/LocalServiceRegistry": localServiceRegistryWithSpy
+    };
+
+    const MercadopagoHelpers = proxyquire(scriptPath, po);
+
+    MercadopagoHelpers.paymentMethods.retrieve();
+
+    const actual = callSpy.getCall(-1).args[0];
+
+    assert.deepEqual(actual, {
+      endpoint: "/ppcore/prod/payment-methods/v1/payment-methods",
+      httpMethod: "GET",
+      hasApiVersion: false
+    });
+  });
+
+  it("should not use asgard endpoint for payment methods retrieval", () => {
+    const callSpy = sinon.spy();
+    const localServiceRegistryWithSpy = {
+      createService: () => ({
+        call: (requestObject) => {
+          callSpy(requestObject);
+          return { ok: true, object: {} };
+        }
+      })
+    };
+
+    const po = {
+      ...proxyquireObject,
+      "dw/svc/LocalServiceRegistry": localServiceRegistryWithSpy
+    };
+
+    const MercadopagoHelpers = proxyquire(scriptPath, po);
+
+    MercadopagoHelpers.paymentMethods.retrieve();
+
+    const actual = callSpy.getCall(-1).args[0];
+
+    assert.ok(
+      !actual.endpoint.includes("asgard"),
+      "Endpoint should not contain asgard"
+    );
+  });
+});
+
 describe("Script test method to returns Seller MP data", () => {
   it("Should returns data with success", () => {
     const MercadopagoHelpers = proxyquire(scriptPath, proxyquireObject);

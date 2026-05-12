@@ -1,5 +1,10 @@
 # Changelog
 
+## [26.7.4] - 2026-05-12
+
+### Fixed
+- Updated GET payment methods endpoint from Asgard to PPCore Payment Methods.
+
 ## [26.7.3] - 2026-04-27
 
 ### Fixed
