@@ -146,9 +146,13 @@ MercadopagoUtil.prototype.validateDocument = (docNumber, docType) => {
     if (docType === MercadopagoUtil.prototype.DOCUMENT_TYPE.cpf) {
       newDocNumber = MercadopagoUtil.prototype.formatCpf(docNumber);
       valid = MercadopagoUtil.prototype.validateCpf(newDocNumber);
+      // API contract requires the raw, unmasked value (formatCpf is for display only)
+      newDocNumber = String(newDocNumber).replace(/[^0-9]/g, "");
     } else if (docType === MercadopagoUtil.prototype.DOCUMENT_TYPE.cnpj) {
       newDocNumber = MercadopagoUtil.prototype.formatCnpj(docNumber);
       valid = MercadopagoUtil.prototype.validateCnpj(newDocNumber);
+      // API contract requires the raw, unmasked, uppercase 14-char value (alphanumeric CNPJ)
+      newDocNumber = String(newDocNumber).toUpperCase().replace(/[^A-Z0-9]/g, "");
     }
 
     if (valid) {
@@ -174,7 +178,7 @@ MercadopagoUtil.prototype.validateAndReturnAttribute = (object, prop) => {
  */
 MercadopagoUtil.prototype.formatCpf = (value) => {
   // Removes everything that is not digit
-  let cpf = value.replace(/\D/g, "");
+  let cpf = String(value).replace(/\D/g, "");
 
   cpf = cpf.replace(/(\d{3})(\d)/, "$1.$2");
   cpf = cpf.replace(/(\d{3})(\d)/, "$1.$2");
@@ -189,13 +193,14 @@ MercadopagoUtil.prototype.formatCpf = (value) => {
  * @returns {String} cpnj with mask
  */
 MercadopagoUtil.prototype.formatCnpj = (value) => {
-  // Removes everything that is not digit
-  let cnpj = value.replace(/\D/g, "");
+  // Removes everything that is not alphanumeric, preserving letters (alphanumeric CNPJ)
+  let cnpj = String(value).toUpperCase().replace(/[^A-Z0-9]/g, "");
 
-  cnpj = cnpj.replace(/^(\d{2})(\d)/, "$1.$2");
-  cnpj = cnpj.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
-  cnpj = cnpj.replace(/\.(\d{3})(\d)/, ".$1/$2");
-  cnpj = cnpj.replace(/(\d{4})(\d)/, "$1-$2");
+  // Positions 1-12: [A-Z0-9]; positions 13-14 (check digits): [0-9]
+  cnpj = cnpj.replace(/^([A-Z0-9]{2})([A-Z0-9])/, "$1.$2");
+  cnpj = cnpj.replace(/^([A-Z0-9]{2})\.([A-Z0-9]{3})([A-Z0-9])/, "$1.$2.$3");
+  cnpj = cnpj.replace(/\.([A-Z0-9]{3})([A-Z0-9])/, ".$1/$2");
+  cnpj = cnpj.replace(/([A-Z0-9]{4})([0-9])/, "$1-$2");
 
   return cnpj;
 };
@@ -204,14 +209,20 @@ function sameDigitsIsNotValid(value) {
   return value.split("").every((char) => char === value[0]);
 }
 
+// cnpjCharWeight maps a CNPJ char to its SERPRO NT 49 weight base via direct charCode - 48:
+// '0'-'9' -> 0-9, 'A'-'Z' -> 17-42. Values 10-16 are unused in the space, no functional impact.
+function cnpjCharWeight(ch) {
+  return ch.charCodeAt(0) - 48;
+}
+
 function calculationCnpjNumbers(numbers, x) {
-  const slice = numbers.slice(0, x);
   let factor = x - 7;
   let amount = 0;
 
-  for (let i = x; i >= 1; i--) {
-    const n = slice[x - i];
-    amount += n * factor;
+  // 1-based loop with inline substring(i - 1, i) char access, mirroring calculationCpfNumbers.
+  // factor starts at x - 7 and wraps back to 9 when it drops below 2 (SERPRO NT 49 weights).
+  for (let i = 1; i <= x; i++) {
+    amount += cnpjCharWeight(numbers.substring(i - 1, i)) * factor;
     factor -= 1;
     if (factor < 2) {
       factor = 9;
@@ -228,9 +239,15 @@ function calculationCnpjNumbers(numbers, x) {
  * @returns {Boolean} true if a valid cnpj
  */
 MercadopagoUtil.prototype.validateCnpj = (cnpj) => {
-  const strCNPJ = cnpj.replace(/[^\d]+/g, "");
+  // Normalize preserving letters (alphanumeric CNPJ, RFB NT 49/2024)
+  const strCNPJ = String(cnpj).toUpperCase().replace(/[^A-Z0-9]/g, "");
 
   if (strCNPJ.length !== 14) {
+    return false;
+  }
+
+  // Positions 1-12 alphanumeric, positions 13-14 (check digits) numeric only
+  if (!/^[A-Z0-9]{12}[0-9]{2}$/.test(strCNPJ)) {
     return false;
   }
 
@@ -238,15 +255,14 @@ MercadopagoUtil.prototype.validateCnpj = (cnpj) => {
     return false;
   }
 
-  const lastTwoDigitsCheckers = strCNPJ.slice(12);
-
+  // substring with literal indices on the original string (Rhino-safe char access)
   const firstCheckDigit = calculationCnpjNumbers(strCNPJ, 12);
-  if (Number(firstCheckDigit) !== Number(lastTwoDigitsCheckers[0])) {
+  if (Number(firstCheckDigit) !== Number(strCNPJ.substring(12, 13))) {
     return false;
   }
 
   const secondCheckDigit = calculationCnpjNumbers(strCNPJ, 13);
-  if (Number(secondCheckDigit) !== Number(lastTwoDigitsCheckers[1])) {
+  if (Number(secondCheckDigit) !== Number(strCNPJ.substring(13, 14))) {
     return false;
   }
 

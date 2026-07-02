@@ -1,5 +1,13 @@
 # Changelog
 
+## [26.7.5] - 2026-06-26
+
+### Added
+- Support for alphanumeric CNPJ (RFB NT 49/2024) in the checkout document validation and normalization.
+
+### Changed
+- CPF is now sent to the API as a raw (digits-only) value instead of the masked value.
+
 ## [26.7.4] - 2026-05-12
 
 ### Fixed

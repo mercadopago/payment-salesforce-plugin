@@ -12,52 +12,75 @@ const proxyquireObject = {
 describe("Scripts utilities MercadopagoUtil test function validateCnpj", () => {
   const MercadopagoUtil = proxyquire(scriptPath, proxyquireObject);
 
-  it("should return that the cnpj is valid", () => {
-    const cnpjNumber = "65269223000102";
+  // Data-driven matrix: numeric / alphanumeric (upper, lower, mixed) x with / without mask
+  const validateCnpjCases = [
+    // --- valid: numeric ---
+    { input: "65269223000102", expected: true, desc: "numeric without mask" },
+    { input: "11222333000181", expected: true, desc: "numeric without mask (reference)" },
+    { input: "11.222.333/0001-81", expected: true, desc: "numeric with mask" },
+    // --- valid: alphanumeric uppercase (SERPRO reference, DV 35) ---
+    { input: "12ABC34501DE35", expected: true, desc: "alphanumeric uppercase without mask" },
+    { input: "12.ABC.345/01DE-35", expected: true, desc: "alphanumeric uppercase with mask" },
+    // --- valid: alphanumeric lowercase (normalized to uppercase) ---
+    { input: "12abc34501de35", expected: true, desc: "alphanumeric lowercase without mask" },
+    { input: "12.abc.345/01de-35", expected: true, desc: "alphanumeric lowercase with mask" },
+    // --- valid: alphanumeric mixed case ---
+    { input: "12aBc34501dE35", expected: true, desc: "alphanumeric mixed case without mask" },
+    { input: "12.aBc.345/01dE-35", expected: true, desc: "alphanumeric mixed case with mask" },
+    // --- invalid ---
+    { input: "", expected: false, desc: "empty string" },
+    { input: "11111111111111", expected: false, desc: "repeated digits" },
+    { input: "AAAAAAAAAAAAAA", expected: false, desc: "repeated letters" },
+    { input: "12345678912345", expected: false, desc: "numeric with wrong check digits" },
+    { input: "12.ABC.345/01DE-99", expected: false, desc: "alphanumeric with wrong check digits" },
+    { input: "123456789123456", expected: false, desc: "more than 14 characters" },
+    { input: "1234567891234", expected: false, desc: "fewer than 14 characters" },
+    { input: "12ABC3450001A1", expected: false, desc: "letter in a check-digit position" }
+  ];
 
-    const result = MercadopagoUtil.validateCnpj(cnpjNumber);
-
-    assert.equal(result, true);
+  validateCnpjCases.forEach((testCase) => {
+    it(`should return ${testCase.expected} for ${testCase.desc} (${testCase.input || "<empty>"})`, () => {
+      assert.equal(MercadopagoUtil.validateCnpj(testCase.input), testCase.expected);
+    });
   });
+});
 
-  it("should return false because cnpj can't be empty", () => {
-    const cnpjNumber = "";
+describe("Scripts utilities MercadopagoUtil test function formatCnpj", () => {
+  const MercadopagoUtil = proxyquire(scriptPath, proxyquireObject);
 
-    const result = MercadopagoUtil.validateCnpj(cnpjNumber);
+  const formatCnpjCases = [
+    { input: "12ABC34501DE35", expected: "12.ABC.345/01DE-35", desc: "raw alphanumeric uppercase" },
+    { input: "12abc34501de35", expected: "12.ABC.345/01DE-35", desc: "raw alphanumeric lowercase (uppercased)" },
+    { input: "12aBc34501dE35", expected: "12.ABC.345/01DE-35", desc: "raw alphanumeric mixed case (uppercased)" },
+    { input: "11222333000181", expected: "11.222.333/0001-81", desc: "raw numeric (no regression)" },
+    { input: "12.ABC.345/01DE-35", expected: "12.ABC.345/01DE-35", desc: "already masked (idempotent)" }
+  ];
 
-    assert.equal(result, false);
+  formatCnpjCases.forEach((testCase) => {
+    it(`should mask ${testCase.desc} (${testCase.input})`, () => {
+      assert.equal(MercadopagoUtil.formatCnpj(testCase.input), testCase.expected);
+    });
   });
+});
 
-  it("should return false because cnpj can't be the same numbers", () => {
-    const cnpjNumber = "11111111111111";
+describe("Scripts utilities MercadopagoUtil test function validateDocument", () => {
+  const MercadopagoUtil = proxyquire(scriptPath, proxyquireObject);
 
-    const result = MercadopagoUtil.validateCnpj(cnpjNumber);
+  // validateDocument returns the raw, unmasked, uppercase value sent to the API (or false)
+  const validateDocumentCases = [
+    { input: "12.ABC.345/01DE-35", type: "CNPJ", expected: "12ABC34501DE35", desc: "CNPJ alphanumeric masked -> raw uppercase" },
+    { input: "12ABC34501DE35", type: "CNPJ", expected: "12ABC34501DE35", desc: "CNPJ alphanumeric raw -> raw" },
+    { input: "12.abc.345/01de-35", type: "CNPJ", expected: "12ABC34501DE35", desc: "CNPJ alphanumeric lowercase -> raw uppercase" },
+    { input: "11.222.333/0001-81", type: "CNPJ", expected: "11222333000181", desc: "CNPJ numeric masked -> raw" },
+    { input: "123.456.789-09", type: "CPF", expected: "12345678909", desc: "CPF masked -> raw" },
+    { input: "12.ABC.345/01DE-99", type: "CNPJ", expected: false, desc: "invalid CNPJ -> false" }
+  ];
 
-    assert.equal(result, false);
-  });
-
-  it("should return false because it's wrong cnpj", () => {
-    const cnpjNumber = "12345678912345";
-
-    const result = MercadopagoUtil.validateCnpj(cnpjNumber);
-
-    assert.equal(result, false);
-  });
-
-  it("should return false because cnpj cannot be more than 14 digits", () => {
-    const cnpjNumber = "123456789123456";
-
-    const result = MercadopagoUtil.validateCnpj(cnpjNumber);
-
-    assert.equal(result, false);
-  });
-
-  it("should return false because cnpj cannot be less than 14 digits", () => {
-    const cnpjNumber = "1234567891234";
-
-    const result = MercadopagoUtil.validateCnpj(cnpjNumber);
-
-    assert.equal(result, false);
+  validateDocumentCases.forEach((testCase) => {
+    it(`should handle ${testCase.desc} (${testCase.input})`, () => {
+      const result = MercadopagoUtil.validateDocument(testCase.input, testCase.type);
+      assert.equal(result, testCase.expected);
+    });
   });
 });
 

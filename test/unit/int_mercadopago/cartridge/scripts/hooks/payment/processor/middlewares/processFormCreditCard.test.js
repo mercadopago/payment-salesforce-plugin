@@ -190,3 +190,93 @@ describe("Hook MERCADOPAGO_PAYMENTS middleware processFormCreditCard test", () =
     );
   });
 });
+
+describe("Hook MERCADOPAGO_PAYMENTS middleware processFormCreditCard alphanumeric CNPJ test", () => {
+  // Use the real MercadopagoUtil to exercise validation + normalization end-to-end
+  const realMercadopagoUtil = proxyquire(
+    "*/../../cartridges/int_mercadopago/cartridge/scripts/util/MercadopagoUtil.js",
+    {
+      "dw/web/Resource": importsUtil.Resource,
+      "dw/system/Site": importsUtil.Site
+    }
+  );
+  const processFormCreditCard = proxyquire(hookPath, {
+    "dw/web/Resource": importsUtil.Resource,
+    "*/cartridge/scripts/util/MercadopagoUtil": realMercadopagoUtil,
+    "*/cartridge/scripts/util/array": importsUtil.array,
+    "*/cartridge/scripts/checkout/checkoutHelpers": importsUtil.checkoutHelpers
+  });
+
+  const req = {
+    form: { storedPaymentUUID: false, securityCode: "securityCode" },
+    currentCustomer: { raw: { authenticated: true, registered: true } },
+    wallet: {}
+  };
+
+  it("should validate and normalize an alphanumeric CNPJ in the credit card flow (raw, no mask)", () => {
+    const creditCardFields = paymentDataUtil.getFormCreditCard();
+    creditCardFields.docType.value = "CNPJ";
+    creditCardFields.docType.htmlValue = "CNPJ";
+    creditCardFields.docNumber.value = "12.ABC.345/01DE-35";
+
+    const paymentForm = {
+      paymentMethod: { value: PAYMENT_METHOD, htmlName: "" },
+      creditCardFields: creditCardFields
+    };
+    const result = processFormCreditCard(req, paymentForm, {});
+
+    assert.equal(result.error, false);
+    assert.equal(
+      result.viewData.paymentInformation.docNumber.value,
+      "12ABC34501DE35"
+    );
+  });
+
+  it("should reject an alphanumeric CNPJ with wrong check digits in the credit card flow", () => {
+    const creditCardFields = paymentDataUtil.getFormCreditCard();
+    creditCardFields.docType.value = "CNPJ";
+    creditCardFields.docType.htmlValue = "CNPJ";
+    creditCardFields.docNumber.value = "12.ABC.345/01DE-99";
+
+    // storedPaymentUUID: true bypasses the mocked validateCreditCard call (which would
+    // return "" and clear fieldErrors). This keeps fieldErrors as a plain object so the
+    // docNumber validation error persists. If processFormCreditCard ever stops skipping
+    // card validation for stored UUIDs, this test will need a different approach.
+    const reqStored = {
+      form: { storedPaymentUUID: true, securityCode: "securityCode" },
+      currentCustomer: { raw: { authenticated: true, registered: true } },
+      wallet: {}
+    };
+    const paymentForm = {
+      paymentMethod: { value: PAYMENT_METHOD, htmlName: "" },
+      creditCardFields: creditCardFields
+    };
+    const result = processFormCreditCard(reqStored, paymentForm, {});
+
+    assert.equal(result.error, true);
+    assert.equal(Object.keys(result.fieldErrors).length, 1);
+    assert.equal(
+      Object.keys(result.fieldErrors)[0],
+      creditCardFields.docNumber.htmlName
+    );
+  });
+
+  it("should normalize a masked CPF to raw digits in the credit card flow", () => {
+    const creditCardFields = paymentDataUtil.getFormCreditCard();
+    creditCardFields.docType.value = "CPF";
+    creditCardFields.docType.htmlValue = "CPF";
+    creditCardFields.docNumber.value = "123.456.789-09";
+
+    const paymentForm = {
+      paymentMethod: { value: PAYMENT_METHOD, htmlName: "" },
+      creditCardFields: creditCardFields
+    };
+    const result = processFormCreditCard(req, paymentForm, {});
+
+    assert.equal(result.error, false);
+    assert.equal(
+      result.viewData.paymentInformation.docNumber.value,
+      "12345678909"
+    );
+  });
+});

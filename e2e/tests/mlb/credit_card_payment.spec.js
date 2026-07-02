@@ -11,92 +11,99 @@ import { validateSavedCard } from "../../flows/validate_saved_card";
 import { deleteOneSavedCard } from "../../flows/delete_one_saved_card";
 import { cleanUser } from "../../data/user";
 
-test("test success pay as guest with amex", async ({ page }) => {
-  const storeUrl = base.storeUrl;
-  await addProductToCart(page, storeUrl);
-  await goToCheckout(page, storeUrl);
-  await fillGuestEmail(page);
-  await fillShippingForm(page);
-  await fillCardData(page, amexApro);
-  await fillDocumentDataBr(page, amexApro);
-  await page.getByRole("button", { name: "Next: Place Order" }).click();
-  await page.waitForTimeout(1000);
-  await page.getByRole("button", { name: "Place Order" }).click();
-  await page.waitForURL((url) => url.pathname.includes('Order-Confirm'), { timeout: 10000 });
-  await expect(page.locator("h1")).toContainText("Thank You");
-  await expect(page.locator("#maincontent")).toContainText("Credit American Express");
-});
+// Serial execution ensures tests that share cleanUser account state do not interfere with each other.
+// Order: guest tests first (no shared state), then logged tests — new-card purchase always before
+// the saved-card purchase that depends on it.
+test.describe.serial("MLB credit card payment", () => {
+  test("test success pay as guest with amex", async ({ page }) => {
+    const storeUrl = base.storeUrl;
+    await addProductToCart(page, storeUrl);
+    await goToCheckout(page, storeUrl);
+    await fillGuestEmail(page);
+    await fillShippingForm(page);
+    await fillCardData(page, amexApro);
+    await fillDocumentDataBr(page, amexApro);
+    await page.getByRole("button", { name: "Next: Place Order" }).click();
+    await page.waitForTimeout(1000);
+    await page.getByRole("button", { name: "Place Order" }).click();
+    await page.waitForURL((url) => url.pathname.includes('Order-Confirm'), { timeout: 10000 });
+    await expect(page.locator("h1")).toContainText("Thank You");
+    await expect(page.locator("#maincontent")).toContainText("Credit American Express");
+  });
 
-test("test success pay as guest with master", async ({ page }) => {
-  const storeUrl = base.storeUrl;
-  await addProductToCart(page, storeUrl);
-  await goToCheckout(page, storeUrl);
-  await fillGuestEmail(page);
-  await fillShippingForm(page);
-  await fillCardData(page, masterAproBr);
-  await fillDocumentDataBr(page, masterAproBr);
-  await page.getByRole("button", { name: "Next: Place Order" }).click();
-  await page.waitForTimeout(1000);
-  await page.getByRole("button", { name: "Place Order" }).click();
-  await page.waitForURL((url) => url.pathname.includes('Order-Confirm'), { timeout: 10000 });
-  await expect(page.locator("h1")).toContainText("Thank You");
-  await expect(page.locator("#maincontent")).toContainText("Credit Master");
-});
+  test("test success pay as guest with master", async ({ page }) => {
+    const storeUrl = base.storeUrl;
+    await addProductToCart(page, storeUrl);
+    await goToCheckout(page, storeUrl);
+    await fillGuestEmail(page);
+    await fillShippingForm(page);
+    await fillCardData(page, masterAproBr);
+    await fillDocumentDataBr(page, masterAproBr);
+    await page.getByRole("button", { name: "Next: Place Order" }).click();
+    await page.waitForTimeout(1000);
+    await page.getByRole("button", { name: "Place Order" }).click();
+    await page.waitForURL((url) => url.pathname.includes('Order-Confirm'), { timeout: 10000 });
+    await expect(page.locator("h1")).toContainText("Thank You");
+    await expect(page.locator("#maincontent")).toContainText("Credit Master");
+  });
 
-test("test success pay new and saved amex card, and deleting card in the end", async ({ page }) => {
-  await fillLoginForm(page, base.storeUrl, cleanUser);
-  await addProductToLoggedCart(page, base.storeUrl);
-  await goToCheckout(page, base.storeUrl);
-  await fillShippingForm(page);
-  await fillDocumentDataBr(page, amexApro);
-  await fillCardData(page, amexApro);
-  await page.getByRole('button', { name: 'Next: Place Order' }).click();
-  await page.waitForTimeout(1000);
-  await page.getByRole('button', { name: 'Place Order' }).click();
-  await page.waitForURL((url) => url.pathname.includes('Order-Confirm'), { timeout: 10000 });
-  await expect(page.locator("h1")).toContainText("Thank You");
-  await expect(page.locator("#maincontent")).toContainText("Credit " + amexApro.cardName);
-  await validateSavedCard(page, amexApro);
-  await addProductToLoggedCart(page, base.storeUrl);
-  await goToCheckout(page, base.storeUrl);
-  await page.getByRole("button", { name: "Next: Payment" }).click();
-  await selectSavedCard(page, amexApro);
-  await page.getByRole('button', { name: 'Next: Place Order' }).click();
-  await page.waitForTimeout(1000);
-  await page.getByRole('button', { name: 'Place Order' }).click();
-  await page.waitForURL((url) => url.pathname.includes('Order-Confirm'), { timeout: 10000 });
-  await expect(page.locator("h1")).toContainText("Thank You");
-  await expect(page.locator("#maincontent")).toContainText("Credit " + amexApro.cardName);
-  await validateSavedCard(page, amexApro);
-  await deleteOneSavedCard(page);
-  await expect(page.getByText('No saved payment instruments')).toBeVisible();
-});
+  // New-card purchase runs first (no saved card in account), saved-card purchase follows within
+  // the same test — ordering is guaranteed by sequential awaits. Card is deleted at the end.
+  test("test success pay with mastercard as logged user with no saved card", async ({ page }) => {
+    await fillLoginForm(page, base.storeUrl, cleanUser);
+    await addProductToLoggedCart(page, base.storeUrl);
+    await goToCheckout(page, base.storeUrl);
+    await fillShippingForm(page);
+    await fillDocumentDataBr(page, masterAproBr);
+    await fillCardData(page, masterAproBr);
+    await page.getByRole('button', { name: 'Next: Place Order' }).click();
+    await page.waitForTimeout(1000);
+    await page.getByRole('button', { name: 'Place Order' }).click();
+    await page.waitForURL((url) => url.pathname.includes('Order-Confirm'), { timeout: 10000 });
+    await expect(page.locator("h1")).toContainText("Thank You");
+    await expect(page.locator("#maincontent")).toContainText("Credit " + masterAproBr.cardName);
+    await validateSavedCard(page, masterAproBr);
+    await addProductToLoggedCart(page, base.storeUrl);
+    await goToCheckout(page, base.storeUrl);
+    await page.getByRole("button", { name: "Next: Payment" }).click();
+    await selectSavedCard(page, masterAproBr);
+    await page.getByRole('button', { name: 'Next: Place Order' }).click();
+    await page.waitForTimeout(1000);
+    await page.getByRole('button', { name: 'Place Order' }).click();
+    await page.waitForURL((url) => url.pathname.includes('Order-Confirm'), { timeout: 10000 });
+    await expect(page.locator("h1")).toContainText("Thank You");
+    await expect(page.locator("#maincontent")).toContainText("Credit " + masterAproBr.cardName);
+    await validateSavedCard(page, masterAproBr);
+    await deleteOneSavedCard(page);
+    await expect(page.getByText('No saved payment instruments')).toBeVisible();
+  });
 
-test("test success pay with mastercard as logged user with no saved card", async ({ page }) => {
-  await fillLoginForm(page, base.storeUrl, cleanUser);
-  await addProductToLoggedCart(page, base.storeUrl);
-  await goToCheckout(page, base.storeUrl);
-  await fillShippingForm(page);
-  await fillDocumentDataBr(page, masterAproBr);
-  await fillCardData(page, masterAproBr);
-  await page.getByRole('button', { name: 'Next: Place Order' }).click();
-  await page.waitForTimeout(1000);
-  await page.getByRole('button', { name: 'Place Order' }).click();
-  await page.waitForURL((url) => url.pathname.includes('Order-Confirm'), { timeout: 10000 });
-  await expect(page.locator("h1")).toContainText("Thank You");
-  await expect(page.locator("#maincontent")).toContainText("Credit " + masterAproBr.cardName);
-  await validateSavedCard(page, masterAproBr);
-  await addProductToLoggedCart(page, base.storeUrl);
-  await goToCheckout(page, base.storeUrl);
-  await page.getByRole("button", { name: "Next: Payment" }).click();
-  await selectSavedCard(page, masterAproBr);
-  await page.getByRole('button', { name: 'Next: Place Order' }).click();
-  await page.waitForTimeout(1000);
-  await page.getByRole('button', { name: 'Place Order' }).click();
-  await page.waitForURL((url) => url.pathname.includes('Order-Confirm'), { timeout: 10000 });
-  await expect(page.locator("h1")).toContainText("Thank You");
-  await expect(page.locator("#maincontent")).toContainText("Credit " + masterAproBr.cardName);
-  await validateSavedCard(page, masterAproBr);
-  await deleteOneSavedCard(page);
-  await expect(page.getByText('No saved payment instruments')).toBeVisible();
+  test("test success pay new and saved amex card, and deleting card in the end", async ({ page }) => {
+    await fillLoginForm(page, base.storeUrl, cleanUser);
+    await addProductToLoggedCart(page, base.storeUrl);
+    await goToCheckout(page, base.storeUrl);
+    await fillShippingForm(page);
+    await fillDocumentDataBr(page, amexApro);
+    await fillCardData(page, amexApro);
+    await page.getByRole('button', { name: 'Next: Place Order' }).click();
+    await page.waitForTimeout(1000);
+    await page.getByRole('button', { name: 'Place Order' }).click();
+    await page.waitForURL((url) => url.pathname.includes('Order-Confirm'), { timeout: 10000 });
+    await expect(page.locator("h1")).toContainText("Thank You");
+    await expect(page.locator("#maincontent")).toContainText("Credit " + amexApro.cardName);
+    await validateSavedCard(page, amexApro);
+    await addProductToLoggedCart(page, base.storeUrl);
+    await goToCheckout(page, base.storeUrl);
+    await page.getByRole("button", { name: "Next: Payment" }).click();
+    await selectSavedCard(page, amexApro);
+    await page.getByRole('button', { name: 'Next: Place Order' }).click();
+    await page.waitForTimeout(1000);
+    await page.getByRole('button', { name: 'Place Order' }).click();
+    await page.waitForURL((url) => url.pathname.includes('Order-Confirm'), { timeout: 10000 });
+    await expect(page.locator("h1")).toContainText("Thank You");
+    await expect(page.locator("#maincontent")).toContainText("Credit " + amexApro.cardName);
+    await validateSavedCard(page, amexApro);
+    await deleteOneSavedCard(page);
+    await expect(page.getByText('No saved payment instruments')).toBeVisible();
+  });
 });
