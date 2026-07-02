@@ -106,3 +106,85 @@ describe("Hook MERCADOPAGO_PAYMENTS middleware processFormPix test", () => {
     );
   });
 });
+
+describe("Hook MERCADOPAGO_PAYMENTS middleware processFormPix alphanumeric CNPJ test", () => {
+  // Use the real MercadopagoUtil to exercise validation + normalization end-to-end in the pix flow
+  const realMercadopagoUtil = proxyquire(
+    "*/../../cartridges/int_mercadopago/cartridge/scripts/util/MercadopagoUtil.js",
+    {
+      "dw/web/Resource": importsUtil.Resource,
+      "dw/system/Site": importsUtil.Site
+    }
+  );
+  const processFormPix = proxyquire(hookPath, {
+    "dw/web/Resource": importsUtil.Resource,
+    "*/cartridge/scripts/util/MercadopagoUtil": realMercadopagoUtil,
+    "*/cartridge/scripts/formErrors": importsUtil.FormErrors
+  });
+
+  it("should validate and normalize an alphanumeric CNPJ in the pix flow (raw, no mask)", () => {
+    const pixFields = paymentDataUtil.getFormPix();
+    pixFields.docTypePix.value = "CNPJ";
+    pixFields.docTypePix.htmlValue = "CNPJ";
+    pixFields.docNumberPix.value = "12.ABC.345/01DE-35";
+
+    const paymentForm = {
+      paymentMethod: {
+        value: PAYMENT_METHOD,
+        htmlName: ""
+      },
+      pixFields: pixFields
+    };
+    const result = processFormPix({}, paymentForm, {});
+
+    assert.equal(result.error, false);
+    assert.equal(
+      result.viewData.paymentInformation.docNumber.value,
+      "12ABC34501DE35"
+    );
+  });
+
+  it("should reject an alphanumeric CNPJ with wrong check digits in the pix flow", () => {
+    const pixFields = paymentDataUtil.getFormPix();
+    pixFields.docTypePix.value = "CNPJ";
+    pixFields.docTypePix.htmlValue = "CNPJ";
+    pixFields.docNumberPix.value = "12.ABC.345/01DE-99";
+
+    const paymentForm = {
+      paymentMethod: {
+        value: PAYMENT_METHOD,
+        htmlName: ""
+      },
+      pixFields: pixFields
+    };
+    const result = processFormPix({}, paymentForm, {});
+
+    assert.equal(result.error, true);
+    assert.equal(
+      Object.keys(result.fieldErrors)[0],
+      pixFields.docNumberPix.htmlName
+    );
+  });
+
+  it("should normalize a masked CPF to raw digits in the pix flow", () => {
+    const pixFields = paymentDataUtil.getFormPix();
+    pixFields.docTypePix.value = "CPF";
+    pixFields.docTypePix.htmlValue = "CPF";
+    pixFields.docNumberPix.value = "123.456.789-09";
+
+    const paymentForm = {
+      paymentMethod: {
+        value: PAYMENT_METHOD,
+        htmlName: ""
+      },
+      pixFields: pixFields
+    };
+    const result = processFormPix({}, paymentForm, {});
+
+    assert.equal(result.error, false);
+    assert.equal(
+      result.viewData.paymentInformation.docNumber.value,
+      "12345678909"
+    );
+  });
+});

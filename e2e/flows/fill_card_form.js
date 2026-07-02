@@ -31,6 +31,8 @@ export const fillDocumentData = async (page, cardData) => {
   await page.getByPlaceholder("Number of ID").fill(cardData.document);
 }
 
+// Call only in guest and new-card (logged) checkout flows where the document field is expected.
+// Do NOT call in saved-card checkout flows — the document field is absent there.
 export const fillDocumentDataBr = async (page, cardData) => {
   await page.getByPlaceholder("Number of ID").fill(cardData.document);
 }
