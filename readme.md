@@ -63,7 +63,6 @@ npm test
 .
 ├── cartridges/        # SFCC Cartridges
 ├── doc/              # Documentation
-├── e2e/              # End-to-end tests
 ├── test/             # Unit tests
 ├── metadata/         # Metadata files
 └── ...

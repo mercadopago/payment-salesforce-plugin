@@ -1,6 +1,7 @@
 const assert = require("assert");
 const proxyquire = require("proxyquire").noCallThru().noPreserveCache();
 const importsUtil = require("../../../mocks/util/importsUtil");
+const paymentDataUtil = require("../../../mocks/util/paymentDataUtil");
 
 const scriptPath = "*/../../cartridges/int_mercadopago/cartridge/scripts/util/MercadopagoUtil.js";
 
@@ -81,6 +82,24 @@ describe("Scripts utilities MercadopagoUtil test function validateDocument", () 
       const result = MercadopagoUtil.validateDocument(testCase.input, testCase.type);
       assert.equal(result, testCase.expected);
     });
+  });
+});
+
+describe("Scripts utilities MercadopagoUtil test function formatCpf", () => {
+  const MercadopagoUtil = proxyquire(scriptPath, proxyquireObject);
+
+  it("should format a numeric CPF with the same mask as a string", () => {
+    // Given
+    const cpfAsText = paymentDataUtil.getFormCreditCard().docNumber.value;
+    const cpfNumber = Number(cpfAsText);
+
+    // When
+    const result = MercadopagoUtil.formatCpf(cpfNumber);
+
+    // Then
+    assert.match(result, /^\d{3}\.\d{3}\.\d{3}-\d{2}$/);
+    assert.equal(result.replace(/\D/g, ""), cpfAsText);
+    assert.equal(result, MercadopagoUtil.formatCpf(cpfAsText));
   });
 });
 
