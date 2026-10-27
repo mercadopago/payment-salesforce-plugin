@@ -18,10 +18,3 @@ launch.json
 
 # Cursor
 .history
-# BEGIN AOC
-.agents/metadata/**
-.agents/skills/**
-!.codex/config.toml
-.aoc/**
-.aoc
-# END AOC
