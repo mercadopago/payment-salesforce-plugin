@@ -1,5 +1,18 @@
 # Changelog
 
+## [Unreleased]
+
+## [26.7.6] - 2026-10-27
+
+### Changed
+- Rename Credits to Mercado Crédito in Spanish, Mercado Parcelado in Brazilian Portuguese and Buy now, pay later in English across checkout, Checkout Pro benefits and seller labels, preserving payment identifiers and settings.
+- Update `.nvmrc` to Node.js 22.23.4 (CVE-2026-111497).
+
+### Fixed
+- Correct mixed-language checkout copy.
+- Prevent Checkout Pro and Credits failures when product options have no associated catalog product.
+- Correct Portuguese Checkout Pro benefits for Argentina, Uruguay, Chile, Colombia and Peru, and Spanish copy for Brazil.
+
 ## [26.7.5] - 2026-06-26
 
 ### Added
@@ -129,4 +142,3 @@ Added translation keys for MLB
 
 ### Added
 - Added information about interest on installments
-

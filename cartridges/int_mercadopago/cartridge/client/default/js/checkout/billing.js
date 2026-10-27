@@ -57,21 +57,21 @@ base.methods.updatePaymentInformation = (order) => {
           htmlToAppend += "</p>";
           htmlToAppend += "</div>";
         } else if (selectedPaymentInstrument.paymentMethod === "MERCADO_CREDITO") {
-          const mercadoPagoImage = $(".checkout-pro-option")[0].currentSrc;
+          const mercadoPagoImage = $(".checkout-credits-option").attr("src");
           const mercadoCreditoTitleText = $(".checkout-credits-tab-text")[0].innerText;
           const mercadoCreditoText = $(".mp-text-messages").data("mpTextMessages")["field.mercadocredito.billing.message"];
-          htmlToAppend += "<div style='padding-top: 10px'>";
-          htmlToAppend += "<img src='" + mercadoPagoImage + "' ";
-          htmlToAppend += "height='32' ";
-          htmlToAppend += "alt='CHECKOUT_PRO' ";
-          htmlToAppend += "title='CHECKOUT_PRO' ";
-          htmlToAppend += "/>";
-          htmlToAppend += "<span style='padding-left: 8px'>" + mercadoCreditoTitleText + "</span>";
-          htmlToAppend += "</div>";
-          htmlToAppend += "<div>";
-          htmlToAppend += "<p style='line-height: 21px;margin-top: 10px'>" + mercadoCreditoText;
-          htmlToAppend += "</p>";
-          htmlToAppend += "</div>";
+          htmlToAppend += $("<div>", { style: "padding-top: 10px" }).append(
+            $("<img>", {
+              src: mercadoPagoImage,
+              height: 32,
+              alt: mercadoCreditoTitleText,
+              title: mercadoCreditoTitleText
+            }),
+            $("<span>", { style: "padding-left: 8px" }).text(mercadoCreditoTitleText)
+          ).prop("outerHTML");
+          htmlToAppend += $("<div>").append(
+            $("<p>", { style: "line-height: 21px;margin-top: 10px" }).text(mercadoCreditoText)
+          ).prop("outerHTML");
         } else if (selectedPaymentInstrument.paymentMethod === "CASH") {
           const { paymentPlace, dateOfExpiration } = selectedPaymentInstrument;
           const methodsOffInfo = $(".mp-text-messages").data("mpTextMessages")["field.methodsoff.invoice.place"];

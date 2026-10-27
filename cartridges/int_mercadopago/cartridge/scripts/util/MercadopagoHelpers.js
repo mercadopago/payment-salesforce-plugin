@@ -825,7 +825,7 @@ MercadopagoHelpers.prototype.createPreferencePayload = (
     item.description = validateAndReturnAttribute(prodLineItem.product, "longDescription")
       ? validateAndReturnAttribute(prodLineItem.product.longDescription, "markup") : null;
 
-    if (prodLineItem.product.primaryCategory) {
+    if (prodLineItem.product && prodLineItem.product.primaryCategory) {
       item.category_id = validateAndReturnAttribute(prodLineItem.product, "primaryCategory")
         ? validateAndReturnAttribute(prodLineItem.product.primaryCategory, "displayName") : null;
     }

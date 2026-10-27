@@ -13,8 +13,8 @@
         ${Resource.msg('mercadopago.chopro.wallet.MLA', 'mercadopago', null)}
       </p>
     </div>
-    <div class="span11-cho-pro margin-tb mini-box mini-box-cho-pro cho-pro-icons">
-      <img src="${URLUtils.staticURL('/images/coin.svg')}" alt=""/>
+    <div class="span11-cho-pro margin-tb mini-box mini-box-cho-pro cho-pro-icons cho-pro-credits-icon">
+      <img src="${URLUtils.staticURL('/images/credits-benefit.svg')}" alt=""/>
       <p tabindex="0">
         <b class="semi-bold">${Resource.msg('mercadopago.chopro.credit.MLA.bold', 'mercadopago', null)}</b>
         ${Resource.msg('mercadopago.chopro.credit.MLA', 'mercadopago', null)}

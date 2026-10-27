@@ -219,8 +219,10 @@ function calculationCnpjNumbers(numbers, x) {
   let factor = x - 7;
   let amount = 0;
 
-  // 1-based loop with inline substring(i - 1, i) char access, mirroring calculationCpfNumbers.
-  // factor starts at x - 7 and wraps back to 9 when it drops below 2 (SERPRO NT 49 weights).
+  // 1-based loop with substring(i - 1, i), mirroring calculationCpfNumbers. The character
+  // is passed straight into cnpjCharWeight and is never stored in a block-scoped const inside
+  // the loop: in SFCC Rhino, block-scoped (let/const) variables in a loop body read their
+  // initial value, which would collapse the character access to index 0.
   for (let i = 1; i <= x; i++) {
     amount += cnpjCharWeight(numbers.substring(i - 1, i)) * factor;
     factor -= 1;

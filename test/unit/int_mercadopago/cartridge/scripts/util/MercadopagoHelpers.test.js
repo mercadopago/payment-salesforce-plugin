@@ -750,6 +750,42 @@ describe("Scripts utilities MercadopagoHelpers creating preference payload - ite
     });
   });
 
+  [
+    { id: "000", title: "Extended Warranty: None", price: 0 },
+    { id: "001", title: "Extended Warranty: 1 Year Warranty", price: 49.99 }
+  ].forEach(({ id, title, price }) => {
+    it(`should preserve the price and name of a product option without a catalog product (${id})`, () => {
+      // Given
+      const television = buildProduct(100, 1);
+      television.product.primaryCategory = { displayName: "Televisions" };
+      const warranty = {
+        ...buildProduct(price, 1, id),
+        product: null,
+        productName: title
+      };
+      const total = 100 + price;
+      const order = buildOrder([television, warranty], {
+        merchandizeTotal: total,
+        adjustedMerchandizeTotal: total
+      });
+
+      const mocks = buildPO(total);
+      mocks["*/cartridge/scripts/util/MercadopagoUtil"].validateAndReturnAttribute =
+        (object, prop) => (object ? object[prop] : null);
+
+      // When
+      const payload = proxyquire(scriptPath, mocks).createPreferencePayload(order);
+
+      // Then
+      assert.deepStrictEqual(payload.items, [
+        { id: "P001", title: "Test Product", description: null, category_id: "Televisions", quantity: 1, unit_price: 100 },
+        { id: id, title: title, description: null, quantity: 1, unit_price: price }
+      ]);
+      const sum = payload.items.reduce((acc, item) => acc + item.quantity * item.unit_price, 0);
+      assert.strictEqual(sum + payload.shipments.cost, payload.transaction_amount);
+    });
+  });
+
   it("should skip gift certificates with null paymentTransaction", () => {
     const lineItems = [buildProduct(100, 1)];
     const order = {

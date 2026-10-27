@@ -108,7 +108,7 @@
                 <min-length>0</min-length>
             </attribute-definition>
             <attribute-definition attribute-id="mercadoCreditoLink">
-                <display-name xml:lang="x-default">Link Checkout Credits</display-name>
+                <display-name xml:lang="x-default">Buy now, pay later checkout link</display-name>
                 <type>string</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
