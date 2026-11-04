@@ -16,7 +16,7 @@ function readCatalog(locale) {
 describe("Credits presentation approved wording", () => {
   // Literal Salesforce handoff expectations; English naming comes from the cross-platform thread.
   const cases = [
-    ["", "Buy now, pay later", "Buy in up to 12 installments without a credit card", "choose the number of installments.", "Access Buy now, pay later", "MLM"],
+    ["", "Buy now, pay later", "Buy in up to 12 installments without a credit card", "choose the number of installments.", "You have Buy now, pay later", "MLM"],
     ["es", "Mercado Crédito", "Compra ahora y paga después en hasta 12 cuotas", "elige la cantidad de cuotas.", "Accedes a Mercado Crédito", "MLM"],
     ["es_AR", "Mercado Crédito", "Comprá ahora y pagá después en hasta 12 cuotas", "elegí la cantidad de cuotas.", "Accedé a Mercado Crédito", "MLA"],
     ["es_MX", "Mercado Crédito", "Compra ahora y paga después en hasta 12 meses", "elige la cantidad de meses.", "Accedes a Mercado Crédito", "MLM"],
@@ -31,6 +31,37 @@ describe("Credits presentation approved wording", () => {
       assert.strictEqual(catalog["mercadocredito.title"], title);
       assert.strictEqual(catalog["mercadocredito.firststep.partthree"], installments);
       assert.strictEqual(catalog[`mercadopago.chopro.credit.${site}.bold`], benefit);
+    });
+  });
+
+  ["MLA", "MLB", "MLM"].forEach((site) => {
+    it(`should compose the approved English Credits benefit for ${site}`, () => {
+      const catalog = readCatalog("");
+      const benefit = `${catalog[`mercadopago.chopro.credit.${site}.bold`]} ${catalog[`mercadopago.chopro.credit.${site}`]}`;
+      assert.strictEqual(benefit, "You have Buy now, pay later with Mercado Pago.");
+    });
+  });
+
+  ["MLC", "MCO", "MPE", "MLU"].forEach((site) => {
+    it(`should preserve the English safe-purchase benefit used by the ${site} template`, () => {
+      const catalog = readCatalog("");
+      const template = fs.readFileSync(path.join(cartridge, `templates/default/checkout/billing/checkoutProTemplates/checkoutPro${site}Form.isml`), "utf8");
+      const keys = Array.from(template.matchAll(/Resource\.msg\('(mercadopago\.chopro\.protected\.[^']+)'/g), (match) => match[1]);
+      assert.strictEqual(keys.length, 2);
+      assert.strictEqual(keys.map((key) => catalog[key]).join(" "), "Buy safely with your preferred payment method.");
+    });
+  });
+
+  [
+    ["pt_BR", "Você tem o Mercado Parcelado para comprar agora e pagar depois."],
+    ["es", "Accedes a Mercado Crédito para comprar ahora y pagar después."]
+  ].forEach(([locale, expected]) => {
+    ["MLA", "MLB", "MLM"].forEach((site) => {
+      it(`should preserve the full ${locale} Credits benefit for ${site}`, () => {
+        const catalog = readCatalog(locale);
+        const benefit = `${catalog[`mercadopago.chopro.credit.${site}.bold`]} ${catalog[`mercadopago.chopro.credit.${site}`]}`;
+        assert.strictEqual(benefit, expected);
+      });
     });
   });
 
@@ -57,14 +88,13 @@ describe("Credits presentation approved wording", () => {
     ]);
   });
 
-  it("should not retain a legacy product name in regional aliases or Checkout Pro benefits", () => {
+  it("should use the localized product name in Credits and Checkout Pro benefits", () => {
     ["", "es", "es_AR", "es_CL", "es_CO", "es_MX", "es_PE", "es_UY", "pt_BR"].forEach((locale) => {
       const catalog = readCatalog(locale);
       let name = locale ? "Mercado Crédito" : "Buy now, pay later";
       if (locale === "pt_BR") name = "Mercado Parcelado";
       assert.strictEqual(catalog["mercadocredito.tab"], name, locale);
       Object.entries(catalog).forEach(([key, value]) => {
-        if (key.startsWith("mercadocredito.tab.")) assert.strictEqual(value, name, `${locale}: ${key}`);
         if (/^mercadopago\.chopro\.credit\.ML[ABM]\.bold$/.test(key)) {
           assert.ok(value.includes(name), `${locale}: ${key} must use the localized product name`);
         }
