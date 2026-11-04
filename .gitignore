@@ -18,3 +18,10 @@ launch.json
 
 # Cursor
 .history
+
+# Version the repository-owned skill while keeping other installed skills local.
+!.agents/skills/sfcc-test-publish/
+!.agents/skills/sfcc-test-publish/**
+.agents/skills/sfcc-test-publish/**/node_modules/
+.agents/skills/sfcc-test-publish/**/__pycache__/
+.agents/skills/sfcc-test-publish/**/.DS_Store

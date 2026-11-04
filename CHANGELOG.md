@@ -1,6 +1,12 @@
 # Changelog
 
-## [Unreleased]
+## [26.7.7] - 2026-11-03
+
+### Fixed
+- Remove repeated English Credits wording from Checkout Pro benefits for Argentina, Brazil and Mexico, preserving other languages and markets.
+
+### Changed
+- Remove unused country-specific Credits title aliases and the legacy coin icon. Custom templates should use `mercadocredito.tab` and `credits-benefit.svg`.
 
 ## [26.7.6] - 2026-10-27
 
